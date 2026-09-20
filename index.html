@@ -374,7 +374,6 @@
             overflow-y: auto;
         }
 
-        /* استایل مرتب ۳ تاریخ در ۳ ردیف جداگانه داخل کارت */
         .tx-item {
             display: flex;
             justify-content: space-between;
@@ -519,7 +518,6 @@
             </div>
         </header>
 
-        <!-- تیکر نرخ اسعار (بدون نمایش نام ولایت در صفحه) -->
         <div class="rates-ticker" id="rates-ticker-bar">
             <span id="ticker-loading">🔄 در حال دریافت نرخ اسعار...</span>
         </div>
@@ -546,7 +544,6 @@
                 </div>
             </div>
 
-            <!-- صفحه تنظیمات پروفایل (ذخیره مستقیم در Supabase) -->
             <div id="profile-page" class="page">
                 <div style="max-width: 450px; margin: 10px auto; width: 100%;">
                     <h2 style="font-size: 18px; margin-bottom: 20px; color: var(--primary);" data-i18n="profile_settings_title">Profile Settings</h2>
@@ -1096,7 +1093,6 @@
             showPage('login-page');
         }
 
-        // بارگذاری دائمی اطلاعات پروفایل و داده‌ها از جدول Supabase
         async function loadDataFromSupabase() {
             try {
                 const { data, error } = await supabaseClient
@@ -1164,19 +1160,41 @@
             }
         }
 
-        function handleImageUpload(event) {
+        // آپلود مستقیم عکس به Supabase Storage (باکت user-uploads)
+        async function handleImageUpload(event) {
             const file = event.target.files[0];
             if (!file) return;
 
-            const reader = new FileReader();
-            reader.onload = function(e) {
-                const base64String = e.target.result;
-                userProfile.avatar = base64String;
-                
+            try {
+                const fileExt = file.name.split('.').pop();
+                const fileName = `${Date.now()}_${Math.random().toString(36.substring(2, 7))}.${fileExt}`;
+                const filePath = `${fileName}`;
+
+                // آپلود فایل به باکت user-uploads
+                const { data, error } = await supabaseClient.storage
+                    .from('user-uploads')
+                    .upload(filePath, file);
+
+                if (error) {
+                    alert('Upload error: ' + error.message);
+                    return;
+                }
+
+                // دریافت لینک عمومی عکس از Storage
+                const { data: publicUrlData } = supabaseClient.storage
+                    .from('user-uploads')
+                    .getPublicUrl(filePath);
+
+                const publicUrl = publicUrlData.publicUrl;
+                userProfile.avatar = publicUrl;
+
                 const preview = document.getElementById('profile-avatar-preview');
-                preview.innerHTML = `<img src="${base64String}" style="width:100%; height:100%; object-fit:cover;" alt="Avatar">`;
-            };
-            reader.readAsDataURL(file);
+                preview.innerHTML = `<img src="${publicUrl}" style="width:100%; height:100%; object-fit:cover;" alt="Avatar">`;
+                
+                alert(currentLang === 'fa' ? 'عکس با موفقیت در فضای ابری (Storage) آپلود شد!' : 'Photo uploaded successfully to cloud Storage!');
+            } catch (err) {
+                alert('Error uploading file: ' + err.message);
+            }
         }
 
         function openProfilePage() {
@@ -1442,7 +1460,6 @@
                         const dateSolar = tx.dateSolar || '-';
                         const dateHijri = tx.dateHijri || '-';
 
-                        // نمایش ۳ تاریخ دقیقاً در ۳ ردیف مجزا و سر به سر زیر هم داخل کادر کوچک اختصاصی معامله
                         txHtml += `
                             <div class="tx-item">
                                 <div style="display:flex; flex-direction:column; gap:4px; max-width: 65%;">
