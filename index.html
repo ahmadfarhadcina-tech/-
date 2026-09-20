@@ -1,8 +1,10 @@
 <!DOCTYPE html>
 <html lang="en" dir="ltr" id="html-root">
+
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1.0,maximum-scale=1.0,user-scalable=no">
+
 <title>Daily Accounting</title>
 
 <link rel="manifest" href="manifest.json">
@@ -11,6 +13,7 @@
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 
 <style>
+
 :root{
  --primary:#7c3aed;
  --primary-dark:#6d28d9;
@@ -52,6 +55,7 @@ body{
   padding:20px;
   background:radial-gradient(circle,#1e293b,#0f172a);
  }
+
  .app{
   max-width:1200px;
   height:92vh;
@@ -646,17 +650,26 @@ button{
  padding:10px;
 }
 
-@media(max-width:500px){
- .page{
-  padding:14px;
- }
- .tx{
-  flex-direction:column;
- }
- .tx > div:last-child{
-  align-items:flex-start!important;
- }
+[dir=rtl] .dropdown{
+ right:auto;
+ left:0;
 }
+
+[dir=rtl] .dropdown button{
+ text-align:right;
+}
+
+[dir=rtl] .card-head,
+[dir=rtl] .option,
+[dir=rtl] .custom-select,
+[dir=rtl] .date-top{
+ direction:rtl;
+}
+
+[dir=rtl] input{
+ text-align:right;
+}
+
 </style>
 </head>
 
@@ -665,13 +678,14 @@ button{
 <div class="app">
 
 <header>
+
 <h1 id="header-title">Daily Accounting</h1>
 
 <div class="header-controls">
 
 <div id="profile-badge"
-     class="profile-badge"
-     onclick="openProfilePage()">
+class="profile-badge"
+onclick="openProfilePage()">
 
 <div id="header-avatar">
 <div class="avatar">U</div>
@@ -681,13 +695,15 @@ button{
 
 </div>
 
-<button id="logout-btn"
+<button
+id="logout-btn"
 onclick="logoutUser()"
 style="display:none;width:auto;padding:6px 9px;font-size:10px;background:#ef4444;color:#fff">
 Logout
 </button>
 
 </div>
+
 </header>
 
 <div class="rates" id="rates">
@@ -708,37 +724,47 @@ Logout
 
 <div style="text-align:center;margin:40px 0 30px">
 
-<h2>Sign In or Register</h2>
+<h2 id="login-title">Sign In or Register</h2>
 
-<p style="font-size:12px;color:var(--muted)">
+<p
+id="login-description"
+style="font-size:12px;color:var(--muted)">
 Log in to access your cloud accounts.
 </p>
 
 </div>
 
 <div class="group">
-<label>Email Address</label>
+
+<label id="email-label">Email Address</label>
+
 <input
 type="email"
 id="auth-email"
 placeholder="example@gmail.com">
+
 </div>
 
 <div class="group">
-<label>Password</label>
+
+<label id="password-label">Password</label>
+
 <input
 type="password"
 id="auth-password"
 placeholder="At least 6 characters">
+
 </div>
 
 <button
+id="signin-btn"
 class="primary"
 onclick="handleSignIn()">
 Sign In
 </button>
 
 <button
+id="signup-btn"
 onclick="handleSignUp()"
 style="background:transparent;border:1px solid var(--primary);color:var(--primary);margin-top:12px">
 Create New Account
@@ -755,7 +781,7 @@ Create New Account
 
 <div class="box">
 
-<h2>Profile Settings</h2>
+<h2 id="profile-title">Profile Settings</h2>
 
 <div style="text-align:center;margin-bottom:20px">
 
@@ -772,6 +798,7 @@ style="display:none"
 onchange="handleImageUpload(event)">
 
 <button
+id="upload-photo-btn"
 class="upload"
 onclick="document.getElementById('avatar-input').click()">
 📷 Upload Photo
@@ -782,7 +809,7 @@ onclick="document.getElementById('avatar-input').click()">
 
 <div class="group">
 
-<label>Full Name / Username</label>
+<label id="name-label">Full Name / Username</label>
 
 <input
 id="profile-name"
@@ -793,7 +820,7 @@ placeholder="Enter your name">
 
 <div class="group">
 
-<label>Phone Number</label>
+<label id="phone-label">Phone Number</label>
 
 <input
 id="profile-phone"
@@ -804,14 +831,14 @@ placeholder="+93 700 000 000">
 
 <div class="group">
 
-<label>City / ولایت</label>
+<label id="city-label">City / Province</label>
 
 <div
 class="custom-select"
 onclick="openCityPicker()">
 
 <span id="location-display">
-جوزجان - شبرغان
+Jawzjan - Sheberghan
 </span>
 
 <span>⌄</span>
@@ -823,7 +850,7 @@ onclick="openCityPicker()">
 
 <div class="group">
 
-<label>App Theme Color</label>
+<label id="theme-label">App Theme Color</label>
 
 <div
 class="custom-select"
@@ -842,7 +869,7 @@ Purple
 
 <div class="group">
 
-<label>Language / زبان</label>
+<label id="language-label">Language / زبان</label>
 
 <div
 class="custom-select"
@@ -860,12 +887,14 @@ English
 
 
 <button
+id="save-profile-btn"
 class="primary"
 onclick="saveProfileSettings()">
 Save Profile
 </button>
 
 <button
+id="cancel-profile-btn"
 class="secondary"
 onclick="showPage('dashboard-page')">
 Cancel
@@ -895,11 +924,11 @@ class="page">
 
 <div class="box">
 
-<h2>Add New Client</h2>
+<h2 id="add-client-title">Add New Client</h2>
 
 <div class="group">
 
-<label>Client Name</label>
+<label id="client-name-label">Client Name</label>
 
 <input
 id="client-name"
@@ -908,12 +937,14 @@ placeholder="Person or company name">
 </div>
 
 <button
+id="save-client-btn"
 class="primary"
 onclick="saveClient()">
 Save Client to Database
 </button>
 
 <button
+id="cancel-client-btn"
 class="secondary"
 onclick="showPage('dashboard-page')">
 Cancel
@@ -932,7 +963,7 @@ class="page">
 
 <div class="box">
 
-<h2>Record Transaction</h2>
+<h2 id="transaction-title">Record Transaction</h2>
 
 <input
 type="hidden"
@@ -941,7 +972,7 @@ id="active-client-id">
 
 <div class="group">
 
-<label>Transaction Type</label>
+<label id="transaction-type-label">Transaction Type</label>
 
 <div
 class="custom-select"
@@ -960,7 +991,7 @@ Credit (↑)
 
 <div class="group">
 
-<label>Currency</label>
+<label id="currency-label">Currency</label>
 
 <div
 class="custom-select"
@@ -979,7 +1010,7 @@ AFN
 
 <div class="group">
 
-<label>Amount</label>
+<label id="amount-label">Amount</label>
 
 <input
 type="number"
@@ -991,7 +1022,7 @@ placeholder="Enter amount">
 
 <div class="group">
 
-<label>Transaction Date</label>
+<label id="transaction-date-label">Transaction Date</label>
 
 <div
 class="custom-select"
@@ -1009,12 +1040,14 @@ Select date
 
 
 <button
+id="save-transaction-btn"
 class="primary"
 onclick="saveTransaction()">
 Save Transaction
 </button>
 
 <button
+id="back-transaction-btn"
 class="secondary"
 onclick="showPage('dashboard-page')">
 Back
@@ -1033,7 +1066,7 @@ class="page">
 
 <div class="box">
 
-<h2>Edit Transaction</h2>
+<h2 id="edit-title">Edit Transaction</h2>
 
 <input type="hidden" id="edit-client-id">
 <input type="hidden" id="edit-tx-index">
@@ -1041,7 +1074,7 @@ class="page">
 
 <div class="group">
 
-<label>Transaction Type</label>
+<label id="edit-type-label">Transaction Type</label>
 
 <div
 class="custom-select"
@@ -1060,7 +1093,7 @@ Credit (↑)
 
 <div class="group">
 
-<label>Currency</label>
+<label id="edit-currency-label">Currency</label>
 
 <div
 class="custom-select"
@@ -1079,7 +1112,7 @@ AFN
 
 <div class="group">
 
-<label>Amount</label>
+<label id="edit-amount-label">Amount</label>
 
 <input
 type="number"
@@ -1090,7 +1123,7 @@ id="edit-amount">
 
 <div class="group">
 
-<label>Transaction Date</label>
+<label id="edit-date-label">Transaction Date</label>
 
 <div
 class="custom-select"
@@ -1108,12 +1141,14 @@ Select date
 
 
 <button
+id="update-transaction-btn"
 class="primary"
 onclick="updateTransaction()">
 Update Transaction
 </button>
 
 <button
+id="cancel-edit-btn"
 class="secondary"
 onclick="showPage('dashboard-page')">
 Cancel
@@ -1144,7 +1179,9 @@ class="modal">
 
 <div class="modal-box">
 
-<div class="modal-title"
+<div
+id="confirm-title"
+class="modal-title"
 style="color:#ef4444">
 Confirm Deletion
 </div>
@@ -1163,6 +1200,7 @@ Yes, Delete
 </button>
 
 <button
+id="confirm-cancel"
 onclick="closeConfirm()"
 style="background:#0f172a;color:#fff;border:1px solid var(--border)">
 Cancel
@@ -1175,7 +1213,7 @@ Cancel
 </div>
 
 
-<!-- CITY MODAL -->
+<!-- CITY -->
 
 <div
 id="city-modal"
@@ -1183,25 +1221,32 @@ class="modal">
 
 <div class="modal-box">
 
-<div class="modal-title">
+<div
+id="city-modal-title"
+class="modal-title">
 📍 Select City
 </div>
 
-<div class="modal-subtitle">
+<div
+id="city-modal-subtitle"
+class="modal-subtitle">
 Choose your city or detect it automatically.
 </div>
 
 <button
+id="detect-location-btn"
 class="geo-button"
 onclick="detectRealLocation()">
 📍 Detect My Real Location
 </button>
 
-<div id="city-options"
+<div
+id="city-options"
 style="margin-top:15px">
 </div>
 
 <button
+id="city-cancel"
 class="modal-close"
 onclick="closeModal('city-modal')">
 Cancel
@@ -1212,7 +1257,7 @@ Cancel
 </div>
 
 
-<!-- THEME MODAL -->
+<!-- THEME -->
 
 <div
 id="theme-modal"
@@ -1220,11 +1265,15 @@ class="modal">
 
 <div class="modal-box">
 
-<div class="modal-title">
+<div
+id="theme-modal-title"
+class="modal-title">
 🎨 Choose Theme
 </div>
 
-<div class="modal-subtitle">
+<div
+id="theme-modal-subtitle"
+class="modal-subtitle">
 Select the main color of the application.
 </div>
 
@@ -1234,6 +1283,7 @@ class="color-grid">
 </div>
 
 <button
+id="theme-cancel"
 class="modal-close"
 onclick="closeModal('theme-modal')">
 Cancel
@@ -1244,7 +1294,7 @@ Cancel
 </div>
 
 
-<!-- LANGUAGE MODAL -->
+<!-- LANGUAGE -->
 
 <div
 id="language-modal"
@@ -1252,17 +1302,22 @@ class="modal">
 
 <div class="modal-box">
 
-<div class="modal-title">
+<div
+id="language-modal-title"
+class="modal-title">
 🌐 Language / زبان
 </div>
 
-<div class="modal-subtitle">
+<div
+id="language-modal-subtitle"
+class="modal-subtitle">
 Choose application language.
 </div>
 
 <div id="language-options"></div>
 
 <button
+id="language-cancel"
 class="modal-close"
 onclick="closeModal('language-modal')">
 Cancel
@@ -1281,17 +1336,22 @@ class="modal">
 
 <div class="modal-box">
 
-<div class="modal-title">
+<div
+id="tx-type-modal-title"
+class="modal-title">
 ↕️ Transaction Type
 </div>
 
-<div class="modal-subtitle">
+<div
+id="tx-type-modal-subtitle"
+class="modal-subtitle">
 Choose the transaction direction.
 </div>
 
 <div id="tx-type-options"></div>
 
 <button
+id="tx-type-cancel"
 class="modal-close"
 onclick="closeModal('tx-type-modal')">
 Cancel
@@ -1310,17 +1370,22 @@ class="modal">
 
 <div class="modal-box">
 
-<div class="modal-title">
+<div
+id="currency-modal-title"
+class="modal-title">
 💰 Currency
 </div>
 
-<div class="modal-subtitle">
+<div
+id="currency-modal-subtitle"
+class="modal-subtitle">
 Select transaction currency.
 </div>
 
 <div id="currency-options"></div>
 
 <button
+id="currency-cancel"
 class="modal-close"
 onclick="closeModal('currency-modal')">
 Cancel
@@ -1339,11 +1404,15 @@ class="modal">
 
 <div class="modal-box">
 
-<div class="modal-title">
+<div
+id="date-modal-title"
+class="modal-title">
 📅 Select Transaction Date
 </div>
 
-<div class="modal-subtitle">
+<div
+id="date-modal-subtitle"
+class="modal-subtitle">
 The date will automatically be shown in Gregorian, Solar Hijri and Islamic Hijri.
 </div>
 
@@ -1389,6 +1458,7 @@ class="calendar-grid">
 </div>
 
 <button
+id="confirm-date-btn"
 class="primary"
 style="margin-top:12px"
 onclick="confirmDatePicker()">
@@ -1396,6 +1466,7 @@ Confirm Date
 </button>
 
 <button
+id="date-cancel"
 class="modal-close"
 onclick="closeModal('date-modal')">
 Cancel
@@ -1448,10 +1519,7 @@ let userProfile={
 };
 
 let rates={
- AFN:1,
- USD:71,
- EUR:77,
- TRY:2.2
+ AFN:1
 };
 
 let detectedCity='';
@@ -1463,6 +1531,512 @@ let pickerState={
  month:0,
  selectedDate:''
 };
+
+let temporaryTxType='credit';
+
+let temporaryCurrency='AFN';
+
+
+/* =========================================================
+   LANGUAGES
+========================================================= */
+
+const translations={
+
+ en:{
+
+  appTitle:'Daily Accounting',
+
+  loadingRates:'🔄 Loading rates...',
+
+  detectingLocation:'📍 Location: Detecting...',
+
+  locationSelected:'📍 Selected Location: {city}',
+
+  realLocation:'📍 Real Location: {city}',
+
+  signInRegister:'Sign In or Register',
+  cloudDescription:'Log in to access your cloud accounts.',
+  email:'Email Address',
+  password:'Password',
+  passwordPlaceholder:'At least 6 characters',
+  signIn:'Sign In',
+  createAccount:'Create New Account',
+
+  profileSettings:'Profile Settings',
+  uploadPhoto:'📷 Upload Photo',
+  fullName:'Full Name / Username',
+  enterName:'Enter your name',
+  phone:'Phone Number',
+  city:'City / Province',
+  themeColor:'App Theme Color',
+  language:'Language / زبان',
+  saveProfile:'Save Profile',
+  cancel:'Cancel',
+
+  addClient:'Add New Client',
+  clientName:'Client Name',
+  clientPlaceholder:'Person or company name',
+  saveClient:'Save Client to Database',
+
+  recordTransaction:'Record Transaction',
+  transactionType:'Transaction Type',
+  currency:'Currency',
+  amount:'Amount',
+  amountPlaceholder:'Enter amount',
+  transactionDate:'Transaction Date',
+  selectDate:'Select date',
+  saveTransaction:'Save Transaction',
+  back:'Back',
+
+  editTransaction:'Edit Transaction',
+  updateTransaction:'Update Transaction',
+
+  selectCity:'📍 Select City',
+  chooseCity:'Choose your city or detect it automatically.',
+  detectLocation:'📍 Detect My Real Location',
+
+  chooseTheme:'🎨 Choose Theme',
+  themeDescription:'Select the main color of the application.',
+
+  languageModal:'🌐 Language / زبان',
+  languageDescription:'Choose application language.',
+
+  typeModal:'↕️ Transaction Type',
+  typeDescription:'Choose the transaction direction.',
+
+  currencyModal:'💰 Currency',
+  currencyDescription:'Select transaction currency.',
+
+  dateModal:'📅 Select Transaction Date',
+  dateDescription:'The date will automatically be shown in Gregorian, Solar Hijri and Islamic Hijri.',
+  confirmDate:'Confirm Date',
+
+  confirmDeletion:'Confirm Deletion',
+  yesDelete:'Yes, Delete',
+
+  noAccounts:'No accounts registered yet.',
+  clickPlus:'Click the + button.',
+
+  credit:'Credit (↑)',
+  debit:'Debit (↓)',
+
+  balance:'Balance',
+  debitLabel:'Debit',
+  creditLabel:'Credit',
+
+  transaction:'Transaction',
+  deleteFull:'🗑️ Delete Full Account',
+  edit:'Edit',
+  delete:'Delete',
+
+  saved:'Saved successfully.',
+  profileSaved:'Profile saved successfully.',
+  photoSaved:'Photo uploaded and saved successfully.',
+  transactionSaved:'Transaction saved successfully.',
+  transactionUpdated:'Transaction updated.',
+
+  enterClient:'Enter client name.',
+  validAmount:'Enter a valid amount.',
+  selectTransactionDate:'Select transaction date.',
+  clientNotFound:'Client not found.',
+  enterAmountDate:'Enter amount and date.',
+
+  deleteClientConfirm:'Delete this client and all transactions?',
+  deleteTransactionConfirm:'Delete this transaction?',
+
+  locationPermission:'Location permission was denied.',
+  locationFailed:'Could not detect your location.',
+  locationUnsupported:'Geolocation is not supported.',
+  requestingLocation:'Requesting your location...',
+  locationDetected:'Real location detected and saved.',
+  locationUnknown:'Your location was detected, but this city is not in the city list.',
+  lookupFailed:'Location detected, but city lookup failed.',
+
+  imageOnly:'Please select an image.',
+  imageSize:'Image must be smaller than 5 MB.',
+
+  databaseError:'Database error',
+  saveError:'Save error',
+
+  solar:'Solar Hijri',
+  gregorian:'Gregorian',
+  hijri:'Islamic Hijri',
+
+  today:'Today',
+
+  currencies:{
+   AFN:'Afghan Afghani',
+   USD:'US Dollar',
+   EUR:'Euro',
+   TRY:'Turkish Lira',
+   IRR:'Iranian Rial',
+   CNY:'Chinese Yuan',
+   PKR:'Pakistani Rupee',
+   INR:'Indian Rupee',
+   SAR:'Saudi Riyal',
+   AED:'UAE Dirham',
+   GBP:'British Pound',
+   JPY:'Japanese Yen',
+   RUB:'Russian Ruble'
+  },
+
+  themes:{
+   Purple:'Purple',
+   Blue:'Blue',
+   'Emerald Green':'Emerald Green',
+   'Amber Gold':'Amber Gold',
+   Pink:'Pink',
+   'Dark Slate':'Dark Slate'
+  },
+
+  cities:{
+   Kabul:'Kabul',
+   Kandahar:'Kandahar',
+   Mazar:'Mazar-e Sharif',
+   Jawzjan:'Jawzjan - Sheberghan',
+   Herat:'Herat',
+   Nangarhar:'Nangarhar - Jalalabad'
+  }
+
+ },
+
+ fa:{
+
+  appTitle:'حسابداری روزانه',
+
+  loadingRates:'🔄 در حال دریافت نرخ اسعار...',
+
+  detectingLocation:'📍 موقعیت: در حال تشخیص...',
+
+  locationSelected:'📍 موقعیت انتخاب‌شده: {city}',
+
+  realLocation:'📍 موقعیت واقعی: {city}',
+
+  signInRegister:'ورود یا ثبت‌نام',
+  cloudDescription:'برای دسترسی به حساب‌های ابری خود وارد شوید.',
+  email:'آدرس ایمیل',
+  password:'رمز عبور',
+  passwordPlaceholder:'حداقل ۶ کاراکتر',
+  signIn:'ورود',
+  createAccount:'ساخت حساب جدید',
+
+  profileSettings:'تنظیمات پروفایل',
+  uploadPhoto:'📷 آپلود عکس',
+  fullName:'نام کامل / نام کاربری',
+  enterName:'نام خود را وارد کنید',
+  phone:'شماره تلفن',
+  city:'شهر / ولایت',
+  themeColor:'رنگ اصلی برنامه',
+  language:'زبان / Language',
+  saveProfile:'ذخیره پروفایل',
+  cancel:'لغو',
+
+  addClient:'افزودن مشتری جدید',
+  clientName:'نام مشتری',
+  clientPlaceholder:'نام شخص یا شرکت',
+  saveClient:'ذخیره مشتری در دیتابیس',
+
+  recordTransaction:'ثبت تراکنش',
+  transactionType:'نوع تراکنش',
+  currency:'واحد پولی',
+  amount:'مبلغ',
+  amountPlaceholder:'مبلغ را وارد کنید',
+  transactionDate:'تاریخ تراکنش',
+  selectDate:'انتخاب تاریخ',
+  saveTransaction:'ذخیره تراکنش',
+  back:'برگشت',
+
+  editTransaction:'ویرایش تراکنش',
+  updateTransaction:'به‌روزرسانی تراکنش',
+
+  selectCity:'📍 انتخاب شهر',
+  chooseCity:'شهر خود را انتخاب کنید یا موقعیت واقعی را تشخیص دهید.',
+  detectLocation:'📍 تشخیص موقعیت واقعی من',
+
+  chooseTheme:'🎨 انتخاب رنگ',
+  themeDescription:'رنگ اصلی برنامه را انتخاب کنید.',
+
+  languageModal:'🌐 زبان / Language',
+  languageDescription:'زبان برنامه را انتخاب کنید.',
+
+  typeModal:'↕️ نوع تراکنش',
+  typeDescription:'جهت تراکنش را انتخاب کنید.',
+
+  currencyModal:'💰 واحد پولی',
+  currencyDescription:'واحد پولی تراکنش را انتخاب کنید.',
+
+  dateModal:'📅 انتخاب تاریخ تراکنش',
+  dateDescription:'تاریخ به صورت هجری شمسی، میلادی و هجری قمری نمایش داده می‌شود.',
+  confirmDate:'تأیید تاریخ',
+
+  confirmDeletion:'تأیید حذف',
+  yesDelete:'بله، حذف کن',
+
+  noAccounts:'هنوز هیچ حسابی ثبت نشده است.',
+  clickPlus:'روی دکمه + کلیک کنید.',
+
+  credit:'بستانکار (↑)',
+  debit:'بدهکار (↓)',
+
+  balance:'موجودی',
+  debitLabel:'بدهکار',
+  creditLabel:'بستانکار',
+
+  transaction:'تراکنش',
+  deleteFull:'🗑️ حذف کامل حساب',
+  edit:'ویرایش',
+  delete:'حذف',
+
+  saved:'با موفقیت ذخیره شد.',
+  profileSaved:'پروفایل با موفقیت ذخیره شد.',
+  photoSaved:'عکس با موفقیت آپلود و ذخیره شد.',
+  transactionSaved:'تراکنش با موفقیت ذخیره شد.',
+  transactionUpdated:'تراکنش با موفقیت به‌روزرسانی شد.',
+
+  enterClient:'نام مشتری را وارد کنید.',
+  validAmount:'یک مبلغ معتبر وارد کنید.',
+  selectTransactionDate:'تاریخ تراکنش را انتخاب کنید.',
+  clientNotFound:'مشتری پیدا نشد.',
+  enterAmountDate:'مبلغ و تاریخ را وارد کنید.',
+
+  deleteClientConfirm:'این مشتری و تمام تراکنش‌هایش حذف شود؟',
+  deleteTransactionConfirm:'این تراکنش حذف شود؟',
+
+  locationPermission:'دسترسی موقعیت مکانی رد شد.',
+  locationFailed:'تشخیص موقعیت مکانی انجام نشد.',
+  locationUnsupported:'مرورگر شما موقعیت مکانی را پشتیبانی نمی‌کند.',
+  requestingLocation:'در حال درخواست موقعیت مکانی...',
+  locationDetected:'موقعیت واقعی با موفقیت تشخیص و ذخیره شد.',
+  locationUnknown:'موقعیت شما تشخیص داده شد، اما این شهر در فهرست شهرها نیست.',
+  lookupFailed:'موقعیت تشخیص داده شد، اما دریافت نام شهر انجام نشد.',
+
+  imageOnly:'لطفاً یک عکس انتخاب کنید.',
+  imageSize:'حجم عکس باید کمتر از ۵ مگابایت باشد.',
+
+  databaseError:'خطای دیتابیس',
+  saveError:'خطای ذخیره',
+
+  solar:'هجری شمسی',
+  gregorian:'میلادی',
+  hijri:'هجری قمری',
+
+  today:'امروز',
+
+  currencies:{
+   AFN:'افغانی افغانستان',
+   USD:'دالر آمریکا',
+   EUR:'یورو',
+   TRY:'لیر ترکیه',
+   IRR:'ریال ایران',
+   CNY:'یوان چین',
+   PKR:'روپیه پاکستان',
+   INR:'روپیه هند',
+   SAR:'ریال سعودی',
+   AED:'درهم امارات',
+   GBP:'پوند انگلیس',
+   JPY:'ین جاپان',
+   RUB:'روبل روسیه'
+  },
+
+  themes:{
+   Purple:'بنفش',
+   Blue:'آبی',
+   'Emerald Green':'سبز زمردی',
+   'Amber Gold':'طلایی',
+   Pink:'صورتی',
+   'Dark Slate':'خاکستری تیره'
+  },
+
+  cities:{
+   Kabul:'کابل',
+   Kandahar:'قندهار',
+   Mazar:'مزار شریف',
+   Jawzjan:'جوزجان - شبرغان',
+   Herat:'هرات',
+   Nangarhar:'ننگرهار - جلال‌آباد'
+  }
+
+ }
+
+};
+
+
+/* =========================================================
+   TRANSLATION HELPER
+========================================================= */
+
+function t(key,vars={}){
+
+ const lang=userProfile.language==='fa'?'fa':'en';
+
+ let value=translations[lang][key];
+
+ if(value===undefined)
+  value=translations.en[key] ?? key;
+
+ Object.keys(vars).forEach(k=>{
+  value=value.replace(
+   new RegExp('\\{'+k+'\\}','g'),
+   vars[k]
+  );
+ });
+
+ return value;
+}
+
+
+function currencyName(code){
+
+ const lang=userProfile.language==='fa'?'fa':'en';
+
+ return translations[lang].currencies[code]
+ || translations.en.currencies[code]
+ || code;
+}
+
+
+function cityName(id){
+
+ const lang=userProfile.language==='fa'?'fa':'en';
+
+ return translations[lang].cities[id]
+ || translations.en.cities[id]
+ || id;
+}
+
+
+function themeName(name){
+
+ const lang=userProfile.language==='fa'?'fa':'en';
+
+ return translations[lang].themes[name]
+ || name;
+}
+
+
+/* =========================================================
+   APPLY LANGUAGE
+========================================================= */
+
+function applyLanguage(){
+
+ const lang=
+ userProfile.language==='fa'
+ ?'fa'
+ :'en';
+
+ const root=
+ document.getElementById('html-root');
+
+ root.lang=lang;
+
+ root.dir=
+ lang==='fa'
+ ?'rtl'
+ :'ltr';
+
+ document.title=t('appTitle');
+
+ document.getElementById('header-title').innerText=t('appTitle');
+
+ document.getElementById('login-title').innerText=t('signInRegister');
+ document.getElementById('login-description').innerText=t('cloudDescription');
+ document.getElementById('email-label').innerText=t('email');
+ document.getElementById('password-label').innerText=t('password');
+ document.getElementById('auth-password').placeholder=t('passwordPlaceholder');
+ document.getElementById('signin-btn').innerText=t('signIn');
+ document.getElementById('signup-btn').innerText=t('createAccount');
+
+ document.getElementById('profile-title').innerText=t('profileSettings');
+ document.getElementById('upload-photo-btn').innerText=t('uploadPhoto');
+ document.getElementById('name-label').innerText=t('fullName');
+ document.getElementById('profile-name').placeholder=t('enterName');
+ document.getElementById('phone-label').innerText=t('phone');
+ document.getElementById('city-label').innerText=t('city');
+ document.getElementById('theme-label').innerText=t('themeColor');
+ document.getElementById('language-label').innerText=t('language');
+ document.getElementById('save-profile-btn').innerText=t('saveProfile');
+ document.getElementById('cancel-profile-btn').innerText=t('cancel');
+
+ document.getElementById('add-client-title').innerText=t('addClient');
+ document.getElementById('client-name-label').innerText=t('clientName');
+ document.getElementById('client-name').placeholder=t('clientPlaceholder');
+ document.getElementById('save-client-btn').innerText=t('saveClient');
+ document.getElementById('cancel-client-btn').innerText=t('cancel');
+
+ document.getElementById('transaction-title').innerText=t('recordTransaction');
+ document.getElementById('transaction-type-label').innerText=t('transactionType');
+ document.getElementById('currency-label').innerText=t('currency');
+ document.getElementById('amount-label').innerText=t('amount');
+ document.getElementById('tx-amount').placeholder=t('amountPlaceholder');
+ document.getElementById('transaction-date-label').innerText=t('transactionDate');
+ document.getElementById('save-transaction-btn').innerText=t('saveTransaction');
+ document.getElementById('back-transaction-btn').innerText=t('back');
+
+ document.getElementById('edit-title').innerText=t('editTransaction');
+ document.getElementById('edit-type-label').innerText=t('transactionType');
+ document.getElementById('edit-currency-label').innerText=t('currency');
+ document.getElementById('edit-amount-label').innerText=t('amount');
+ document.getElementById('edit-date-label').innerText=t('transactionDate');
+ document.getElementById('update-transaction-btn').innerText=t('updateTransaction');
+ document.getElementById('cancel-edit-btn').innerText=t('cancel');
+
+ document.getElementById('confirm-title').innerText=t('confirmDeletion');
+ document.getElementById('confirm-yes').innerText=t('yesDelete');
+ document.getElementById('confirm-cancel').innerText=t('cancel');
+
+ document.getElementById('city-modal-title').innerText=t('selectCity');
+ document.getElementById('city-modal-subtitle').innerText=t('chooseCity');
+ document.getElementById('detect-location-btn').innerText=t('detectLocation');
+ document.getElementById('city-cancel').innerText=t('cancel');
+
+ document.getElementById('theme-modal-title').innerText=t('chooseTheme');
+ document.getElementById('theme-modal-subtitle').innerText=t('themeDescription');
+ document.getElementById('theme-cancel').innerText=t('cancel');
+
+ document.getElementById('language-modal-title').innerText=t('languageModal');
+ document.getElementById('language-modal-subtitle').innerText=t('languageDescription');
+ document.getElementById('language-cancel').innerText=t('cancel');
+
+ document.getElementById('tx-type-modal-title').innerText=t('typeModal');
+ document.getElementById('tx-type-modal-subtitle').innerText=t('typeDescription');
+ document.getElementById('tx-type-cancel').innerText=t('cancel');
+
+ document.getElementById('currency-modal-title').innerText=t('currencyModal');
+ document.getElementById('currency-modal-subtitle').innerText=t('currencyDescription');
+ document.getElementById('currency-cancel').innerText=t('cancel');
+
+ document.getElementById('date-modal-title').innerText=t('dateModal');
+ document.getElementById('date-modal-subtitle').innerText=t('dateDescription');
+ document.getElementById('confirm-date-btn').innerText=t('confirmDate');
+ document.getElementById('date-cancel').innerText=t('cancel');
+
+ updateProfileDisplays();
+ updateTransactionDisplays();
+ updateLocationStatusLanguage();
+ renderDashboard();
+ renderLanguageOptions();
+ renderTransactionTypeOptions(
+  'tx-type-options',
+  'tx',
+  false
+ );
+
+ if(document.getElementById('currency-modal').classList.contains('active'))
+  renderCurrencyOptions();
+
+ if(document.getElementById('theme-modal').classList.contains('active'))
+  renderThemeOptions();
+
+ if(document.getElementById('city-modal').classList.contains('active'))
+  renderCityOptions();
+
+ if(document.getElementById('date-modal').classList.contains('active'))
+  renderCalendar();
+
+ updateRatesDisplay();
+}
 
 
 /* =========================================================
@@ -1565,7 +2139,9 @@ async function handleSignUp(){
  if(!email || password.length<6){
 
   return toast(
-   'Enter a valid email and password (minimum 6 characters).'
+   userProfile.language==='fa'
+   ?'ایمیل معتبر و رمز عبور حداقل ۶ کاراکتری وارد کنید.'
+   :'Enter a valid email and password (minimum 6 characters).'
   );
  }
 
@@ -1576,12 +2152,19 @@ async function handleSignUp(){
  });
 
  if(error)
-  return showError('Sign up error',error);
+  return showError(
+   userProfile.language==='fa'
+   ?'خطای ثبت‌نام'
+   :'Sign up error',
+   error
+  );
 
  toast(
   data.session
-  ? 'Account created and signed in.'
-  : 'Account created. Check your email for confirmation.'
+  ?t('saved')
+  :(userProfile.language==='fa'
+   ?'حساب ساخته شد. ایمیل خود را بررسی کنید.'
+   :'Account created. Check your email for confirmation.')
  );
 }
 
@@ -1603,7 +2186,12 @@ async function handleSignIn(){
  });
 
  if(error)
-  return showError('Sign in error',error);
+  return showError(
+   userProfile.language==='fa'
+   ?'خطای ورود'
+   :'Sign in error',
+   error
+  );
 
  currentUser=data.user;
 
@@ -1636,6 +2224,8 @@ async function logoutUser(){
  ).style.display='none';
 
  showPage('login-page');
+
+ applyLanguage();
 }
 
 
@@ -1654,6 +2244,13 @@ function updateHeader(){
  document.getElementById(
   'logout-btn'
  ).style.display='block';
+
+ document.getElementById(
+  'logout-btn'
+ ).innerText=
+ userProfile.language==='fa'
+ ?'خروج'
+ :'Logout';
 
  const name=
  userProfile.name ||
@@ -1679,7 +2276,7 @@ function updateHeader(){
 
 
 /* =========================================================
-   LOAD / SAVE SUPABASE
+   LOAD / SAVE
 ========================================================= */
 
 async function loadDataFromSupabase(){
@@ -1696,7 +2293,7 @@ async function loadDataFromSupabase(){
  if(error){
 
   showError(
-   'Database load error',
+   t('databaseError'),
    error
   );
 
@@ -1750,11 +2347,9 @@ async function loadDataFromSupabase(){
   userProfile.themeColor||'#7c3aed'
  );
 
- updateProfileDisplays();
+ applyLanguage();
 
  updateHeader();
-
- renderDashboard();
 
  fetchExchangeRates();
 
@@ -1770,7 +2365,7 @@ async function saveDatatoSupabase(){
  if(!currentUser){
 
   showError(
-   'Save error',
+   t('saveError'),
    'No logged-in user'
   );
 
@@ -1799,7 +2394,7 @@ async function saveDatatoSupabase(){
  if(error){
 
   showError(
-   'Database save error',
+   t('saveError'),
    error
   );
 
@@ -1824,10 +2419,10 @@ async function handleImageUpload(event){
  if(!file || !currentUser)return;
 
  if(!file.type.startsWith('image/'))
-  return toast('Please select an image.');
+  return toast(t('imageOnly'));
 
  if(file.size>5*1024*1024)
-  return toast('Image must be smaller than 5 MB.');
+  return toast(t('imageSize'));
 
  const ext=
  (
@@ -1855,7 +2450,9 @@ async function handleImageUpload(event){
 
  if(uploadError)
   return showError(
-   'Photo upload error',
+   userProfile.language==='fa'
+   ?'خطای آپلود عکس'
+   :'Photo upload error',
    uploadError
   );
 
@@ -1884,9 +2481,7 @@ async function handleImageUpload(event){
 
   updateHeader();
 
-  toast(
-   'Photo uploaded and saved successfully.'
-  );
+  toast(t('photoSaved'));
  }
 }
 
@@ -1935,47 +2530,69 @@ function openProfilePage(){
 
 function updateProfileDisplays(){
 
- const cityNames={
-  Kabul:'کابل',
-  Kandahar:'قندهار',
-  Mazar:'مزار شریف',
-  Jawzjan:'جوزجان - شبرغان',
-  Herat:'هرات',
-  Nangarhar:'ننگرهار - جلال‌آباد'
- };
-
- const themeNames={
-  '#7c3aed':'Purple',
-  '#3b82f6':'Blue',
-  '#10b981':'Emerald Green',
-  '#f59e0b':'Amber Gold',
-  '#ec4899':'Pink',
-  '#64748b':'Dark Slate'
- };
-
- const languageNames={
-  en:'English',
-  fa:'فارسی'
- };
-
  document.getElementById(
   'location-display'
  ).innerText=
- cityNames[userProfile.location] ||
+ cityName(userProfile.location) ||
  userProfile.location ||
- 'Select city';
+ (
+  userProfile.language==='fa'
+  ?'انتخاب شهر'
+  :'Select city'
+ );
 
  document.getElementById(
   'theme-display'
  ).innerText=
- themeNames[userProfile.themeColor] ||
- 'Purple';
+ themeName(
+  themes.find(x=>x.color===userProfile.themeColor)?.name ||
+  'Purple'
+ );
 
  document.getElementById(
   'language-display'
  ).innerText=
- languageNames[userProfile.language] ||
- 'English';
+ userProfile.language==='fa'
+ ?'فارسی'
+ :'English';
+
+ const txType=
+ document.getElementById('tx-type-display');
+
+ if(txType){
+
+  txType.innerText=
+   txType.dataset.value==='debit'
+   ?t('debit')
+   :t('credit');
+ }
+
+ const editType=
+ document.getElementById('edit-type-display');
+
+ if(editType){
+
+  editType.innerText=
+   editType.dataset.value==='debit'
+   ?t('debit')
+   :t('credit');
+ }
+}
+
+
+function updateTransactionDisplays(){
+
+ const txDate=
+ document.getElementById('tx-date-display');
+
+ if(txDate && !txDate.dataset.value)
+  txDate.innerText=t('selectDate');
+
+ const editDate=
+ document.getElementById('edit-date-display');
+
+ if(editDate && !editDate.dataset.value)
+  editDate.innerText=t('selectDate');
 }
 
 
@@ -1995,12 +2612,12 @@ async function saveProfileSettings(){
   userProfile.themeColor
  );
 
- updateProfileDisplays();
-
  const saved=
  await saveDatatoSupabase();
 
  if(saved){
+
+  applyLanguage();
 
   updateHeader();
 
@@ -2008,52 +2625,54 @@ async function saveProfileSettings(){
 
   showPage('dashboard-page');
 
-  toast(
-   'Profile saved successfully.'
-  );
+  toast(t('profileSaved'));
  }
 }
 
 
 /* =========================================================
-   CITY PICKER
+   CITY
 ========================================================= */
 
 const cityList=[
  {
   id:'Kabul',
-  name:'کابل',
   icon:'🏙️'
  },
  {
   id:'Kandahar',
-  name:'قندهار',
   icon:'🏜️'
  },
  {
   id:'Mazar',
-  name:'مزار شریف',
   icon:'🕌'
  },
  {
   id:'Jawzjan',
-  name:'جوزجان - شبرغان',
   icon:'📍'
  },
  {
   id:'Herat',
-  name:'هرات',
   icon:'🏛️'
  },
  {
   id:'Nangarhar',
-  name:'ننگرهار - جلال‌آباد',
   icon:'🌴'
  }
 ];
 
 
 function openCityPicker(){
+
+ renderCityOptions();
+
+ document
+ .getElementById('city-modal')
+ .classList.add('active');
+}
+
+
+function renderCityOptions(){
 
  const box=
  document.getElementById(
@@ -2080,7 +2699,7 @@ function openCityPicker(){
    ${city.icon}
    </div>
 
-   <span>${city.name}</span>
+   <span>${escapeHtml(cityName(city.id))}</span>
 
    </div>
 
@@ -2092,10 +2711,6 @@ function openCityPicker(){
    `
   );
  });
-
- document
- .getElementById('city-modal')
- .classList.add('active');
 }
 
 
@@ -2109,34 +2724,45 @@ function selectCity(city){
 
  updateLocationDisplay(city,false);
 
- toast('City selected.');
+ toast(
+  userProfile.language==='fa'
+  ?'شهر انتخاب شد.'
+  :'City selected.'
+ );
 }
 
 
 function updateLocationDisplay(city,real){
 
- const names={
-  Kabul:'کابل',
-  Kandahar:'قندهار',
-  Mazar:'مزار شریف',
-  Jawzjan:'جوزجان - شبرغان',
-  Herat:'هرات',
-  Nangarhar:'ننگرهار - جلال‌آباد'
- };
-
  const text=
- names[city] ||
+ cityName(city) ||
  city ||
- 'Unknown';
+ (
+  userProfile.language==='fa'
+  ?'نامشخص'
+  :'Unknown'
+ );
 
  document.getElementById(
   'location-status'
  ).innerText=
  real
  ?
- `📍 Real Location: ${text}`
+ t('realLocation',{city:text})
  :
- `📍 Selected Location: ${text}`;
+ t('locationSelected',{city:text});
+}
+
+
+function updateLocationStatusLanguage(){
+
+ const city=
+ userProfile.location||'';
+
+ updateLocationDisplay(
+  city,
+  !!detectedCity
+ );
 }
 
 
@@ -2149,13 +2775,13 @@ function detectRealLocation(silent=false){
  if(!navigator.geolocation){
 
   if(!silent)
-   toast('Geolocation is not supported.');
+   toast(t('locationUnsupported'));
 
   return;
  }
 
  if(!silent)
-  toast('Requesting your location...');
+  toast(t('requestingLocation'));
 
  navigator.geolocation.getCurrentPosition(
   async position=>{
@@ -2167,11 +2793,6 @@ function detectRealLocation(silent=false){
     position.coords.longitude;
 
    try{
-
-    /*
-      Reverse geocoding through Nominatim.
-      The browser asks for location permission only.
-    */
 
     const response=
     await fetch(
@@ -2264,25 +2885,27 @@ function detectRealLocation(silent=false){
      await saveDatatoSupabase();
 
      if(!silent)
-      toast(
-       'Real location detected and saved.'
-      );
+      toast(t('locationDetected'));
 
     }else{
 
      document.getElementById(
       'location-status'
      ).innerText=
-     `📍 Location detected: ${escapeHtml(
-      address.city ||
-      address.town ||
-      'Afghanistan'
-     )}`;
+     `📍 ${
+      userProfile.language==='fa'
+      ?'موقعیت تشخیص داده شد'
+      :'Location detected'
+     }: ${
+      escapeHtml(
+       address.city ||
+       address.town ||
+       'Afghanistan'
+      )
+     }`;
 
      if(!silent)
-      toast(
-       'Your location was detected, but this city is not in the city list.'
-      );
+      toast(t('locationUnknown'));
     }
 
    }catch(error){
@@ -2290,9 +2913,7 @@ function detectRealLocation(silent=false){
     console.error(error);
 
     if(!silent)
-     toast(
-      'Location detected, but city lookup failed.'
-     );
+     toast(t('lookupFailed'));
    }
 
   },
@@ -2304,14 +2925,10 @@ function detectRealLocation(silent=false){
    if(!silent){
 
     if(error.code===1)
-     toast(
-      'Location permission was denied.'
-     );
+     toast(t('locationPermission'));
 
     else
-     toast(
-      'Could not detect your location.'
-     );
+     toast(t('locationFailed'));
    }
   },
 
@@ -2325,7 +2942,7 @@ function detectRealLocation(silent=false){
 
 
 /* =========================================================
-   THEME PICKER
+   THEMES
 ========================================================= */
 
 const themes=[
@@ -2358,6 +2975,16 @@ const themes=[
 
 function openThemePicker(){
 
+ renderThemeOptions();
+
+ document
+ .getElementById('theme-modal')
+ .classList.add('active');
+}
+
+
+function renderThemeOptions(){
+
  const box=
  document.getElementById(
   'theme-options'
@@ -2382,16 +3009,12 @@ function openThemePicker(){
    style="background:${theme.color}">
    </div>
 
-   ${theme.name}
+   ${escapeHtml(themeName(theme.name))}
 
    </div>
    `
   );
  });
-
- document
- .getElementById('theme-modal')
- .classList.add('active');
 }
 
 
@@ -2406,16 +3029,28 @@ function selectTheme(color,name){
  closeModal('theme-modal');
 
  toast(
-  `${name} theme selected.`
+  userProfile.language==='fa'
+  ?'رنگ انتخاب شد.'
+  :'Theme selected.'
  );
 }
 
 
 /* =========================================================
-   LANGUAGE
+   LANGUAGE PICKER
 ========================================================= */
 
 function openLanguagePicker(){
+
+ renderLanguageOptions();
+
+ document
+ .getElementById('language-modal')
+ .classList.add('active');
+}
+
+
+function renderLanguageOptions(){
 
  const box=
  document.getElementById(
@@ -2439,7 +3074,7 @@ function openLanguagePicker(){
    `
    <div
    class="option ${selected?'selected':''}"
-   onclick="selectLanguage('${item[0]}','${item[2]}')">
+   onclick="selectLanguage('${item[0]}')">
 
    <div class="option-left">
 
@@ -2459,30 +3094,35 @@ function openLanguagePicker(){
    `
   );
  });
-
- document
- .getElementById('language-modal')
- .classList.add('active');
 }
 
 
-function selectLanguage(lang,name){
+async function selectLanguage(lang){
 
  userProfile.language=lang;
 
- updateProfileDisplays();
+ /*
+   Apply immediately BEFORE saving.
+   This fixes the original problem.
+ */
+
+ applyLanguage();
 
  closeModal('language-modal');
 
- /*
-   We keep the database value.
-   Full translation can be added without
-   changing the database structure.
- */
+ const saved=
+ await saveDatatoSupabase();
 
- toast(
-  `${name} selected.`
- );
+ if(saved){
+
+  updateHeader();
+
+  toast(
+   lang==='fa'
+   ?'زبان فارسی شد.'
+   :'Language changed to English.'
+  );
+ }
 }
 
 
@@ -2498,9 +3138,7 @@ async function saveClient(){
  ).value.trim();
 
  if(!name)
-  return toast(
-   'Enter client name.'
-  );
+  return toast(t('enterClient'));
 
  appData.clients.push({
 
@@ -2533,12 +3171,8 @@ async function saveClient(){
 
 
 /* =========================================================
-   TRANSACTION PICKERS
+   TRANSACTION TYPE
 ========================================================= */
-
-let temporaryTxType='credit';
-
-let temporaryCurrency='AFN';
 
 function openTransactionTypePicker(){
 
@@ -2578,7 +3212,7 @@ function openEditTypePicker(){
 }
 
 
-function renderTransactionTypeOptions(id,target){
+function renderTransactionTypeOptions(id,target,open=true){
 
  const box=
  document.getElementById(id);
@@ -2588,12 +3222,12 @@ function renderTransactionTypeOptions(id,target){
  const options=[
   {
    id:'credit',
-   name:'Credit (↑)',
+   name:t('credit'),
    icon:'🟢'
   },
   {
    id:'debit',
-   name:'Debit (↓)',
+   name:t('debit'),
    icon:'🔴'
   }
  ];
@@ -2613,7 +3247,7 @@ function renderTransactionTypeOptions(id,target){
    ${o.icon}
    </div>
 
-   <span>${o.name}</span>
+   <span>${escapeHtml(o.name)}</span>
 
    </div>
 
@@ -2636,37 +3270,50 @@ function selectTransactionType(type,target){
 
  const text=
  type==='credit'
- ?'Credit (↑)'
- :'Debit (↓)';
+ ?t('credit')
+ :t('debit');
 
- if(target==='tx'){
+ const el=
+ target==='tx'
+ ?
+ document.getElementById(
+  'tx-type-display'
+ )
+ :
+ document.getElementById(
+  'edit-type-display'
+ );
 
-  const el=
-  document.getElementById(
-   'tx-type-display'
-  );
+ el.innerText=text;
 
-  el.innerText=text;
-  el.dataset.value=type;
-
- }else{
-
-  const el=
-  document.getElementById(
-   'edit-type-display'
-  );
-
-  el.innerText=text;
-  el.dataset.value=type;
- }
+ el.dataset.value=type;
 
  closeModal('tx-type-modal');
 }
 
 
 /* =========================================================
-   CURRENCY PICKER
+   CURRENCY
 ========================================================= */
+
+const currencies=[
+
+ ['AFN','🇦🇫'],
+ ['USD','🇺🇸'],
+ ['EUR','🇪🇺'],
+ ['TRY','🇹🇷'],
+ ['IRR','🇮🇷'],
+ ['CNY','🇨🇳'],
+ ['PKR','🇵🇰'],
+ ['INR','🇮🇳'],
+ ['SAR','🇸🇦'],
+ ['AED','🇦🇪'],
+ ['GBP','🇬🇧'],
+ ['JPY','🇯🇵'],
+ ['RUB','🇷🇺']
+
+];
+
 
 function openCurrencyPicker(target){
 
@@ -2685,6 +3332,16 @@ function openCurrencyPicker(target){
 
  temporaryCurrency=current;
 
+ renderCurrencyOptions();
+
+ document
+ .getElementById('currency-modal')
+ .classList.add('active');
+}
+
+
+function renderCurrencyOptions(){
+
  const box=
  document.getElementById(
   'currency-options'
@@ -2692,12 +3349,25 @@ function openCurrencyPicker(target){
 
  box.innerHTML='';
 
- const currencies=[
-  ['AFN','🇦🇫','Afghan Afghani'],
-  ['USD','🇺🇸','US Dollar'],
-  ['EUR','🇪🇺','Euro'],
-  ['TRY','🇹🇷','Turkish Lira']
- ];
+ const target=
+ document.getElementById(
+  'tx-currency-display'
+ ).dataset.value
+ ?'tx'
+ :'edit';
+
+ const current=
+ target==='tx'
+ ?
+ document.getElementById(
+  'tx-currency-display'
+ ).dataset.value ||
+ 'AFN'
+ :
+ document.getElementById(
+  'edit-currency-display'
+ ).dataset.value ||
+ 'AFN';
 
  currencies.forEach(c=>{
 
@@ -2718,10 +3388,13 @@ function openCurrencyPicker(target){
    </div>
 
    <div>
+
    <div>${c[0]}</div>
+
    <small style="color:var(--muted)">
-   ${c[2]}
+   ${escapeHtml(currencyName(c[0]))}
    </small>
+
    </div>
 
    </div>
@@ -2734,10 +3407,6 @@ function openCurrencyPicker(target){
    `
   );
  });
-
- document
- .getElementById('currency-modal')
- .classList.add('active');
 }
 
 
@@ -2765,7 +3434,7 @@ function selectCurrency(currency,target){
 
 
 /* =========================================================
-   DATE PICKER
+   DATE
 ========================================================= */
 
 function openTransactionPage(id){
@@ -2780,7 +3449,7 @@ function openTransactionPage(id){
 
  document.getElementById(
   'tx-type-display'
- ).innerText='Credit (↑)';
+ ).innerText=t('credit');
 
  document.getElementById(
   'tx-type-display'
@@ -2796,7 +3465,7 @@ function openTransactionPage(id){
 
  document.getElementById(
   'tx-date-display'
- ).innerText='Select date';
+ ).innerText=t('selectDate');
 
  document.getElementById(
   'tx-date-display'
@@ -2853,7 +3522,6 @@ function changeCalendarMonth(delta){
 
   pickerState.month=11;
   pickerState.year--;
-
  }
 
  if(pickerState.month>11){
@@ -2874,7 +3542,7 @@ function renderCalendar(){
  const month=
  pickerState.month;
 
- const monthNames=[
+ const monthNamesEn=[
   'January',
   'February',
   'March',
@@ -2889,13 +3557,46 @@ function renderCalendar(){
   'December'
  ];
 
+ const monthNamesFa=[
+  'جنوری',
+  'فبروری',
+  'مارچ',
+  'اپریل',
+  'می',
+  'جون',
+  'جولای',
+  'آگست',
+  'سپتامبر',
+  'اکتبر',
+  'نوامبر',
+  'دسامبر'
+ ];
+
+ const monthNames=
+ userProfile.language==='fa'
+ ?monthNamesFa
+ :monthNamesEn;
+
  document.getElementById(
   'month-title'
  ).innerText=
  `${monthNames[month]} ${year}`;
 
 
- const weekdays=[
+ const weekdays=
+ userProfile.language==='fa'
+ ?
+ [
+  'یک',
+  'دو',
+  'سه',
+  'چهار',
+  'پنج',
+  'جمعه',
+  'شنبه'
+ ]
+ :
+ [
   'Sun',
   'Mon',
   'Tue',
@@ -2985,7 +3686,7 @@ function updateDatePreview(){
 
   document.getElementById(
    'date-preview'
-  ).innerText='Select a date';
+  ).innerText=t('selectDate');
 
   return;
  }
@@ -3000,17 +3701,17 @@ function updateDatePreview(){
  ).innerHTML=
  `
  <span class="date-line">
- ☀️ <b>هجری شمسی:</b>
+ ☀️ <b>${escapeHtml(t('solar'))}:</b>
  ${escapeHtml(dates.solar)}
  </span>
 
  <span class="date-line">
- 📅 <b>میلادی:</b>
+ 📅 <b>${escapeHtml(t('gregorian'))}:</b>
  ${escapeHtml(dates.gregorian)}
  </span>
 
  <span class="date-line">
- 🌙 <b>هجری قمری:</b>
+ 🌙 <b>${escapeHtml(t('hijri'))}:</b>
  ${escapeHtml(dates.hijri)}
  </span>
  `;
@@ -3020,9 +3721,7 @@ function updateDatePreview(){
 function confirmDatePicker(){
 
  if(!pickerState.selectedDate)
-  return toast(
-   'Please select a date.'
-  );
+  return toast(t('selectTransactionDate'));
 
  const dates=
  formatDates(
@@ -3062,7 +3761,6 @@ function formatDates(dateVal){
  );
 
  let solar='';
-
  let hijri='';
 
  try{
@@ -3104,7 +3802,9 @@ function formatDates(dateVal){
 
   gregorian:
    d.toLocaleDateString(
-    'en-GB',
+    userProfile.language==='fa'
+    ?'en-US'
+    :'en-GB',
     {
      year:'numeric',
      month:'long',
@@ -3120,7 +3820,7 @@ function formatDates(dateVal){
 
 
 /* =========================================================
-   SAVE TRANSACTION
+   TRANSACTION
 ========================================================= */
 
 function convertToAFN(
@@ -3128,9 +3828,14 @@ function convertToAFN(
  currency
 ){
 
+ /*
+   rates[currency] means:
+   1 unit of that currency = X AFN.
+ */
+
  return amount*
  (
-  rates[currency] ||
+  Number(rates[currency]) ||
   1
  );
 }
@@ -3169,15 +3874,11 @@ async function saveTransaction(){
 
 
  if(!amount || amount<=0)
-  return toast(
-   'Enter a valid amount.'
-  );
+  return toast(t('validAmount'));
 
 
  if(!date)
-  return toast(
-   'Select transaction date.'
-  );
+  return toast(t('selectTransactionDate'));
 
 
  const c=
@@ -3186,14 +3887,11 @@ async function saveTransaction(){
  );
 
  if(!c)
-  return toast(
-   'Client not found.'
-  );
+  return toast(t('clientNotFound'));
 
 
  const dates=
  formatDates(date);
-
 
  c.transactions.push({
 
@@ -3226,15 +3924,13 @@ async function saveTransaction(){
    'dashboard-page'
   );
 
-  toast(
-   'Transaction saved successfully.'
-  );
+  toast(t('transactionSaved'));
  }
 }
 
 
 /* =========================================================
-   EDIT TRANSACTION
+   EDIT
 ========================================================= */
 
 function openEdit(
@@ -3265,8 +3961,8 @@ function openEdit(
   'edit-type-display'
  ).innerText=
  tx.type==='credit'
- ?'Credit (↑)'
- :'Debit (↓)';
+ ?t('credit')
+ :t('debit');
 
  document.getElementById(
   'edit-type-display'
@@ -3304,7 +4000,7 @@ function openEdit(
  ?
  formatDates(tx.rawDate).solar
  :
- 'Select date';
+ t('selectDate');
 
 
  showPage('edit-page');
@@ -3338,9 +4034,7 @@ async function updateTransaction(){
  ).dataset.value;
 
  if(!amount || amount<=0 || !date)
-  return toast(
-   'Enter amount and date.'
-  );
+  return toast(t('enterAmountDate'));
 
 
  const c=
@@ -3398,9 +4092,7 @@ async function updateTransaction(){
    'dashboard-page'
   );
 
-  toast(
-   'Transaction updated.'
-  );
+  toast(t('transactionUpdated'));
  }
 }
 
@@ -3454,7 +4146,7 @@ function closeConfirm(){
 function deleteClient(id){
 
  askDelete(
-  'Delete this client and all transactions?',
+  t('deleteClientConfirm'),
   async()=>{
 
    appData.clients=
@@ -3477,7 +4169,7 @@ function deleteTransaction(
 ){
 
  askDelete(
-  'Delete this transaction?',
+  t('deleteTransactionConfirm'),
   async()=>{
 
    const c=
@@ -3499,6 +4191,8 @@ function deleteTransaction(
    }
   }
  );
+
+
 }
 
 
@@ -3531,8 +4225,7 @@ window.addEventListener(
   .forEach(
    x=>x.classList.remove('active')
   );
- }
-);
+});
 
 
 /* =========================================================
@@ -3554,8 +4247,8 @@ function renderDashboard(){
   box.innerHTML=
   `
   <div class="empty-state">
-  No accounts registered yet.<br>
-  Click the + button.
+  ${escapeHtml(t('noAccounts'))}<br>
+  ${escapeHtml(t('clickPlus'))}
   </div>
   `;
 
@@ -3566,9 +4259,7 @@ function renderDashboard(){
  appData.clients.forEach(c=>{
 
   let credit=0;
-
   let debit=0;
-
   let txHtml='';
 
 
@@ -3596,10 +4287,8 @@ function renderDashboard(){
 
    ${
     tx.type==='credit'
-    ?
-    'Credit (↑)'
-    :
-    'Debit (↓)'
+    ?escapeHtml(t('credit'))
+    :escapeHtml(t('debit'))
    }
 
    </b>
@@ -3614,6 +4303,7 @@ function renderDashboard(){
    ${Number(
     tx.rawAmount
    ).toLocaleString()}
+
    ${escapeHtml(tx.currency)}
 
    </div>
@@ -3622,24 +4312,18 @@ function renderDashboard(){
    <div class="tx-date">
 
    <span class="date-line">
-   ☀️ <b>هجری شمسی:</b>
-   ${escapeHtml(
-    tx.solar||'-'
-   )}
+   ☀️ <b>${escapeHtml(t('solar'))}:</b>
+   ${escapeHtml(tx.solar||'-')}
    </span>
 
    <span class="date-line">
-   📅 <b>میلادی:</b>
-   ${escapeHtml(
-    tx.gregorian||'-'
-   )}
+   📅 <b>${escapeHtml(t('gregorian'))}:</b>
+   ${escapeHtml(tx.gregorian||'-')}
    </span>
 
    <span class="date-line">
-   🌙 <b>هجری قمری:</b>
-   ${escapeHtml(
-    tx.hijri||'-'
-   )}
+   🌙 <b>${escapeHtml(t('hijri'))}:</b>
+   ${escapeHtml(tx.hijri||'-')}
    </span>
 
    </div>
@@ -3672,7 +4356,7 @@ function renderDashboard(){
    class="smallbtn blue"
    onclick="openEdit('${c.id}',${i})">
 
-   Edit
+   ${escapeHtml(t('edit'))}
 
    </button>
 
@@ -3680,7 +4364,7 @@ function renderDashboard(){
    class="smallbtn red"
    onclick="deleteTransaction('${c.id}',${i})">
 
-   Delete
+   ${escapeHtml(t('delete'))}
 
    </button>
 
@@ -3715,7 +4399,7 @@ function renderDashboard(){
    class="smallbtn primary"
    onclick="openTransactionPage('${c.id}')">
 
-   + Transaction
+   + ${escapeHtml(t('transaction'))}
 
    </button>
 
@@ -3738,7 +4422,7 @@ function renderDashboard(){
    <button
    onclick="deleteClient('${c.id}')">
 
-   🗑️ Delete Full Account
+   ${escapeHtml(t('deleteFull'))}
 
    </button>
 
@@ -3755,7 +4439,7 @@ function renderDashboard(){
 
    <div class="stat">
 
-   <small>Balance</small>
+   <small>${escapeHtml(t('balance'))}</small>
 
    <b
    style="color:var(--primary)">
@@ -3770,7 +4454,7 @@ function renderDashboard(){
 
    <div class="stat">
 
-   <small>Debit</small>
+   <small>${escapeHtml(t('debitLabel'))}</small>
 
    <b
    style="color:var(--red)">
@@ -3785,7 +4469,7 @@ function renderDashboard(){
 
    <div class="stat">
 
-   <small>Credit</small>
+   <small>${escapeHtml(t('creditLabel'))}</small>
 
    <b
    style="color:var(--green)">
@@ -3822,6 +4506,18 @@ function renderDashboard(){
 
 async function fetchExchangeRates(){
 
+ const currencyCodes=
+ currencies
+ .map(x=>x[0])
+ .filter(x=>x!=='AFN');
+
+ document.getElementById(
+  'rates'
+ ).innerHTML=
+ `
+ <span>${escapeHtml(t('loadingRates'))}</span>
+ `;
+
  try{
 
   const controller=
@@ -3855,51 +4551,32 @@ async function fetchExchangeRates(){
    data.rates
   ){
 
-   /*
-     AFN is the BASE currency.
-     Therefore AFN = 1.
-   */
-
    rates.AFN=1;
 
    /*
-     API returns how many units of
-     another currency equal one AFN.
-     To display "USD: XX AFN",
-     we invert it.
+     API:
+     1 AFN -> X foreign currency
+
+     We invert:
+     1 foreign currency -> X AFN
+
+     No city-based artificial adjustment.
    */
 
-   if(data.rates.USD)
-    rates.USD=
-     1/data.rates.USD;
+   currencyCodes.forEach(code=>{
 
-   if(data.rates.EUR)
-    rates.EUR=
-     1/data.rates.EUR;
+    if(
+     data.rates[code] &&
+     Number(data.rates[code])>0
+    ){
 
-   if(data.rates.TRY)
-    rates.TRY=
-     1/data.rates.TRY;
+     rates[code]=
+      1/Number(data.rates[code]);
+    }
+   });
 
 
-   document.getElementById(
-    'rates'
-   ).innerHTML=
-   `
-   <span>🇦🇫 AFN: 1</span>
-
-   <span>
-   💵 USD: ${rates.USD.toFixed(2)}
-   </span>
-
-   <span>
-   💶 EUR: ${rates.EUR.toFixed(2)}
-   </span>
-
-   <span>
-   🇹🇷 TRY: ${rates.TRY.toFixed(2)}
-   </span>
-   `;
+   updateRatesDisplay();
 
   }else{
 
@@ -3916,6 +4593,10 @@ async function fetchExchangeRates(){
    error
   );
 
+  /*
+    Never invent a rate.
+  */
+
   document.getElementById(
    'rates'
   ).innerHTML=
@@ -3924,8 +4605,58 @@ async function fetchExchangeRates(){
   <span>💵 USD: --</span>
   <span>💶 EUR: --</span>
   <span>🇹🇷 TRY: --</span>
+  <span>🇮🇷 IRR: --</span>
+  <span>🇨🇳 CNY: --</span>
   `;
  }
+}
+
+
+function updateRatesDisplay(){
+
+ const displayCurrencies=[
+  ['AFN','🇦🇫'],
+  ['USD','🇺🇸'],
+  ['EUR','🇪🇺'],
+  ['TRY','🇹🇷'],
+  ['IRR','🇮🇷'],
+  ['CNY','🇨🇳'],
+  ['PKR','🇵🇰'],
+  ['INR','🇮🇳'],
+  ['SAR','🇸🇦'],
+  ['AED','🇦🇪'],
+  ['GBP','🇬🇧'],
+  ['JPY','🇯🇵'],
+  ['RUB','🇷🇺']
+ ];
+
+ document.getElementById(
+  'rates'
+ ).innerHTML=
+ displayCurrencies
+ .map(c=>{
+
+  const value=
+   c[0]==='AFN'
+   ?'1'
+   :
+   rates[c[0]]
+   ?
+   Number(rates[c[0]]).toFixed(
+    c[0]==='IRR'||c[0]==='JPY'
+    ?2
+    :2
+   )
+   :'--';
+
+  return `
+   <span>
+   ${c[1]} ${c[0]}: ${value}
+   </span>
+  `;
+
+ })
+ .join('');
 }
 
 
@@ -3977,15 +4708,17 @@ window.addEventListener(
 
   }else{
 
+   /*
+     Default language before login.
+   */
+
+   applyLanguage();
+
    showPage(
     'login-page'
    );
 
    fetchExchangeRates();
-
-   /*
-     We don't request GPS before login.
-   */
   }
  });
 
@@ -4013,8 +4746,7 @@ supabaseClient
 
    detectRealLocation(true);
   }
- }
-);
+ });
 
 </script>
 
