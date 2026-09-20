@@ -315,11 +315,11 @@
 
         <main class="app-content">
             
-            <!-- صفحه ورود و ثبت‌نام با پسورد و تأیید ایمیل -->
+            <!-- صفحه ورود و ثبت‌نام (بدون درخواست کشور) -->
             <div id="login-page" class="page active">
-                <div style="text-align: center; margin: 20px 0;">
+                <div style="text-align: center; margin: 30px 0;">
                     <h2 style="font-size: 18px; color: #a78bfa; margin-bottom: 8px;">ورود یا ثبت‌نام در صرافی</h2>
-                    <p style="font-size: 11px; color: var(--text-muted);">برای امنیت اطلاعات، ایمیل و پسورد خود را وارد کنید.</p>
+                    <p style="font-size: 11px; color: var(--text-muted);">ایمیل و پسورد خود را وارد کنید.</p>
                 </div>
                 <div class="input-group">
                     <label>آدرس ایمیل</label>
@@ -414,7 +414,7 @@
         let currentUserEmail = '';
         let appData = { clients: [] };
 
-        // بررسی خودکار نشست کاربر هنگام باز شدن صفحه (بدون نیاز به ورود دوباره)
+        // بررسی خودکار نشست کاربر هنگام باز شدن صفحه
         document.addEventListener('DOMContentLoaded', async () => {
             const { data: { session } } = await supabaseClient.auth.getSession();
             if (session && session.user) {
