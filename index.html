@@ -11,6 +11,7 @@
 <meta name="theme-color" content="#7c3aed">
 
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
 <style>
 
 :root{
@@ -47,10 +48,6 @@ body{
  min-height:100vh;
 }
 
-/* =========================================================
-   MAIN APP
-========================================================= */
-
 .app{
  width:100%;
  min-height:100vh;
@@ -58,10 +55,6 @@ body{
  display:flex;
  flex-direction:column;
 }
-
-/* =========================================================
-   HEADER
-========================================================= */
 
 header{
  background:linear-gradient(135deg,#1e293b,#0f172a);
@@ -130,10 +123,6 @@ header h1{
  text-align:center;
  border-bottom:1px solid var(--border);
 }
-
-/* =========================================================
-   MAIN
-========================================================= */
 
 main{
  position:relative;
@@ -221,10 +210,6 @@ button{
  margin-top:12px;
 }
 
-/* =========================================================
-   PROFILE
-========================================================= */
-
 .profile-preview{
  width:85px;
  height:85px;
@@ -246,10 +231,6 @@ button{
  background:#3b82f6;
  color:#fff;
 }
-
-/* =========================================================
-   CARDS
-========================================================= */
 
 .card{
  background:#0f172a;
@@ -350,10 +331,6 @@ button{
  color:white;
 }
 
-/* =========================================================
-   FAB
-========================================================= */
-
 .fab{
  position:fixed;
  right:30px;
@@ -375,10 +352,6 @@ button{
  right:auto;
  left:30px;
 }
-
-/* =========================================================
-   MENU
-========================================================= */
 
 .menu{
  position:relative;
@@ -424,10 +397,6 @@ button{
 [dir=rtl] .dropdown button{
  text-align:right;
 }
-
-/* =========================================================
-   MODALS
-========================================================= */
 
 .modal{
  position:fixed;
@@ -544,10 +513,6 @@ button{
  border-color:#fff;
 }
 
-/* =========================================================
-   SELECT
-========================================================= */
-
 .custom-select{
  width:100%;
  padding:14px 16px;
@@ -576,10 +541,6 @@ button{
 [dir=rtl] input{
  text-align:right;
 }
-
-/* =========================================================
-   DATE PICKER
-========================================================= */
 
 .date-picker{
  background:#0f172a;
@@ -667,10 +628,6 @@ button{
  border:1px solid var(--border);
 }
 
-/* =========================================================
-   TOAST
-========================================================= */
-
 #toast{
  position:fixed;
  left:50%;
@@ -702,12 +659,6 @@ button{
  font-size:12px;
  padding:10px;
 }
-
-
-/* =========================================================
-   TABLET
-   768px+
-========================================================= */
 
 @media(min-width:768px){
 
@@ -800,12 +751,6 @@ button{
 
 }
 
-
-/* =========================================================
-   DESKTOP
-   1024px+
-========================================================= */
-
 @media(min-width:1024px){
 
  body{
@@ -851,10 +796,6 @@ button{
   padding:35px 50px;
  }
 
- /* -----------------------------------------
-    FORMS
- ----------------------------------------- */
-
  #login-page .box,
  #profile-page .box,
  #add-client-page .box,
@@ -879,10 +820,6 @@ button{
  button{
   min-height:48px;
  }
-
- /* -----------------------------------------
-    DASHBOARD
- ----------------------------------------- */
 
  #dashboard-page{
   padding:30px 45px 100px;
@@ -932,10 +869,6 @@ button{
   font-size:11px;
  }
 
- /* -----------------------------------------
-    TRANSACTION ACTIONS
- ----------------------------------------- */
-
  #accounts-list .card-head > div:last-child{
   display:flex;
   align-items:center;
@@ -948,10 +881,6 @@ button{
   padding:10px 15px!important;
   font-size:12px;
  }
-
- /* -----------------------------------------
-    FAB
- ----------------------------------------- */
 
  .fab{
   width:64px;
@@ -967,10 +896,6 @@ button{
   left:38px;
  }
 
- /* -----------------------------------------
-    MODALS
- ----------------------------------------- */
-
  .modal-box{
   max-width:600px;
   padding:25px;
@@ -985,12 +910,6 @@ button{
  }
 
 }
-
-
-/* =========================================================
-   LARGE DESKTOP
-   1280px+
-========================================================= */
 
 @media(min-width:1280px){
 
@@ -1009,12 +928,6 @@ button{
 
 }
 
-
-/* =========================================================
-   VERY LARGE SCREENS
-   1600px+
-========================================================= */
-
 @media(min-width:1600px){
 
  body{
@@ -1031,12 +944,6 @@ button{
  }
 
 }
-
-
-/* =========================================================
-   MOBILE
-   Keep current mobile behavior
-========================================================= */
 
 @media(max-width:767px){
 
@@ -1079,11 +986,6 @@ button{
  }
 
 }
-
-
-/* =========================================================
-   SMALL MOBILE
-========================================================= */
 
 @media(max-width:420px){
 
@@ -1161,11 +1063,6 @@ button{
 
 }
 
-
-/* =========================================================
-   ACCESSIBILITY / TOUCH
-========================================================= */
-
 @media(pointer:coarse){
 
  button,
@@ -1181,11 +1078,6 @@ button{
  }
 
 }
-
-
-/* =========================================================
-   LANDSCAPE MOBILE
-========================================================= */
 
 @media(max-width:767px) and (orientation:landscape){
 
@@ -1250,8 +1142,6 @@ Logout
 
 <main>
 
-<!-- LOGIN -->
-
 <section id="login-page" class="page">
 
 <div class="box">
@@ -1304,6 +1194,73 @@ style="background:transparent;border:1px solid var(--primary);color:var(--primar
 Create New Account
 </button>
 
+
+<!-- OTP -->
+
+<div
+id="otp-section"
+style="display:none;margin-top:20px">
+
+<div style="text-align:center;margin:25px 0 20px">
+
+<h3
+id="otp-title"
+style="font-size:17px;color:var(--primary);margin-bottom:8px">
+Verify Your Email
+</h3>
+
+<p
+id="otp-description"
+style="font-size:12px;color:var(--muted);line-height:1.8">
+Enter the 6-digit code sent to your email.
+</p>
+
+<p
+id="otp-email-display"
+style="font-size:12px;color:#38bdf8;margin-top:8px">
+</p>
+
+</div>
+
+<div class="group">
+
+<label id="otp-label">
+Verification Code
+</label>
+
+<input
+type="text"
+id="otp-code"
+inputmode="numeric"
+autocomplete="one-time-code"
+maxlength="6"
+placeholder="Enter 6-digit code">
+
+</div>
+
+<button
+id="verify-otp-btn"
+class="primary"
+onclick="verifySignupCode()">
+Verify Code
+</button>
+
+<button
+id="resend-otp-btn"
+class="secondary"
+onclick="resendSignupCode()">
+Resend Code
+</button>
+
+<button
+id="back-signup-btn"
+class="secondary"
+onclick="backToSignup()">
+Back
+</button>
+
+</div>
+
 </div>
 
 </section>
@@ -1340,7 +1297,6 @@ onclick="document.getElementById('avatar-input').click()">
 
 </div>
 
-
 <div class="group">
 
 <label id="name-label">Full Name / Username</label>
@@ -1351,7 +1307,6 @@ placeholder="Enter your name">
 
 </div>
 
-
 <div class="group">
 
 <label id="phone-label">Phone Number</label>
@@ -1361,7 +1316,6 @@ id="profile-phone"
 placeholder="+93 700 000 000">
 
 </div>
-
 
 <div class="group">
 
@@ -1381,7 +1335,6 @@ Jawzjan - Sheberghan
 
 </div>
 
-
 <div class="group">
 
 <label id="theme-label">App Theme Color</label>
@@ -1400,7 +1353,6 @@ Purple
 
 </div>
 
-
 <div class="group">
 
 <label id="language-label">Language / زبان</label>
@@ -1418,7 +1370,6 @@ English
 </div>
 
 </div>
-
 
 <button
 id="save-profile-btn"
@@ -1503,7 +1454,6 @@ class="page">
 type="hidden"
 id="active-client-id">
 
-
 <div class="group">
 
 <label id="transaction-type-label">Transaction Type</label>
@@ -1521,7 +1471,6 @@ Credit (↑)
 </div>
 
 </div>
-
 
 <div class="group">
 
@@ -1541,7 +1490,6 @@ AFN
 
 </div>
 
-
 <div class="group">
 
 <label id="amount-label">Amount</label>
@@ -1552,7 +1500,6 @@ id="tx-amount"
 placeholder="Enter amount">
 
 </div>
-
 
 <div class="group">
 
@@ -1571,7 +1518,6 @@ Select date
 </div>
 
 </div>
-
 
 <button
 id="save-transaction-btn"
@@ -1605,7 +1551,6 @@ class="page">
 <input type="hidden" id="edit-client-id">
 <input type="hidden" id="edit-tx-index">
 
-
 <div class="group">
 
 <label id="edit-type-label">Transaction Type</label>
@@ -1623,7 +1568,6 @@ Credit (↑)
 </div>
 
 </div>
-
 
 <div class="group">
 
@@ -1643,7 +1587,6 @@ AFN
 
 </div>
 
-
 <div class="group">
 
 <label id="edit-amount-label">Amount</label>
@@ -1653,7 +1596,6 @@ type="number"
 id="edit-amount">
 
 </div>
-
 
 <div class="group">
 
@@ -1672,7 +1614,6 @@ Select date
 </div>
 
 </div>
-
 
 <button
 id="update-transaction-btn"
@@ -1904,9 +1845,8 @@ class="modal">
 
 <div class="modal-box">
 
-<div
-id="currency-modal-title"
-class="modal-title">
+<div class="modal-title"
+id="currency-modal-title">
 💰 Currency
 </div>
 
@@ -2072,6 +2012,13 @@ let temporaryCurrency='AFN';
 
 
 /* =========================================================
+   OTP STATE
+========================================================= */
+
+let pendingSignup=null;
+
+
+/* =========================================================
    LANGUAGES
 ========================================================= */
 
@@ -2096,6 +2043,20 @@ const translations={
   passwordPlaceholder:'At least 6 characters',
   signIn:'Sign In',
   createAccount:'Create New Account',
+
+  otpTitle:'Verify Your Email',
+  otpDescription:'Enter the 6-digit code sent to your email.',
+  otpLabel:'Verification Code',
+  otpPlaceholder:'Enter 6-digit code',
+  verifyCode:'Verify Code',
+  resendCode:'Resend Code',
+  backToSignup:'Back',
+  otpSent:'A 6-digit verification code was sent to your email.',
+  otpVerified:'Email verified successfully. You are now signed in.',
+  otpInvalid:'Enter the 6-digit verification code.',
+  otpSendError:'Could not send verification code.',
+  otpVerifyError:'Could not verify verification code.',
+  signupError:'Sign up error',
 
   profileSettings:'Profile Settings',
   uploadPhoto:'📷 Upload Photo',
@@ -2254,6 +2215,20 @@ const translations={
   passwordPlaceholder:'حداقل ۶ کاراکتر',
   signIn:'ورود',
   createAccount:'ساخت حساب جدید',
+
+  otpTitle:'تأیید ایمیل',
+  otpDescription:'کد ۶ رقمی ارسال‌شده به ایمیل خود را وارد کنید.',
+  otpLabel:'کد تأیید',
+  otpPlaceholder:'کد ۶ رقمی را وارد کنید',
+  verifyCode:'تأیید کد',
+  resendCode:'ارسال دوباره کد',
+  backToSignup:'برگشت',
+  otpSent:'کد ۶ رقمی به ایمیل شما ارسال شد.',
+  otpVerified:'ایمیل با موفقیت تأیید شد و وارد حساب شدید.',
+  otpInvalid:'کد ۶ رقمی تأیید را وارد کنید.',
+  otpSendError:'ارسال کد تأیید انجام نشد.',
+  otpVerifyError:'تأیید کد انجام نشد.',
+  signupError:'خطای ثبت‌نام',
 
   profileSettings:'تنظیمات پروفایل',
   uploadPhoto:'📷 آپلود عکس',
@@ -2482,6 +2457,14 @@ function applyLanguage(){
  document.getElementById('signin-btn').innerText=t('signIn');
  document.getElementById('signup-btn').innerText=t('createAccount');
 
+ document.getElementById('otp-title').innerText=t('otpTitle');
+ document.getElementById('otp-description').innerText=t('otpDescription');
+ document.getElementById('otp-label').innerText=t('otpLabel');
+ document.getElementById('otp-code').placeholder=t('otpPlaceholder');
+ document.getElementById('verify-otp-btn').innerText=t('verifyCode');
+ document.getElementById('resend-otp-btn').innerText=t('resendCode');
+ document.getElementById('back-signup-btn').innerText=t('backToSignup');
+
  document.getElementById('profile-title').innerText=t('profileSettings');
  document.getElementById('upload-photo-btn').innerText=t('uploadPhoto');
  document.getElementById('name-label').innerText=t('fullName');
@@ -2660,6 +2643,11 @@ function closeModal(id){
    AUTH
 ========================================================= */
 
+
+/* =========================================================
+   CUSTOM OTP SIGN UP
+========================================================= */
+
 async function handleSignUp(){
 
  const email=
@@ -2679,29 +2667,574 @@ async function handleSignUp(){
   );
  }
 
- const {data,error}=
- await supabaseClient.auth.signUp({
-  email,
-  password
- });
+ const signupButton=
+ document.getElementById('signup-btn');
 
- if(error)
-  return showError(
-   userProfile.language==='fa'
-   ?'خطای ثبت‌نام'
-   :'Sign up error',
+ const oldText=
+ signupButton.innerText;
+
+ signupButton.disabled=true;
+ signupButton.style.opacity='.6';
+
+ try{
+
+  const {data,error}=
+  await supabaseClient
+  .functions
+  .invoke(
+   'smooth-responder',
+   {
+    body:{
+     email,
+     password
+    }
+   }
+  );
+
+  if(error){
+
+   let message=
+    error.message ||
+    t('otpSendError');
+
+   if(error.context){
+
+    try{
+
+     const body=
+      await error.context.json();
+
+     if(body?.error)
+      message=body.error;
+
+     else if(body?.message)
+      message=body.message;
+
+    }catch(e){
+
+     console.warn(
+      'Could not read function error:',
+      e
+     );
+    }
+   }
+
+   return showError(
+    t('signupError'),
+    {message}
+   );
+  }
+
+  if(!data?.success){
+
+   return toast(
+    data?.error ||
+    t('otpSendError')
+   );
+  }
+
+  pendingSignup={
+   email,
+   password,
+   userId:data.user_id||''
+  };
+
+  showOtpSection();
+
+  toast(t('otpSent'));
+
+ }catch(error){
+
+  console.error(error);
+
+  showError(
+   t('signupError'),
    error
   );
 
- toast(
-  data.session
-  ?t('saved')
-  :(userProfile.language==='fa'
-   ?'حساب ساخته شد. ایمیل خود را بررسی کنید.'
-   :'Account created. Check your email for confirmation.')
- );
+ }finally{
+
+  signupButton.disabled=false;
+  signupButton.style.opacity='1';
+  signupButton.innerText=oldText;
+ }
 }
 
+
+/* =========================================================
+   SHOW OTP
+========================================================= */
+
+function showOtpSection(){
+
+ const emailGroup=
+  document.getElementById(
+   'email-label'
+  ).parentElement;
+
+ const passwordGroup=
+  document.getElementById(
+   'password-label'
+  ).parentElement;
+
+ emailGroup.style.display='none';
+ passwordGroup.style.display='none';
+
+ document.getElementById(
+  'signin-btn'
+ ).style.display='none';
+
+ document.getElementById(
+  'signup-btn'
+ ).style.display='none';
+
+ document.getElementById(
+  'otp-section'
+ ).style.display='block';
+
+ document.getElementById(
+  'login-title'
+ ).innerText=
+ t('otpTitle');
+
+ document.getElementById(
+  'login-description'
+ ).innerText=
+ t('otpDescription');
+
+ document.getElementById(
+  'otp-title'
+ ).innerText=
+ t('otpTitle');
+
+ document.getElementById(
+  'otp-description'
+ ).innerText=
+ t('otpDescription');
+
+ document.getElementById(
+  'otp-label'
+ ).innerText=
+ t('otpLabel');
+
+ document.getElementById(
+  'otp-code'
+ ).placeholder=
+ t('otpPlaceholder');
+
+ document.getElementById(
+  'verify-otp-btn'
+ ).innerText=
+ t('verifyCode');
+
+ document.getElementById(
+  'resend-otp-btn'
+ ).innerText=
+ t('resendCode');
+
+ document.getElementById(
+  'back-signup-btn'
+ ).innerText=
+ t('backToSignup');
+
+ document.getElementById(
+  'otp-email-display'
+ ).innerText=
+ pendingSignup?.email||'';
+
+ const input=
+ document.getElementById(
+  'otp-code'
+ );
+
+ input.value='';
+
+ setTimeout(()=>{
+  input.focus();
+ },100);
+}
+
+
+/* =========================================================
+   BACK TO SIGN UP
+========================================================= */
+
+function backToSignup(){
+
+ pendingSignup=null;
+
+ document.getElementById(
+  'otp-section'
+ ).style.display='none';
+
+ document.getElementById(
+  'email-label'
+ ).parentElement
+ .style.display='block';
+
+ document.getElementById(
+  'password-label'
+ ).parentElement
+ .style.display='block';
+
+ document.getElementById(
+  'signin-btn'
+ ).style.display='block';
+
+ document.getElementById(
+  'signup-btn'
+ ).style.display='block';
+
+ document.getElementById(
+  'login-title'
+ ).innerText=
+ t('signInRegister');
+
+ document.getElementById(
+  'login-description'
+ ).innerText=
+ t('cloudDescription');
+
+ document.getElementById(
+  'otp-code'
+ ).value='';
+
+ document.getElementById(
+  'otp-email-display'
+ ).innerText='';
+}
+
+
+/* =========================================================
+   VERIFY OTP
+========================================================= */
+
+async function verifySignupCode(){
+
+ if(!pendingSignup){
+
+  return toast(
+   userProfile.language==='fa'
+   ?'اطلاعات ثبت‌نام پیدا نشد.'
+   :'Sign-up information was not found.'
+  );
+ }
+
+ const code=
+ document.getElementById(
+  'otp-code'
+ ).value.trim();
+
+ if(!/^\d{6}$/.test(code)){
+
+  return toast(
+   t('otpInvalid')
+  );
+ }
+
+ const verifyButton=
+ document.getElementById(
+  'verify-otp-btn'
+ );
+
+ const oldText=
+ verifyButton.innerText;
+
+ verifyButton.disabled=true;
+ verifyButton.style.opacity='.6';
+
+ try{
+
+  const {data,error}=
+  await supabaseClient
+  .functions
+  .invoke(
+   'verify-email-code',
+   {
+    body:{
+     email:pendingSignup.email,
+     code
+    }
+   }
+  );
+
+  if(error){
+
+   let message=
+    error.message ||
+    t('otpVerifyError');
+
+   if(error.context){
+
+    try{
+
+     const body=
+      await error.context.json();
+
+     if(body?.error)
+      message=body.error;
+
+     else if(body?.message)
+      message=body.message;
+
+    }catch(e){
+
+     console.warn(
+      'Could not read verification error:',
+      e
+     );
+    }
+   }
+
+   return showError(
+    userProfile.language==='fa'
+    ?'خطای تأیید'
+    :'Verification error',
+    {message}
+   );
+  }
+
+  if(!data?.success){
+
+   return toast(
+    data?.error ||
+    t('otpVerifyError')
+   );
+  }
+
+
+  /*
+    The Edge Function has now confirmed
+    the email. Sign in normally using
+    the password kept only in memory.
+  */
+
+  const email=
+   pendingSignup.email;
+
+  const password=
+   pendingSignup.password;
+
+  const {data:loginData,error:loginError}=
+   await supabaseClient
+   .auth
+   .signInWithPassword({
+    email,
+    password
+   });
+
+  if(loginError){
+
+   console.error(
+    'Automatic sign in error:',
+    loginError
+   );
+
+   pendingSignup=null;
+
+   backToSignup();
+
+   return showError(
+    userProfile.language==='fa'
+    ?'ایمیل تأیید شد، اما ورود خودکار انجام نشد'
+    :'Email verified, but automatic sign in failed',
+    loginError
+   );
+  }
+
+  currentUser=
+   loginData.user;
+
+  pendingSignup=null;
+
+  document.getElementById(
+   'otp-section'
+  ).style.display='none';
+
+  document.getElementById(
+   'email-label'
+  ).parentElement
+  .style.display='block';
+
+  document.getElementById(
+   'password-label'
+  ).parentElement
+  .style.display='block';
+
+  document.getElementById(
+   'signin-btn'
+  ).style.display='block';
+
+  document.getElementById(
+   'signup-btn'
+  ).style.display='block';
+
+  document.getElementById(
+   'login-title'
+  ).innerText=
+   t('signInRegister');
+
+  document.getElementById(
+   'login-description'
+  ).innerText=
+   t('cloudDescription');
+
+  document.getElementById(
+   'otp-code'
+  ).value='';
+
+  document.getElementById(
+   'otp-email-display'
+  ).innerText='';
+
+  await loadDataFromSupabase();
+
+  showPage(
+   'dashboard-page'
+  );
+
+  updateHeader();
+
+  detectRealLocation(true);
+
+  toast(
+   t('otpVerified')
+  );
+
+ }catch(error){
+
+  console.error(error);
+
+  showError(
+   userProfile.language==='fa'
+   ?'خطای تأیید'
+   :'Verification error',
+   error
+  );
+
+ }finally{
+
+  verifyButton.disabled=false;
+  verifyButton.style.opacity='1';
+  verifyButton.innerText=oldText;
+ }
+}
+
+
+/* =========================================================
+   RESEND OTP
+========================================================= */
+
+async function resendSignupCode(){
+
+ if(!pendingSignup){
+
+  return toast(
+   userProfile.language==='fa'
+   ?'اطلاعات ثبت‌نام پیدا نشد.'
+   :'Sign-up information was not found.'
+  );
+ }
+
+ const resendButton=
+ document.getElementById(
+  'resend-otp-btn'
+ );
+
+ const oldText=
+ resendButton.innerText;
+
+ resendButton.disabled=true;
+ resendButton.style.opacity='.6';
+
+ try{
+
+  const {data,error}=
+  await supabaseClient
+  .functions
+  .invoke(
+   'smooth-responder',
+   {
+    body:{
+     email:pendingSignup.email,
+     password:pendingSignup.password
+    }
+   }
+  );
+
+  if(error){
+
+   let message=
+    error.message ||
+    t('otpSendError');
+
+   if(error.context){
+
+    try{
+
+     const body=
+      await error.context.json();
+
+     if(body?.error)
+      message=body.error;
+
+     else if(body?.message)
+      message=body.message;
+
+    }catch(e){
+
+     console.warn(
+      'Could not read resend error:',
+      e
+     );
+    }
+   }
+
+   return showError(
+    t('signupError'),
+    {message}
+   );
+  }
+
+  if(!data?.success){
+
+   return toast(
+    data?.error ||
+    t('otpSendError')
+   );
+  }
+
+  if(data.user_id)
+   pendingSignup.userId=
+    data.user_id;
+
+  document.getElementById(
+   'otp-code'
+  ).value='';
+
+  toast(t('otpSent'));
+
+ }catch(error){
+
+  console.error(error);
+
+  showError(
+   t('signupError'),
+   error
+  );
+
+ }finally{
+
+  resendButton.disabled=false;
+  resendButton.style.opacity='1';
+  resendButton.innerText=oldText;
+ }
+}
+
+
+/* =========================================================
+   NORMAL SIGN IN
+========================================================= */
 
 async function handleSignIn(){
 
@@ -2834,7 +3367,6 @@ async function loadDataFromSupabase(){
   return;
  }
 
-
  if(data){
 
   appData=
@@ -2875,7 +3407,6 @@ async function loadDataFromSupabase(){
 
   await saveDatatoSupabase();
  }
-
 
  setThemeColor(
   userProfile.themeColor||'#7c3aed'
@@ -3635,11 +4166,6 @@ async function selectLanguage(lang){
 
  userProfile.language=lang;
 
- /*
-   Apply immediately BEFORE saving.
-   This fixes the original problem.
- */
-
  applyLanguage();
 
  closeModal('language-modal');
@@ -4116,7 +4642,6 @@ function renderCalendar(){
  ).innerText=
  `${monthNames[month]} ${year}`;
 
-
  const weekdays=
  userProfile.language==='fa'
  ?
@@ -4146,7 +4671,6 @@ function renderCalendar(){
  weekdays
  .map(x=>`<div>${x}</div>`)
  .join('');
-
 
  const first=
  new Date(
@@ -4314,7 +4838,6 @@ function formatDates(dateVal){
   solar=dateVal;
  }
 
-
  try{
 
   hijri=
@@ -4406,14 +4929,11 @@ async function saveTransaction(){
  ).dataset.value ||
  'AFN';
 
-
  if(!amount || amount<=0)
   return toast(t('validAmount'));
 
-
  if(!date)
   return toast(t('selectTransactionDate'));
-
 
  const c=
  appData.clients.find(
@@ -4422,7 +4942,6 @@ async function saveTransaction(){
 
  if(!c)
   return toast(t('clientNotFound'));
-
 
  const dates=
  formatDates(date);
@@ -4445,7 +4964,6 @@ async function saveTransaction(){
 
   rawDate:date
  });
-
 
  const saved=
  await saveDatatoSupabase();
@@ -4490,7 +5008,6 @@ function openEdit(
   'edit-tx-index'
  ).value=index;
 
-
  document.getElementById(
   'edit-type-display'
  ).innerText=
@@ -4503,7 +5020,6 @@ function openEdit(
  ).dataset.value=
  tx.type;
 
-
  document.getElementById(
   'edit-currency-display'
  ).innerText=
@@ -4514,12 +5030,10 @@ function openEdit(
  ).dataset.value=
  tx.currency;
 
-
  document.getElementById(
   'edit-amount'
  ).value=
  tx.rawAmount;
-
 
  const dateEl=
  document.getElementById(
@@ -4535,7 +5049,6 @@ function openEdit(
  formatDates(tx.rawDate).solar
  :
  t('selectDate');
-
 
  showPage('edit-page');
 }
@@ -4570,14 +5083,12 @@ async function updateTransaction(){
  if(!amount || amount<=0 || !date)
   return toast(t('enterAmountDate'));
 
-
  const c=
  appData.clients.find(
   x=>String(x.id)===String(id)
  );
 
  if(!c)return;
-
 
  const currency=
  document.getElementById(
@@ -4593,7 +5104,6 @@ async function updateTransaction(){
 
  const dates=
  formatDates(date);
-
 
  c.transactions[index]={
 
@@ -4613,7 +5123,6 @@ async function updateTransaction(){
 
   rawDate:date
  };
-
 
  const saved=
  await saveDatatoSupabase();
@@ -4725,8 +5234,6 @@ function deleteTransaction(
    }
   }
  );
-
-
 }
 
 
@@ -4775,7 +5282,6 @@ function renderDashboard(){
 
  box.innerHTML='';
 
-
  if(!appData.clients?.length){
 
   box.innerHTML=
@@ -4789,13 +5295,11 @@ function renderDashboard(){
   return;
  }
 
-
  appData.clients.forEach(c=>{
 
   let credit=0;
   let debit=0;
   let txHtml='';
-
 
   (c.transactions||[])
   .forEach((tx,i)=>{
@@ -4806,7 +5310,6 @@ function renderDashboard(){
    else
     debit+=
     Number(tx.amountInBase)||0;
-
 
    txHtml+=
    `
@@ -4827,7 +5330,6 @@ function renderDashboard(){
 
    </b>
 
-
    <div
    style="
    font-size:14px;
@@ -4841,7 +5343,6 @@ function renderDashboard(){
    ${escapeHtml(tx.currency)}
 
    </div>
-
 
    <div class="tx-date">
 
@@ -4864,7 +5365,6 @@ function renderDashboard(){
 
    </div>
 
-
    <div
    style="
    display:flex;
@@ -4882,7 +5382,6 @@ function renderDashboard(){
    ).toFixed(0)} AFN
 
    </span>
-
 
    <div>
 
@@ -4910,7 +5409,6 @@ function renderDashboard(){
    `;
   });
 
-
   box.insertAdjacentHTML(
    'beforeend',
    `
@@ -4921,7 +5419,6 @@ function renderDashboard(){
    <div class="name">
    ${escapeHtml(c.name)}
    </div>
-
 
    <div
    style="
@@ -4937,7 +5434,6 @@ function renderDashboard(){
 
    </button>
 
-
    <div class="menu">
 
    <button
@@ -4947,7 +5443,6 @@ function renderDashboard(){
    ⋮
 
    </button>
-
 
    <div
    id="menu-${c.id}"
@@ -4968,7 +5463,6 @@ function renderDashboard(){
 
    </div>
 
-
    <div class="stats">
 
    <div class="stat">
@@ -4985,7 +5479,6 @@ function renderDashboard(){
 
    </div>
 
-
    <div class="stat">
 
    <small>${escapeHtml(t('debitLabel'))}</small>
@@ -4999,7 +5492,6 @@ function renderDashboard(){
    </b>
 
    </div>
-
 
    <div class="stat">
 
@@ -5016,7 +5508,6 @@ function renderDashboard(){
    </div>
 
    </div>
-
 
    ${
     txHtml
@@ -5063,7 +5554,6 @@ async function fetchExchangeRates(){
    7000
   );
 
-
   const response=
   await fetch(
    'https://open.er-api.com/v6/latest/AFN',
@@ -5074,10 +5564,8 @@ async function fetchExchangeRates(){
 
   clearTimeout(timer);
 
-
   const data=
   await response.json();
-
 
   if(
    data &&
@@ -5086,16 +5574,6 @@ async function fetchExchangeRates(){
   ){
 
    rates.AFN=1;
-
-   /*
-     API:
-     1 AFN -> X foreign currency
-
-     We invert:
-     1 foreign currency -> X AFN
-
-     No city-based artificial adjustment.
-   */
 
    currencyCodes.forEach(code=>{
 
@@ -5109,7 +5587,6 @@ async function fetchExchangeRates(){
     }
    });
 
-
    updateRatesDisplay();
 
   }else{
@@ -5119,17 +5596,12 @@ async function fetchExchangeRates(){
    );
   }
 
-
  }catch(error){
 
   console.warn(
    'Exchange rate error:',
    error
   );
-
-  /*
-    Never invent a rate.
-  */
 
   document.getElementById(
    'rates'
@@ -5211,7 +5683,6 @@ window.addEventListener(
    .catch(console.error);
   }
 
-
   const {
    data,
    error
@@ -5220,10 +5691,8 @@ window.addEventListener(
   .auth
   .getSession();
 
-
   if(error)
    console.error(error);
-
 
   if(
    data.session?.user
@@ -5241,10 +5710,6 @@ window.addEventListener(
    detectRealLocation(true);
 
   }else{
-
-   /*
-     Default language before login.
-   */
 
    applyLanguage();
 
