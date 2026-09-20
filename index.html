@@ -397,9 +397,9 @@
     </div>
 
     <script>
-        // تنظیمات اتصال به Supabase (اطلاعات پروژه خودت را اینجا وارد کن)
-        const SUPABASE_URL = 'https://YOUR_SUPABASE_PROJECT.supabase.co';
-        const SUPABASE_KEY = 'YOUR_SUPABASE_ANON_KEY';
+        // تنظیمات اتصال به Supabase با کلید جدید و صحیح Publishable
+        const SUPABASE_URL = 'https://hvsymjkbmpmvjycwenbd.supabase.co';
+        const SUPABASE_KEY = 'sb_publishable_9pkhkb88LNXJw457Sx8dpA_0E231JwH';
         
         // راه‌اندازی کلاینت Supabase
         const supabaseClient = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
@@ -574,7 +574,6 @@
 
                 client.transactions.forEach(tx => {
                     if (tx.type === 'credit') totalCredit += tx.amountInBase;
-                    if.type === 'debit' // safety check
                     if (tx.type === 'debit') totalDebit += tx.amountInBase;
                 });
 
