@@ -97,6 +97,7 @@
             overflow-y: auto;
             position: relative;
             padding: 20px;
+            padding-bottom: 90px; /* فضای خالی برای دکمه شناور ثابت */
         }
 
         .page {
@@ -343,10 +344,11 @@
             border: 1px solid rgba(255,255,255,0.03);
         }
 
+        /* اصلاح دکمه شناور (+) تا ثابت بماند و با اسکرول تکون نخورد */
         .fab {
-            position: absolute;
-            bottom: 24px;
-            left: 24px;
+            position: fixed;
+            bottom: 25px;
+            left: 25px;
             width: 56px;
             height: 56px;
             background-color: var(--primary);
@@ -358,7 +360,7 @@
             font-size: 28px;
             box-shadow: 0 10px 20px rgba(124, 58, 237, 0.4);
             cursor: pointer;
-            z-index: 10;
+            z-index: 99;
         }
     </style>
 </head>
@@ -399,6 +401,7 @@
 
             <div id="dashboard-page" class="page">
                 <div id="accounts-list"></div>
+                <!-- دکمه پلاس ثابت -->
                 <div class="fab" onclick="showPage('add-client-page')">+</div>
             </div>
 
@@ -549,7 +552,6 @@
         let currentUserEmail = '';
         let appData = { clients: [] };
         
-        // نرخ‌های نسبی پایه به افغانی (پیش‌فرض)
         let liveRatesToAFN = {
             AFN: 1,
             USD: 71.0,
@@ -721,7 +723,6 @@
             const amount = Number(document.getElementById('tx-amount').value);
             if (!amount || amount <= 0) return alert('لطفاً مبلغ معتبری وارد کنید.');
 
-            // تبدیل مبلغ به افغانی بر اساس واحد پول انتخاب شده
             let rateToAFN = 1;
             if (selectedCurrencyVal === 'USD') rateToAFN = liveRatesToAFN.USD;
             if (selectedCurrencyVal === 'EUR') rateToAFN = liveRatesToAFN.EUR;
@@ -836,10 +837,10 @@
                                     <span style="color:${typeColor}; font-weight:bold;">${typeText}</span>
                                     <span style="font-size:12px; font-weight:bold; color:#f8fafc;">${tx.rawAmount.toLocaleString()} ${tx.currency}</span>
                                 </div>
-                                <div style="display:flex; align-items:center; gap:8px;">
+                                <div style="display:flex; align-items:center; gap:6px;">
                                     <span style="color:var(--text-muted); font-size:10px;">(~${tx.amountInBase.toFixed(0)} افغانی)</span>
-                                    <button onclick="openEditTransactionPage(${client.id}, ${idx})" style="width:auto; padding:4px 8px; font-size:10px; background:#3b82f6; color:white; border-radius:6px;">ویرایش</button>
-                                    <button onclick="deleteTransaction(${client.id}, ${idx})" style="width:auto; padding:4px 8px; font-size:10px; background:#ef4444; color:white; border-radius:6px;">حذف</button>
+                                    <button onclick="openEditTransactionPage(${client.id}, ${idx})" style="width:auto; padding:3px 6px; font-size:10px; background:#3b82f6; color:white; border-radius:6px;">ویرایش</button>
+                                    <button onclick="deleteTransaction(${client.id}, ${idx})" style="width:auto; padding:3px 6px; font-size:10px; background:#ef4444; color:white; border-radius:6px;">حذف</button>
                                 </div>
                             </div>
                         `;
@@ -858,16 +859,16 @@
                     </div>
                     <div class="account-stats">
                         <div class="stat-box">
-                            <div class="stat-label">Credit (طلب)</div>
-                            <div class="stat-value" style="color:var(--credit-color);">${totalCreditAfn.toFixed(0)} AFN</div>
+                            <div class="stat-label">Balance (باقی)</div>
+                            <div class="stat-value" style="color:#a78bfa;">${balanceAfn.toFixed(0)} AFN</div>
                         </div>
                         <div class="stat-box">
                             <div class="stat-label">Debit (بدهی)</div>
                             <div class="stat-value" style="color:var(--debit-color);">${totalDebitAfn.toFixed(0)} AFN</div>
                         </div>
-                        <div class="stat-box" style="background:#1e293b; border-color:var(--primary);">
-                            <div class="stat-label">Balance (باقی)</div>
-                            <div class="stat-value" style="color:#a78bfa;">${balanceAfn.toFixed(0)} AFN</div>
+                        <div class="stat-box">
+                            <div class="stat-label">Credit (طلب)</div>
+                            <div class="stat-value" style="color:var(--credit-color);">${totalCreditAfn.toFixed(0)} AFN</div>
                         </div>
                     </div>
                     ${txHtml}
