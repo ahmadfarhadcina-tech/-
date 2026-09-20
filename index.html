@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html lang="fa" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>سامانه پیشرفته مدیریت معاملات صرافی</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+    <div class="app-container">
+        <!-- هدر برنامه -->
+        <header class="app-header">
+            <h1>سامانه مدیریت معاملات</h1>
+            <p>سیستم چندارزی امن و پیشرفته</p>
+        </header>
+
+        <!-- محتوای اصلی صفحات -->
+        <main class="app-content">
+            
+            <!-- صفحه اول: داشبورد و لیست تراکنش‌ها -->
+            <div id="home-page" class="page active">
+                <div class="dashboard-actions">
+                    <button class="btn-primary" onclick="switchPage('transaction-page')">
+                        <span>+ ثبت معامله جدید</span>
+                    </button>
+                </div>
+
+                <div class="transactions-section">
+                    <h3>لیست معاملات ثبت شده</h3>
+                    <div class="table-responsive">
+                        <table id="transactions-table">
+                            <thead>
+                                <tr>
+                                    <th>نام مشتری</th>
+                                    <th>واحد پول</th>
+                                    <th>مبلغ</th>
+                                    <th>تاریخ و ساعت</th>
+                                </tr>
+                            </thead>
+                            <tbody id="transaction-list-body">
+                                <!-- معاملات به صورت پویا اینجا اضافه می‌شوند -->
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+
+            <!-- صفحه دوم: فرم ثبت معامله پیشرفته -->
+            <div id="transaction-page" class="page">
+                <div class="form-card">
+                    <h2>ثبت معامله جدید</h2>
+                    
+                    <div class="input-group">
+                        <label for="client-name">نام شخص / مشتری</label>
+                        <input type="text" id="client-name" placeholder="مثلاً: احمد رضایی">
+                    </div>
+
+                    <div class="input-group">
+                        <label for="currency-type">انتخاب واحد پول</label>
+                        <select id="currency-type">
+                            <option value="USD">دلار آمریکا (USD)</option>
+                            <option value="AFN">افغانی (AFN)</option>
+                            <option value="IRT">تومان ایران (IRT)</option>
+                            <option value="EUR">یورو (EUR)</option>
+                        </select>
+                    </div>
+
+                    <div class="input-group">
+                        <label for="amount">مقدار مبلغ</label>
+                        <input type="number" id="amount" placeholder="مقدار عددی را وارد کنید...">
+                    </div>
+
+                    <div class="form-actions">
+                        <button class="btn-success" onclick="saveTransaction()">ذخیره معامله</button>
+                        <button class="btn-secondary" onclick="switchPage('home-page')">بازگشت</button>
+                    </div>
+                </div>
+            </div>
+
+        </main>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>
