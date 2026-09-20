@@ -2,7 +2,7 @@
 <html lang="fa" dir="rtl">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>Account Manager - صرافی ابری امن</title>
     
     <link rel="manifest" href="manifest.json">
@@ -31,6 +31,7 @@
             padding: 0;
             box-sizing: border-box;
             font-family: 'Tahoma', sans-serif;
+            -webkit-tap-highlight-color: transparent;
         }
 
         body {
@@ -40,13 +41,18 @@
             justify-content: center;
             align-items: center;
             min-height: 100vh;
+            min-height: -webkit-fill-available;
+        }
+
+        html {
+            height: -webkit-fill-available;
         }
 
         .app-container {
             width: 100%;
             max-width: 480px;
             height: 100vh;
-            max-height: 900px;
+            height: -webkit-fill-available;
             background: var(--card-bg);
             box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.7);
             display: flex;
@@ -71,6 +77,7 @@
             justify-content: space-between;
             align-items: center;
             border-bottom: 1px solid var(--border-color);
+            z-index: 10;
         }
 
         .app-header h1 {
@@ -90,6 +97,7 @@
             align-items: center;
             overflow-x: auto;
             white-space: nowrap;
+            z-index: 10;
         }
 
         .app-content {
@@ -97,7 +105,8 @@
             overflow-y: auto;
             position: relative;
             padding: 20px;
-            padding-bottom: 90px; /* فضای خالی برای دکمه شناور ثابت */
+            padding-bottom: 100px; /* فضای کافی زیر لیست برای دکمه پلاس ثابت */
+            -webkit-overflow-scrolling: touch;
         }
 
         .page {
@@ -165,7 +174,6 @@
 
         .btn-primary:hover {
             background-color: var(--primary-dark);
-            transform: translateY(-1px);
         }
 
         .custom-select-trigger {
@@ -180,11 +188,6 @@
             justify-content: space-between;
             align-items: center;
             cursor: pointer;
-            transition: 0.2s;
-        }
-
-        .custom-select-trigger:hover {
-            border-color: var(--primary);
         }
 
         .modal-overlay {
@@ -201,7 +204,7 @@
             opacity: 0;
             pointer-events: none;
             transition: all 0.35s cubic-bezier(0.16, 1, 0.3, 1);
-            z-index: 100;
+            z-index: 1000;
         }
 
         .modal-overlay.active {
@@ -283,6 +286,7 @@
             border-radius: var(--radius);
             padding: 16px;
             margin-bottom: 14px;
+            position: relative;
         }
 
         .account-header {
@@ -344,11 +348,11 @@
             border: 1px solid rgba(255,255,255,0.03);
         }
 
-        /* اصلاح دکمه شناور (+) تا ثابت بماند و با اسکرول تکون نخورد */
+        /* دکمه شناور پلاس کاملاً فیکس و بیرون از بخش اسکرول‌شونده */
         .fab {
             position: fixed;
-            bottom: 25px;
-            left: 25px;
+            bottom: 24px;
+            left: 24px;
             width: 56px;
             height: 56px;
             background-color: var(--primary);
@@ -358,9 +362,71 @@
             justify-content: center;
             align-items: center;
             font-size: 28px;
-            box-shadow: 0 10px 20px rgba(124, 58, 237, 0.4);
+            box-shadow: 0 10px 25px rgba(124, 58, 237, 0.6);
             cursor: pointer;
-            z-index: 99;
+            z-index: 999;
+        }
+
+        /* استایل منوی سه نقطه */
+        .menu-container {
+            position: relative;
+            display: inline-block;
+        }
+
+        .menu-dots-btn {
+            background: transparent;
+            color: var(--text-muted);
+            border: none;
+            font-size: 18px;
+            padding: 4px 8px;
+            cursor: pointer;
+            border-radius: 50%;
+            width: 32px;
+            height: 32px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .menu-dots-btn:hover {
+            background: rgba(255, 255, 255, 0.05);
+            color: var(--text-color);
+        }
+
+        .dropdown-menu {
+            position: absolute;
+            left: 0;
+            top: 36px;
+            background: #1e293b;
+            border: 1px solid var(--border-color);
+            border-radius: 12px;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.5);
+            display: none;
+            z-index: 50;
+            min-width: 140px;
+            overflow: hidden;
+        }
+
+        .dropdown-menu.active {
+            display: block;
+        }
+
+        .dropdown-item {
+            padding: 10px 14px;
+            font-size: 12px;
+            color: var(--debit-color);
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            background: transparent;
+            width: 100%;
+            text-align: right;
+            border: none;
+        }
+
+        .dropdown-item:hover {
+            background: rgba(239, 68, 68, 0.1);
         }
     </style>
 </head>
@@ -401,8 +467,6 @@
 
             <div id="dashboard-page" class="page">
                 <div id="accounts-list"></div>
-                <!-- دکمه پلاس ثابت -->
-                <div class="fab" onclick="showPage('add-client-page')">+</div>
             </div>
 
             <div id="add-client-page" class="page">
@@ -444,7 +508,6 @@
                 <button onclick="showPage('dashboard-page')" style="background:transparent; color:var(--text-muted); margin-top:10px;">بازگشت</button>
             </div>
 
-            <!-- صفحه ویرایش معامله -->
             <div id="edit-transaction-page" class="page">
                 <h2 style="font-size: 16px; margin-bottom: 16px;">ویرایش معامله</h2>
                 <input type="hidden" id="edit-client-id">
@@ -477,7 +540,10 @@
 
         </main>
 
-        <!-- پنجره مدرن انتخاب واحد پول (ثبت) -->
+        <!-- دکمه پلاس ثابت (حالا بیرون از محتواست و کاملاً فیکس میماند) -->
+        <div id="floating-add-btn" class="fab" onclick="showPage('add-client-page')" style="display: none;">+</div>
+
+        <!-- مودال‌ها -->
         <div id="currency-modal" class="modal-overlay" onclick="closeModal(event, 'currency-modal')">
             <div class="modal-content">
                 <div class="modal-header">
@@ -492,7 +558,6 @@
             </div>
         </div>
 
-        <!-- پنجره مدرن انتخاب نوع معامله (ثبت) -->
         <div id="txtype-modal" class="modal-overlay" onclick="closeModal(event, 'txtype-modal')">
             <div class="modal-content">
                 <div class="modal-header">
@@ -504,7 +569,6 @@
             </div>
         </div>
 
-        <!-- پنجره مدرن انتخاب واحد پول (ویرایش) -->
         <div id="edit-currency-modal" class="modal-overlay" onclick="closeModal(event, 'edit-currency-modal')">
             <div class="modal-content">
                 <div class="modal-header">
@@ -519,7 +583,6 @@
             </div>
         </div>
 
-        <!-- پنجره مدرن انتخاب نوع معامله (ویرایش) -->
         <div id="edit-txtype-modal" class="modal-overlay" onclick="closeModal(event, 'edit-txtype-modal')">
             <div class="modal-content">
                 <div class="modal-header">
@@ -545,20 +608,12 @@
 
         let selectedCurrencyVal = 'AFN';
         let selectedTxTypeVal = 'credit';
-        
         let editSelectedCurrencyVal = 'AFN';
         let editSelectedTxTypeVal = 'credit';
-
         let currentUserEmail = '';
         let appData = { clients: [] };
         
-        let liveRatesToAFN = {
-            AFN: 1,
-            USD: 71.0,
-            EUR: 77.0,
-            TRY: 2.2,
-            IRR: 0.0017
-        };
+        let liveRatesToAFN = { AFN: 1, USD: 71.0, EUR: 77.0, TRY: 2.2, IRR: 0.0017 };
 
         async function fetchLiveExchangeRates() {
             try {
@@ -579,9 +634,7 @@
                         <span>🇹🇷 لیر: ${(liveRatesToAFN.TRY).toFixed(2)}</span>
                     `;
                 }
-            } catch (e) {
-                console.log('استفاده از نرخ‌های پیش‌فرض.');
-            }
+            } catch (e) { console.log('خطا در دریافت نرخ.'); }
         }
 
         document.addEventListener('DOMContentLoaded', async () => {
@@ -603,6 +656,14 @@
         function showPage(pageId) {
             document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
             document.getElementById(pageId).classList.add('active');
+            
+            // نمایش یا عدم نمایش دکمه شناور پلاس بسته به صفحه فعلی
+            const fab = document.getElementById('floating-add-btn');
+            if (pageId === 'dashboard-page' && currentUserEmail) {
+                fab.style.display = 'flex';
+            } else {
+                fab.style.display = 'none';
+            }
         }
 
         function openModal(modalId) { document.getElementById(modalId).classList.add('active'); }
@@ -639,10 +700,7 @@
         async function handleSignUp() {
             const email = document.getElementById('auth-email').value.trim();
             const password = document.getElementById('auth-password').value.trim();
-            if (!email || password.length < 6) {
-                alert('لطفاً ایمیل معتبر و پسورد حداقل ۶ کاراکتری وارد کنید.');
-                return;
-            }
+            if (!email || password.length < 6) return alert('ایمیل معتبر و پسورد حداقل ۶ کاراکتری وارد کنید.');
             const { error } = await supabaseClient.auth.signUp({ email, password });
             if (error) alert('خطا: ' + error.message);
             else alert('ثبت‌نام انجام شد! ایمیل تایید را بررسی کنید.');
@@ -683,9 +741,7 @@
                     appData = { clients: [] };
                     await saveDatatoSupabase();
                 }
-            } catch (err) {
-                appData = { clients: [] };
-            }
+            } catch (err) { appData = { clients: [] }; }
             renderDashboard();
         }
 
@@ -708,6 +764,31 @@
             showPage('dashboard-page');
         }
 
+        // تابع حذف کل حساب مشتری
+        async function deleteClient(clientId) {
+            if (!confirm('آیا از حذف این حساب و تمام معاملات آن مطمئن هستید؟')) return;
+            
+            appData.clients = appData.clients.filter(c => c.id !== clientId);
+            await saveDatatoSupabase();
+            renderDashboard();
+        }
+
+        // مدیریت باز و بسته شدن منوی سه نقطه
+        function toggleClientMenu(event, clientId) {
+            event.stopPropagation();
+            // بستن سایر منوهای باز
+            document.querySelectorAll('.dropdown-menu').forEach(m => {
+                if (m.id !== 'menu-' + clientId) m.classList.remove('active');
+            });
+            const menu = document.getElementById('menu-' + clientId);
+            menu.classList.toggle('active');
+        }
+
+        // بستن منوها با کلیک در جای دیگر صفحه
+        window.addEventListener('click', () => {
+            document.querySelectorAll('.dropdown-menu').forEach(m => m.classList.remove('active'));
+        });
+
         function openTransactionPage(clientId) {
             document.getElementById('active-client-id').value = clientId;
             selectedCurrencyVal = 'AFN';
@@ -721,7 +802,7 @@
         async function saveTransaction() {
             const clientId = Number(document.getElementById('active-client-id').value);
             const amount = Number(document.getElementById('tx-amount').value);
-            if (!amount || amount <= 0) return alert('لطفاً مبلغ معتبری وارد کنید.');
+            if (!amount || amount <= 0) return alert('مبلغ معتبری وارد کنید.');
 
             let rateToAFN = 1;
             if (selectedCurrencyVal === 'USD') rateToAFN = liveRatesToAFN.USD;
@@ -729,14 +810,12 @@
             if (selectedCurrencyVal === 'TRY') rateToAFN = liveRatesToAFN.TRY;
             if (selectedCurrencyVal === 'IRR') rateToAFN = liveRatesToAFN.IRR;
 
-            const amountInAfn = amount * rateToAFN;
-
             const client = appData.clients.find(c => c.id === clientId);
             client.transactions.push({
                 type: selectedTxTypeVal,
                 currency: selectedCurrencyVal,
                 rawAmount: amount,
-                amountInBase: amountInAfn,
+                amountInBase: amount * rateToAFN,
                 date: new Date().toLocaleDateString('fa-IR')
             });
 
@@ -782,14 +861,12 @@
             if (editSelectedCurrencyVal === 'TRY') rateToAFN = liveRatesToAFN.TRY;
             if (editSelectedCurrencyVal === 'IRR') rateToAFN = liveRatesToAFN.IRR;
 
-            const amountInAfn = amount * rateToAFN;
-
             const client = appData.clients.find(c => c.id === clientId);
             client.transactions[txIndex] = {
                 type: editSelectedTxTypeVal,
                 currency: editSelectedCurrencyVal,
                 rawAmount: amount,
-                amountInBase: amountInAfn,
+                amountInBase: amount * rateToAFN,
                 date: client.transactions[txIndex].date || new Date().toLocaleDateString('fa-IR')
             };
 
@@ -800,10 +877,8 @@
 
         async function deleteTransaction(clientId, txIndex) {
             if (!confirm('آیا از حذف این معامله مطمئن هستید؟')) return;
-
             const client = appData.clients.find(c => c.id === clientId);
             client.transactions.splice(txIndex, 1);
-
             await saveDatatoSupabase();
             renderDashboard();
         }
@@ -838,7 +913,7 @@
                                     <span style="font-size:12px; font-weight:bold; color:#f8fafc;">${tx.rawAmount.toLocaleString()} ${tx.currency}</span>
                                 </div>
                                 <div style="display:flex; align-items:center; gap:6px;">
-                                    <span style="color:var(--text-muted); font-size:10px;">(~${tx.amountInBase.toFixed(0)} افغانی)</span>
+                                    <span style="color:var(--text-muted); font-size:10px;">(~${tx.amountInBase.toFixed(0)} AFN)</span>
                                     <button onclick="openEditTransactionPage(${client.id}, ${idx})" style="width:auto; padding:3px 6px; font-size:10px; background:#3b82f6; color:white; border-radius:6px;">ویرایش</button>
                                     <button onclick="deleteTransaction(${client.id}, ${idx})" style="width:auto; padding:3px 6px; font-size:10px; background:#ef4444; color:white; border-radius:6px;">حذف</button>
                                 </div>
@@ -854,8 +929,18 @@
                 card.className = 'account-card';
                 card.innerHTML = `
                     <div class="account-header">
-                        <span class="account-name">${client.name}</span>
-                        <button onclick="openTransactionPage(${client.id})" style="width:auto; padding:6px 12px; font-size:11px;" class="btn-primary">+ معامله</button>
+                        <div style="display:flex; align-items:center; gap:8px;">
+                            <span class="account-name">${client.name}</span>
+                        </div>
+                        <div style="display:flex; align-items:center; gap:8px;">
+                            <button onclick="openTransactionPage(${client.id})" style="width:auto; padding:6px 12px; font-size:11px;" class="btn-primary">+ معامله</button>
+                            <div class="menu-container">
+                                <button class="menu-dots-btn" onclick="toggleClientMenu(event, ${client.id})">⋮</button>
+                                <div id="menu-${client.id}" class="dropdown-menu">
+                                    <button class="dropdown-item" onclick="deleteClient(${client.id})">🗑️ حذف حساب کل</button>
+                                </div>
+                            </div>
+                        </div>
                     </div>
                     <div class="account-stats">
                         <div class="stat-box">
