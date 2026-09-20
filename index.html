@@ -186,7 +186,6 @@
             border-color: var(--primary);
         }
 
-        /* طراحی مدرن و زیبای پنجره‌های بازشو (مُدال) */
         .modal-overlay {
             position: absolute;
             top: 0;
@@ -320,7 +319,7 @@
         }
 
         .stat-value {
-            font-size: 12px;
+            font-size: 11px;
             font-weight: bold;
         }
 
@@ -328,7 +327,7 @@
             border-top: 1px solid var(--border-color);
             padding-top: 10px;
             margin-top: 8px;
-            max-height: 150px;
+            max-height: 180px;
             overflow-y: auto;
         }
 
@@ -337,7 +336,7 @@
             justify-content: space-between;
             align-items: center;
             font-size: 11px;
-            padding: 6px 8px;
+            padding: 8px 10px;
             background: #1e293b;
             border-radius: 8px;
             margin-bottom: 6px;
@@ -428,7 +427,7 @@
                 <div class="input-group">
                     <label>واحد پول معامله</label>
                     <div class="custom-select-trigger" onclick="openModal('currency-modal')">
-                        <span id="selected-currency-text">دلار آمریکا (USD)</span>
+                        <span id="selected-currency-text">افغانی (AFN)</span>
                         <span>▼</span>
                     </div>
                 </div>
@@ -442,24 +441,55 @@
                 <button onclick="showPage('dashboard-page')" style="background:transparent; color:var(--text-muted); margin-top:10px;">بازگشت</button>
             </div>
 
+            <!-- صفحه ویرایش معامله -->
+            <div id="edit-transaction-page" class="page">
+                <h2 style="font-size: 16px; margin-bottom: 16px;">ویرایش معامله</h2>
+                <input type="hidden" id="edit-client-id">
+                <input type="hidden" id="edit-tx-index">
+
+                <div class="input-group">
+                    <label>نوع معامله</label>
+                    <div class="custom-select-trigger" onclick="openModal('edit-txtype-modal')">
+                        <span id="edit-selected-txtype-text">طلب / بستانکاری (Credit ↑)</span>
+                        <span>▼</span>
+                    </div>
+                </div>
+
+                <div class="input-group">
+                    <label>واحد پول معامله</label>
+                    <div class="custom-select-trigger" onclick="openModal('edit-currency-modal')">
+                        <span id="edit-selected-currency-text">افغانی (AFN)</span>
+                        <span>▼</span>
+                    </div>
+                </div>
+
+                <div class="input-group">
+                    <label>مقدار مبلغ</label>
+                    <input type="number" id="edit-tx-amount" placeholder="مقدار جدید...">
+                </div>
+
+                <button class="btn-primary" onclick="updateTransaction()">به‌روزرسانی معامله</button>
+                <button onclick="showPage('dashboard-page')" style="background:transparent; color:var(--text-muted); margin-top:10px;">انصراف</button>
+            </div>
+
         </main>
 
-        <!-- پنجره مدرن انتخاب واحد پول -->
+        <!-- پنجره مدرن انتخاب واحد پول (ثبت) -->
         <div id="currency-modal" class="modal-overlay" onclick="closeModal(event, 'currency-modal')">
             <div class="modal-content">
                 <div class="modal-header">
                     <h3>انتخاب واحد پول</h3>
                     <button class="modal-close-btn" onclick="document.getElementById('currency-modal').classList.remove('active')">✕</button>
                 </div>
+                <div class="modal-option" onclick="selectCurrency('AFN', 'افغانی (AFN)')"><span>افغانی</span> <span>AFN</span></div>
                 <div class="modal-option" onclick="selectCurrency('USD', 'دلار آمریکا (USD)')"><span>دلار آمریکا</span> <span>USD</span></div>
                 <div class="modal-option" onclick="selectCurrency('EUR', 'یورو (EUR)')"><span>یورو</span> <span>EUR</span></div>
                 <div class="modal-option" onclick="selectCurrency('TRY', 'لیر ترکیه (TRY)')"><span>لیر ترکیه</span> <span>TRY</span></div>
-                <div class="modal-option" onclick="selectCurrency('AFN', 'افغانی (AFN)')"><span>افغانی</span> <span>AFN</span></div>
                 <div class="modal-option" onclick="selectCurrency('IRR', 'ریال / تومان (IRR)')"><span>ریال / تومان</span> <span>IRR</span></div>
             </div>
         </div>
 
-        <!-- پنجره مدرن انتخاب نوع معامله -->
+        <!-- پنجره مدرن انتخاب نوع معامله (ثبت) -->
         <div id="txtype-modal" class="modal-overlay" onclick="closeModal(event, 'txtype-modal')">
             <div class="modal-content">
                 <div class="modal-header">
@@ -468,6 +498,33 @@
                 </div>
                 <div class="modal-option" onclick="selectTxType('credit', 'طلب / بستانکاری (Credit ↑)')" style="color:var(--credit-color);"><span>طلب / بستانکاری (↑)</span> <span>Credit</span></div>
                 <div class="modal-option" onclick="selectTxType('debit', 'بدهی (Debit ↓)')" style="color:var(--debit-color);"><span>بدهی (↓)</span> <span>Debit</span></div>
+            </div>
+        </div>
+
+        <!-- پنجره مدرن انتخاب واحد پول (ویرایش) -->
+        <div id="edit-currency-modal" class="modal-overlay" onclick="closeModal(event, 'edit-currency-modal')">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h3>انتخاب واحد پول</h3>
+                    <button class="modal-close-btn" onclick="document.getElementById('edit-currency-modal').classList.remove('active')">✕</button>
+                </div>
+                <div class="modal-option" onclick="selectEditCurrency('AFN', 'افغانی (AFN)')"><span>افغانی</span> <span>AFN</span></div>
+                <div class="modal-option" onclick="selectEditCurrency('USD', 'دلار آمریکا (USD)')"><span>دلار آمریکا</span> <span>USD</span></div>
+                <div class="modal-option" onclick="selectEditCurrency('EUR', 'یورو (EUR)')"><span>یورو</span> <span>EUR</span></div>
+                <div class="modal-option" onclick="selectEditCurrency('TRY', 'لیر ترکیه (TRY)')"><span>لیر ترکیه</span> <span>TRY</span></div>
+                <div class="modal-option" onclick="selectEditCurrency('IRR', 'ریال / تومان (IRR)')"><span>ریال / تومان</span> <span>IRR</span></div>
+            </div>
+        </div>
+
+        <!-- پنجره مدرن انتخاب نوع معامله (ویرایش) -->
+        <div id="edit-txtype-modal" class="modal-overlay" onclick="closeModal(event, 'edit-txtype-modal')">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h3>انتخاب نوع معامله</h3>
+                    <button class="modal-close-btn" onclick="document.getElementById('edit-txtype-modal').classList.remove('active')">✕</button>
+                </div>
+                <div class="modal-option" onclick="selectEditTxType('credit', 'طلب / بستانکاری (Credit ↑)')" style="color:var(--credit-color);"><span>طلب / بستانکاری (↑)</span> <span>Credit</span></div>
+                <div class="modal-option" onclick="selectEditTxType('debit', 'بدهی (Debit ↓)')" style="color:var(--debit-color);"><span>بدهی (↓)</span> <span>Debit</span></div>
             </div>
         </div>
     </div>
@@ -483,29 +540,41 @@
         const SUPABASE_KEY = 'sb_publishable_9pkhkb88LNXJw457Sx8dpA_0E231JwH';
         const supabaseClient = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
 
-        let selectedCurrencyVal = 'USD';
+        let selectedCurrencyVal = 'AFN';
         let selectedTxTypeVal = 'credit';
+        
+        let editSelectedCurrencyVal = 'AFN';
+        let editSelectedTxTypeVal = 'credit';
+
         let currentUserEmail = '';
         let appData = { clients: [] };
         
-        let liveRates = { USD: 1, EUR: 0.92, TRY: 32.5, AFN: 71, IRR: 420000 };
+        // نرخ‌های نسبی پایه به افغانی (پیش‌فرض)
+        let liveRatesToAFN = {
+            AFN: 1,
+            USD: 71.0,
+            EUR: 77.0,
+            TRY: 2.2,
+            IRR: 0.0017
+        };
 
         async function fetchLiveExchangeRates() {
             try {
                 const response = await fetch('https://open.er-api.com/v6/latest/USD');
                 const data = await response.json();
                 if (data && data.rates) {
-                    liveRates.USD = 1;
-                    liveRates.EUR = data.rates.EUR || 0.92;
-                    liveRates.TRY = data.rates.TRY || 32.5;
-                    liveRates.AFN = data.rates.AFN || 71;
-                    liveRates.IRR = data.rates.IRR || 420000;
+                    const usdToAfn = data.rates.AFN || 71.0;
+                    liveRatesToAFN.USD = usdToAfn;
+                    liveRatesToAFN.EUR = usdToAfn / (data.rates.EUR || 0.92);
+                    liveRatesToAFN.TRY = usdToAfn / (data.rates.TRY || 32.5);
+                    liveRatesToAFN.IRR = usdToAfn / (data.rates.IRR || 420000);
+                    liveRatesToAFN.AFN = 1;
                     
                     document.getElementById('rates-ticker-bar').innerHTML = `
-                        <span>💵 دلار: پایه</span>
-                        <span>💶 یورو: ${liveRates.EUR.toFixed(2)}</span>
-                        <span>🇹🇷 لیر: ${liveRates.TRY.toFixed(1)}</span>
-                        <span>🇦🇫 افغانی: ${liveRates.AFN.toFixed(1)}</span>
+                        <span>🇦🇫 افغانی: پایه</span>
+                        <span>💵 دلار: ${(usdToAfn).toFixed(1)}</span>
+                        <span>💶 یورو: ${(liveRatesToAFN.EUR).toFixed(1)}</span>
+                        <span>🇹🇷 لیر: ${(liveRatesToAFN.TRY).toFixed(2)}</span>
                     `;
                 }
             } catch (e) {
@@ -551,6 +620,18 @@
             selectedTxTypeVal = type;
             document.getElementById('selected-txtype-text').innerText = label;
             document.getElementById('txtype-modal').classList.remove('active');
+        }
+
+        function selectEditCurrency(code, label) {
+            editSelectedCurrencyVal = code;
+            document.getElementById('edit-selected-currency-text').innerText = label;
+            document.getElementById('edit-currency-modal').classList.remove('active');
+        }
+
+        function selectEditTxType(type, label) {
+            editSelectedTxTypeVal = type;
+            document.getElementById('edit-selected-txtype-text').innerText = label;
+            document.getElementById('edit-txtype-modal').classList.remove('active');
         }
 
         async function handleSignUp() {
@@ -627,6 +708,11 @@
 
         function openTransactionPage(clientId) {
             document.getElementById('active-client-id').value = clientId;
+            selectedCurrencyVal = 'AFN';
+            selectedTxTypeVal = 'credit';
+            document.getElementById('selected-currency-text').innerText = 'افغانی (AFN)';
+            document.getElementById('selected-txtype-text').innerText = 'طلب / بستانکاری (Credit ↑)';
+            document.getElementById('tx-amount').value = '';
             showPage('transaction-page');
         }
 
@@ -635,20 +721,21 @@
             const amount = Number(document.getElementById('tx-amount').value);
             if (!amount || amount <= 0) return alert('لطفاً مبلغ معتبری وارد کنید.');
 
-            let rateToUSD = 1;
-            if (selectedCurrencyVal === 'EUR') rateToUSD = 1 / liveRates.EUR;
-            if (selectedCurrencyVal === 'TRY') rateToUSD = 1 / liveRates.TRY;
-            if (selectedCurrencyVal === 'AFN') rateToUSD = 1 / liveRates.AFN;
-            if (selectedCurrencyVal === 'IRR') rateToUSD = 1 / liveRates.IRR;
+            // تبدیل مبلغ به افغانی بر اساس واحد پول انتخاب شده
+            let rateToAFN = 1;
+            if (selectedCurrencyVal === 'USD') rateToAFN = liveRatesToAFN.USD;
+            if (selectedCurrencyVal === 'EUR') rateToAFN = liveRatesToAFN.EUR;
+            if (selectedCurrencyVal === 'TRY') rateToAFN = liveRatesToAFN.TRY;
+            if (selectedCurrencyVal === 'IRR') rateToAFN = liveRatesToAFN.IRR;
 
-            const amountInUSD = amount * rateToUSD;
+            const amountInAfn = amount * rateToAFN;
 
             const client = appData.clients.find(c => c.id === clientId);
             client.transactions.push({
                 type: selectedTxTypeVal,
                 currency: selectedCurrencyVal,
                 rawAmount: amount,
-                amountInBase: amountInUSD,
+                amountInBase: amountInAfn,
                 date: new Date().toLocaleDateString('fa-IR')
             });
 
@@ -656,6 +743,68 @@
             document.getElementById('tx-amount').value = '';
             renderDashboard();
             showPage('dashboard-page');
+        }
+
+        function openEditTransactionPage(clientId, txIndex) {
+            const client = appData.clients.find(c => c.id === clientId);
+            const tx = client.transactions[txIndex];
+
+            document.getElementById('edit-client-id').value = clientId;
+            document.getElementById('edit-tx-index').value = txIndex;
+            document.getElementById('edit-tx-amount').value = tx.rawAmount;
+
+            editSelectedCurrencyVal = tx.currency;
+            editSelectedTxTypeVal = tx.type;
+
+            let currLabel = 'افغانی (AFN)';
+            if (tx.currency === 'USD') currLabel = 'دلار آمریکا (USD)';
+            if (tx.currency === 'EUR') currLabel = 'یورو (EUR)';
+            if (tx.currency === 'TRY') currLabel = 'لیر ترکیه (TRY)';
+            if (tx.currency === 'IRR') currLabel = 'ریال / تومان (IRR)';
+            document.getElementById('edit-selected-currency-text').innerText = currLabel;
+
+            let typeLabel = tx.type === 'credit' ? 'طلب / بستانکاری (Credit ↑)' : 'بدهی (Debit ↓)';
+            document.getElementById('edit-selected-txtype-text').innerText = typeLabel;
+
+            showPage('edit-transaction-page');
+        }
+
+        async function updateTransaction() {
+            const clientId = Number(document.getElementById('edit-client-id').value);
+            const txIndex = Number(document.getElementById('edit-tx-index').value);
+            const amount = Number(document.getElementById('edit-tx-amount').value);
+            if (!amount || amount <= 0) return alert('مبلغ معتبری وارد کنید.');
+
+            let rateToAFN = 1;
+            if (editSelectedCurrencyVal === 'USD') rateToAFN = liveRatesToAFN.USD;
+            if (editSelectedCurrencyVal === 'EUR') rateToAFN = liveRatesToAFN.EUR;
+            if (editSelectedCurrencyVal === 'TRY') rateToAFN = liveRatesToAFN.TRY;
+            if (editSelectedCurrencyVal === 'IRR') rateToAFN = liveRatesToAFN.IRR;
+
+            const amountInAfn = amount * rateToAFN;
+
+            const client = appData.clients.find(c => c.id === clientId);
+            client.transactions[txIndex] = {
+                type: editSelectedTxTypeVal,
+                currency: editSelectedCurrencyVal,
+                rawAmount: amount,
+                amountInBase: amountInAfn,
+                date: client.transactions[txIndex].date || new Date().toLocaleDateString('fa-IR')
+            };
+
+            await saveDatatoSupabase();
+            renderDashboard();
+            showPage('dashboard-page');
+        }
+
+        async function deleteTransaction(clientId, txIndex) {
+            if (!confirm('آیا از حذف این معامله مطمئن هستید؟')) return;
+
+            const client = appData.clients.find(c => c.id === clientId);
+            client.transactions.splice(txIndex, 1);
+
+            await saveDatatoSupabase();
+            renderDashboard();
         }
 
         function renderDashboard() {
@@ -668,31 +817,37 @@
             }
 
             appData.clients.forEach(client => {
-                let totalCredit = 0;
-                let totalDebit = 0;
+                let totalCreditAfn = 0;
+                let totalDebitAfn = 0;
                 let txHtml = '';
 
                 if (client.transactions && client.transactions.length > 0) {
                     txHtml = `<div class="transactions-list">`;
-                    client.transactions.forEach(tx => {
-                        if (tx.type === 'credit') totalCredit += tx.amountInBase;
-                        if (tx.type === 'debit') totalDebit += tx.amountInBase;
+                    client.transactions.forEach((tx, idx) => {
+                        if (tx.type === 'credit') totalCreditAfn += tx.amountInBase;
+                        if (tx.type === 'debit') totalDebitAfn += tx.amountInBase;
 
                         const typeText = tx.type === 'credit' ? 'طلب (↑)' : 'بدهی (↓)';
                         const typeColor = tx.type === 'credit' ? 'var(--credit-color)' : 'var(--debit-color)';
                         
                         txHtml += `
                             <div class="tx-item">
-                                <span style="color:${typeColor}; font-weight:bold;">${typeText}</span>
-                                <span>${tx.rawAmount.toLocaleString()} ${tx.currency}</span>
-                                <span style="color:var(--text-muted); font-size:10px;">($${tx.amountInBase.toFixed(2)})</span>
+                                <div style="display:flex; flex-direction:column; gap:2px;">
+                                    <span style="color:${typeColor}; font-weight:bold;">${typeText}</span>
+                                    <span style="font-size:12px; font-weight:bold; color:#f8fafc;">${tx.rawAmount.toLocaleString()} ${tx.currency}</span>
+                                </div>
+                                <div style="display:flex; align-items:center; gap:8px;">
+                                    <span style="color:var(--text-muted); font-size:10px;">(~${tx.amountInBase.toFixed(0)} افغانی)</span>
+                                    <button onclick="openEditTransactionPage(${client.id}, ${idx})" style="width:auto; padding:4px 8px; font-size:10px; background:#3b82f6; color:white; border-radius:6px;">ویرایش</button>
+                                    <button onclick="deleteTransaction(${client.id}, ${idx})" style="width:auto; padding:4px 8px; font-size:10px; background:#ef4444; color:white; border-radius:6px;">حذف</button>
+                                </div>
                             </div>
                         `;
                     });
                     txHtml += `</div>`;
                 }
 
-                let balance = totalCredit - totalDebit;
+                let balanceAfn = totalCreditAfn - totalDebitAfn;
 
                 const card = document.createElement('div');
                 card.className = 'account-card';
@@ -703,16 +858,16 @@
                     </div>
                     <div class="account-stats">
                         <div class="stat-box">
-                            <div class="stat-label">Credit</div>
-                            <div class="stat-value" style="color:var(--credit-color);">$${totalCredit.toFixed(2)}</div>
+                            <div class="stat-label">Credit (طلب)</div>
+                            <div class="stat-value" style="color:var(--credit-color);">${totalCreditAfn.toFixed(0)} AFN</div>
                         </div>
                         <div class="stat-box">
-                            <div class="stat-label">Debit</div>
-                            <div class="stat-value" style="color:var(--debit-color);">$${totalDebit.toFixed(2)}</div>
+                            <div class="stat-label">Debit (بدهی)</div>
+                            <div class="stat-value" style="color:var(--debit-color);">${totalDebitAfn.toFixed(0)} AFN</div>
                         </div>
                         <div class="stat-box" style="background:#1e293b; border-color:var(--primary);">
-                            <div class="stat-label">Balance</div>
-                            <div class="stat-value" style="color:#a78bfa;">$${balance.toFixed(2)}</div>
+                            <div class="stat-label">Balance (باقی)</div>
+                            <div class="stat-value" style="color:#a78bfa;">${balanceAfn.toFixed(0)} AFN</div>
                         </div>
                     </div>
                     ${txHtml}
