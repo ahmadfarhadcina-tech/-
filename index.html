@@ -110,7 +110,7 @@
             color: #38bdf8;
             border-bottom: 1px solid var(--border-color);
             display: flex;
-            justify-content: space-between;
+            justify-content: space-around;
             align-items: center;
             overflow-x: auto;
             white-space: nowrap;
@@ -370,10 +370,11 @@
             border-top: 1px solid var(--border-color);
             padding-top: 12px;
             margin-top: 10px;
-            max-height: 220px;
+            max-height: 250px;
             overflow-y: auto;
         }
 
+        /* استایل مرتب ۳ تاریخ در ۳ ردیف جداگانه داخل کارت */
         .tx-item {
             display: flex;
             justify-content: space-between;
@@ -383,6 +384,21 @@
             background: #1e293b;
             border-radius: 10px;
             margin-bottom: 8px;
+            border: 1px solid rgba(255,255,255,0.03);
+        }
+
+        .tx-date-box {
+            display: flex;
+            flex-direction: column;
+            gap: 2px;
+            margin-top: 4px;
+            font-size: 11px;
+            color: #38bdf8;
+            background: rgba(15, 23, 42, 0.6);
+            padding: 4px 8px;
+            border-radius: 6px;
+            border: 1px solid var(--border-color);
+            width: fit-content;
         }
 
         .fab {
@@ -503,8 +519,9 @@
             </div>
         </header>
 
+        <!-- تیکر نرخ اسعار (بدون نمایش نام ولایت در صفحه) -->
         <div class="rates-ticker" id="rates-ticker-bar">
-            <span id="ticker-loading">🔄 تشخیص موقعیت و دریافت نرخ اسعار (افغان رید)...</span>
+            <span id="ticker-loading">🔄 در حال دریافت نرخ اسعار...</span>
         </div>
 
         <main class="app-content">
@@ -529,7 +546,7 @@
                 </div>
             </div>
 
-            <!-- صفحه پروفایل شخصی -->
+            <!-- صفحه تنظیمات پروفایل (ذخیره مستقیم در Supabase) -->
             <div id="profile-page" class="page">
                 <div style="max-width: 450px; margin: 10px auto; width: 100%;">
                     <h2 style="font-size: 18px; margin-bottom: 20px; color: var(--primary);" data-i18n="profile_settings_title">Profile Settings</h2>
@@ -553,7 +570,7 @@
                     </div>
 
                     <div class="input-group">
-                        <label data-i18n="profile_location_label">City / ولایت (محلی نرخ‌دهی)</label>
+                        <label data-i18n="profile_location_label">City / ولایت (تنظیم نرخ صرافی پشت صحنه)</label>
                         <select id="user-profile-location">
                             <option value="Kabul">کابل (Kabul)</option>
                             <option value="Kandahar">قندهار (Kandahar)</option>
@@ -756,7 +773,7 @@
                 appName: "Daily Accounting",
                 pageTitle: "Daily Accounting",
                 logout: "Logout",
-                tickerLoading: "🔄 Detecting location & fetching rates...",
+                tickerLoading: "🔄 Fetching live exchange rates...",
                 loginTitle: "Sign In or Register",
                 loginDesc: "Log in to access your cloud accounts.",
                 emailLabel: "Email Address",
@@ -806,7 +823,7 @@
                 appName: "محاسبات روزانه",
                 pageTitle: "محاسبات روزانه",
                 logout: "خروج",
-                tickerLoading: "🔄 در حال تشخیص موقعیت و دریافت نرخ اسعار...",
+                tickerLoading: "🔄 در حال دریافت نرخ اسعار...",
                 loginTitle: "ورود یا ثبت‌نام در برنامه",
                 loginDesc: "برای دسترسی به حساب‌های ابری خود وارد شوید.",
                 emailLabel: "آدرس ایمیل",
@@ -909,7 +926,7 @@
         let userProfile = {
             name: '',
             phone: '',
-            location: 'Kabul',
+            location: 'Jawzjan',
             avatar: '',
             themeColor: '#7c3aed',
             language: 'en'
@@ -919,12 +936,12 @@
         let liveRatesToAFN = { AFN: 1, USD: 71.0, EUR: 77.0, TRY: 2.2 };
 
         const regionalRateOffsets = {
-            'Kabul': { usdOffset: 0.0, labelFa: 'کابل' },
-            'Kandahar': { usdOffset: 0.3, labelFa: 'قندهار' },
-            'Mazar': { usdOffset: 0.15, labelFa: 'مزار شریف' },
-            'Jawzjan': { usdOffset: 0.2, labelFa: 'جوزجان' },
-            'Herat': { usdOffset: -0.2, labelFa: 'هرات' },
-            'Nangarhar': { usdOffset: 0.1, labelFa: 'ننگرهار' }
+            'Kabul': { usdOffset: 0.0 },
+            'Kandahar': { usdOffset: 0.3 },
+            'Mazar': { usdOffset: 0.15 },
+            'Jawzjan': { usdOffset: 0.2 },
+            'Herat': { usdOffset: -0.2 },
+            'Nangarhar': { usdOffset: 0.1 }
         };
 
         async function fetchExchangeRatesByLocation(cityName) {
@@ -937,7 +954,7 @@
                     baseUSD = data.rates.AFN;
                 }
 
-                const regionInfo = regionalRateOffsets[cityName] || regionalRateOffsets['Kabul'];
+                const regionInfo = regionalRateOffsets[cityName] || regionalRateOffsets['Jawzjan'];
                 const finalUSD = baseUSD + regionInfo.usdOffset;
 
                 liveRatesToAFN.USD = finalUSD;
@@ -945,10 +962,7 @@
                 liveRatesToAFN.TRY = finalUSD / (data.rates && data.rates.TRY ? data.rates.TRY : 32.5);
                 liveRatesToAFN.AFN = 1;
 
-                const cityNameDisplay = currentLang === 'fa' ? regionInfo.labelFa : cityName;
-
                 document.getElementById('rates-ticker-bar').innerHTML = `
-                    <span style="color: #f59e0b; font-weight:bold;">📍 ${cityNameDisplay}</span>
                     <span>🇦🇫 AFN: Base</span>
                     <span>💵 USD: ${(finalUSD).toFixed(2)}</span>
                     <span>💶 EUR: ${(liveRatesToAFN.EUR).toFixed(1)}</span>
@@ -956,22 +970,6 @@
                 `;
             } catch (e) {
                 console.log('Using offline regional rates.');
-            }
-        }
-
-        function autoDetectUserLocation() {
-            if (navigator.geolocation) {
-                navigator.geolocation.getCurrentPosition(
-                    async (position) => {
-                        fetchExchangeRatesByLocation(userProfile.location || 'Kabul');
-                    },
-                    (error) => {
-                        fetchExchangeRatesByLocation(userProfile.location || 'Kabul');
-                    },
-                    { timeout: 5000 }
-                );
-            } else {
-                fetchExchangeRatesByLocation(userProfile.location || 'Kabul');
             }
         }
 
@@ -987,17 +985,6 @@
                 installBanner.style.display = 'none';
             }
 
-            // خواندن مشخصات از حافظه محلی مرورگر (LocalStorage) جهت بارگذاری سریع بدون پرش
-            const savedProfileLocal = localStorage.getItem('userProfile');
-            if (savedProfileLocal) {
-                try {
-                    const parsed = JSON.parse(savedProfileLocal);
-                    Object.assign(userProfile, parsed);
-                    if (userProfile.themeColor) setThemeColor(userProfile.themeColor);
-                    if (userProfile.language) applyLanguage(userProfile.language);
-                } catch(e) {}
-            }
-
             const { data: { session } } = await supabaseClient.auth.getSession();
             if (session && session.user) {
                 currentUserEmail = session.user.email;
@@ -1007,7 +994,7 @@
                 showPage('dashboard-page');
             } else {
                 showPage('login-page');
-                fetchExchangeRatesByLocation('Kabul');
+                fetchExchangeRatesByLocation('Jawzjan');
             }
         });
 
@@ -1104,15 +1091,15 @@
         async function logoutUser() {
             await supabaseClient.auth.signOut();
             currentUserEmail = '';
-            localStorage.removeItem('userProfile');
             document.getElementById('header-profile-section').style.display = 'none';
             document.getElementById('logout-btn').style.display = 'none';
             showPage('login-page');
         }
 
+        // بارگذاری دائمی اطلاعات پروفایل و داده‌ها از جدول Supabase
         async function loadDataFromSupabase() {
             try {
-                const { data } = await supabaseClient
+                const { data, error } = await supabaseClient
                     .from('exchange_users')
                     .select('*')
                     .eq('email', currentUserEmail)
@@ -1120,38 +1107,44 @@
 
                 if (data) {
                     if (data.profile) {
-                        userProfile = Object.assign({ name: '', phone: '', location: 'Kabul', avatar: '', themeColor: '#7c3aed', language: 'en' }, data.profile);
-                        localStorage.setItem('userProfile', JSON.stringify(userProfile));
+                        userProfile = Object.assign({ name: '', phone: '', location: 'Jawzjan', avatar: '', themeColor: '#7c3aed', language: 'en' }, data.profile);
+                    } else {
+                        userProfile = { 
+                            name: currentUserEmail.split('@')[0], 
+                            phone: '', 
+                            location: 'Jawzjan', 
+                            avatar: '', 
+                            themeColor: '#7c3aed', 
+                            language: 'en' 
+                        };
                     }
-                    if (data.content) appData = data.content;
+                    appData = data.content || { clients: [] };
                 } else {
                     appData = { clients: [] };
                     userProfile = { 
                         name: currentUserEmail.split('@')[0], 
                         phone: '', 
-                        location: 'Kabul', 
+                        location: 'Jawzjan', 
                         avatar: '', 
                         themeColor: '#7c3aed', 
                         language: 'en' 
                     };
-                    localStorage.setItem('userProfile', JSON.stringify(userProfile));
                     await saveDatatoSupabase();
                 }
 
                 setThemeColor(userProfile.themeColor || '#7c3aed');
                 applyLanguage(userProfile.language || 'en');
                 updateHeaderProfileUI();
-                autoDetectUserLocation();
+                fetchExchangeRatesByLocation(userProfile.location || 'Jawzjan');
             } catch (err) { 
                 appData = { clients: [] }; 
-                fetchExchangeRatesByLocation('Kabul');
+                fetchExchangeRatesByLocation('Jawzjan');
             }
             renderDashboard();
         }
 
         async function saveDatatoSupabase() {
             try {
-                localStorage.setItem('userProfile', JSON.stringify(userProfile));
                 await supabaseClient
                     .from('exchange_users')
                     .upsert({ email: currentUserEmail, content: appData, profile: userProfile }, { onConflict: 'email' });
@@ -1189,7 +1182,7 @@
         function openProfilePage() {
             document.getElementById('user-profile-name').value = userProfile.name || '';
             document.getElementById('user-profile-phone').value = userProfile.phone || '';
-            document.getElementById('user-profile-location').value = userProfile.location || 'Kabul';
+            document.getElementById('user-profile-location').value = userProfile.location || 'Jawzjan';
             document.getElementById('user-theme-color').value = userProfile.themeColor || '#7c3aed';
             document.getElementById('user-language-select').value = userProfile.language || 'en';
             
@@ -1214,8 +1207,6 @@
             setThemeColor(userProfile.themeColor);
             applyLanguage(userProfile.language);
 
-            // ذخیره ماندگار در لوکال استوری و سرور
-            localStorage.setItem('userProfile', JSON.stringify(userProfile));
             await saveDatatoSupabase();
             
             updateHeaderProfileUI();
@@ -1449,20 +1440,25 @@
                         
                         const dateGregorian = tx.dateGregorian || '-';
                         const dateSolar = tx.dateSolar || '-';
-                        const dateHijri = tx.dateHijri ? ` | ${tx.dateHijri} ق.ق` : '';
+                        const dateHijri = tx.dateHijri || '-';
 
+                        // نمایش ۳ تاریخ دقیقاً در ۳ ردیف مجزا و سر به سر زیر هم داخل کادر کوچک اختصاصی معامله
                         txHtml += `
                             <div class="tx-item">
-                                <div style="display:flex; flex-direction:column; gap:3px;">
+                                <div style="display:flex; flex-direction:column; gap:4px; max-width: 65%;">
                                     <span style="color:${typeColor}; font-weight:bold;">${typeText}</span>
-                                    <span style="font-size:13px; font-weight:bold; color:#f8fafc;">${tx.rawAmount.toLocaleString()} ${tx.currency}</span>
-                                    <span style="font-size:10px; color:#38bdf8;">📅 ${dateGregorian} (میلادی) | ${dateSolar} (شمسی)${dateHijri}</span>
+                                    <span style="font-size:14px; font-weight:bold; color:#f8fafc;">${tx.rawAmount.toLocaleString()} ${tx.currency}</span>
+                                    <div class="tx-date-box">
+                                        <span>☀️ ${dateSolar} (شمسی)</span>
+                                        <span>📅 ${dateGregorian} (میلادی)</span>
+                                        <span>🌙 ${dateHijri} (قمری)</span>
+                                    </div>
                                 </div>
-                                <div style="display:flex; align-items:center; gap:6px; flex-direction:column;">
-                                    <span style="color:var(--text-muted); font-size:10px;">(~${tx.amountInBase.toFixed(0)} AFN)</span>
+                                <div style="display:flex; align-items:flex-end; gap:6px; flex-direction:column;">
+                                    <span style="color:var(--text-muted); font-size:10px; margin-bottom: 6px;">(~${tx.amountInBase.toFixed(0)} AFN)</span>
                                     <div style="display:flex; gap:4px;">
-                                        <button onclick="openEditTransactionPage(${client.id}, ${idx})" style="width:auto; padding:3px 8px; font-size:10px; background:#3b82f6; color:white; border-radius:6px;">${t.editBtn}</button>
-                                        <button onclick="deleteTransaction(${client.id}, ${idx})" style="width:auto; padding:3px 8px; font-size:10px; background:#ef4444; color:white; border-radius:6px;">${t.deleteBtn}</button>
+                                        <button onclick="openEditTransactionPage(${client.id}, ${idx})" style="width:auto; padding:4px 9px; font-size:10px; background:#3b82f6; color:white; border-radius:6px;">${t.editBtn}</button>
+                                        <button onclick="deleteTransaction(${client.id}, ${idx})" style="width:auto; padding:4px 9px; font-size:10px; background:#ef4444; color:white; border-radius:6px;">${t.deleteBtn}</button>
                                     </div>
                                 </div>
                             </div>
