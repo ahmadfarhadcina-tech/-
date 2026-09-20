@@ -315,7 +315,6 @@
 
         <main class="app-content">
             
-            <!-- صفحه ورود و ثبت‌نام (بدون درخواست کشور) -->
             <div id="login-page" class="page active">
                 <div style="text-align: center; margin: 30px 0;">
                     <h2 style="font-size: 18px; color: #a78bfa; margin-bottom: 8px;">ورود یا ثبت‌نام در صرافی</h2>
@@ -334,13 +333,11 @@
                 <button onclick="handleSignUp()" style="background:transparent; border:1px solid var(--primary); color:#a78bfa; margin-top:10px;">ساخت حساب جدید (ارسال ایمیل تأیید)</button>
             </div>
 
-            <!-- داشبورد اصلی (لیست مشتریان) -->
             <div id="dashboard-page" class="page">
                 <div id="accounts-list"></div>
                 <div class="fab" onclick="showPage('add-client-page')">+</div>
             </div>
 
-            <!-- افزودن مشتری جدید -->
             <div id="add-client-page" class="page">
                 <h2 style="font-size: 16px; margin-bottom: 16px;">افزودن مشتری جدید</h2>
                 <div class="input-group">
@@ -351,7 +348,6 @@
                 <button onclick="showPage('dashboard-page')" style="background:transparent; color:var(--text-muted); margin-top:10px;">انصراف</button>
             </div>
 
-            <!-- ثبت معامله -->
             <div id="transaction-page" class="page">
                 <h2 style="font-size: 16px; margin-bottom: 16px;">ثبت معامله</h2>
                 <input type="hidden" id="active-client-id">
@@ -383,7 +379,6 @@
 
         </main>
 
-        <!-- پنجره‌های انتخاب -->
         <div id="currency-modal" class="modal-overlay" onclick="closeModal(event, 'currency-modal')">
             <div class="modal-content">
                 <h3 style="font-size: 14px; margin-bottom: 14px; color: #a78bfa;">انتخاب واحد پول</h3>
@@ -414,7 +409,7 @@
         let currentUserEmail = '';
         let appData = { clients: [] };
 
-        // بررسی خودکار نشست کاربر هنگام باز شدن صفحه
+        // بررسی خودکار نشست کاربر هنگام تازه‌سازی صفحه
         document.addEventListener('DOMContentLoaded', async () => {
             const { data: { session } } = await supabaseClient.auth.getSession();
             if (session && session.user) {
@@ -453,7 +448,6 @@
             document.getElementById('txtype-modal').classList.remove('active');
         }
 
-        // ثبت‌نام جدید (ارسال ایمیل تأیید)
         async function handleSignUp() {
             const email = document.getElementById('auth-email').value.trim();
             const password = document.getElementById('auth-password').value.trim();
@@ -470,7 +464,6 @@
             }
         }
 
-        // ورود به حساب با ایمیل و پسورد
         async function handleSignIn() {
             const email = document.getElementById('auth-email').value.trim();
             const password = document.getElementById('auth-password').value.trim();
@@ -491,7 +484,6 @@
             }
         }
 
-        // خروج از حساب
         async function logoutUser() {
             await supabaseClient.auth.signOut();
             currentUserEmail = '';
@@ -506,7 +498,7 @@
                     .from('exchange_users')
                     .select('*')
                     .eq('email', currentUserEmail)
-                    .single();
+                    .maybeSingle();
 
                 if (data && data.content) {
                     appData = data.content;
@@ -515,6 +507,7 @@
                     await saveDatatoSupabase();
                 }
             } catch (err) {
+                console.error('خطا در خواندن داده‌ها:', err);
                 appData = { clients: [] };
             }
             renderDashboard();
@@ -524,7 +517,7 @@
             try {
                 await supabaseClient
                     .from('exchange_users')
-                    .upsert({ email: currentUserEmail, content: appData });
+                    .upsert({ email: currentUserEmail, content: appData }, { onConflict: 'email' });
             } catch (err) {
                 console.error('خطا در ذخیره ابری:', err);
             }
