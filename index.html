@@ -3,8 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Account Manager - صرافی ابری Supabase</title>
-    <!-- کتابخانه رسمی Supabase برای اتصال به دیتابیس -->
+    <title>Account Manager - صرافی ابری امن</title>
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <style>
         :root {
@@ -57,7 +56,6 @@
             }
         }
 
-        /* هدر اپلیکیشن */
         .app-header {
             background: linear-gradient(135deg, #1e293b, #0f172a);
             color: white;
@@ -99,7 +97,6 @@
             display: flex;
         }
 
-        /* المان‌های فرم */
         .input-group {
             margin-bottom: 16px;
         }
@@ -150,7 +147,6 @@
             transform: translateY(-1px);
         }
 
-        /* پنجره سفارشی (Custom Modal) به جای منوی پیش‌فرض مرورگر */
         .custom-select-trigger {
             width: 100%;
             padding: 14px;
@@ -220,7 +216,6 @@
             border-color: var(--primary);
         }
 
-        /* کارت‌های حساب مشتریان */
         .account-card {
             background: #0f172a;
             border: 1px solid var(--border-color);
@@ -247,6 +242,7 @@
             grid-template-columns: repeat(3, 1fr);
             gap: 8px;
             text-align: center;
+            margin-bottom: 12px;
         }
 
         .stat-box {
@@ -267,7 +263,26 @@
             font-weight: bold;
         }
 
-        /* دکمه شناور */
+        .transactions-list {
+            border-top: 1px solid var(--border-color);
+            padding-top: 10px;
+            margin-top: 8px;
+            max-height: 150px;
+            overflow-y: auto;
+        }
+
+        .tx-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            font-size: 11px;
+            padding: 6px 8px;
+            background: #1e293b;
+            border-radius: 8px;
+            margin-bottom: 6px;
+            border: 1px solid rgba(255,255,255,0.03);
+        }
+
         .fab {
             position: absolute;
             bottom: 24px;
@@ -290,32 +305,33 @@
 <body>
 
     <div class="app-container">
-        <!-- هدر -->
         <header class="app-header">
-            <h1 id="header-title">Account Manager</h1>
-            <span id="user-email-badge" style="font-size: 11px; color: var(--text-muted);"></span>
+            <h1 id="header-title">صرافی ابری امن</h1>
+            <div style="display: flex; align-items: center; gap: 10px;">
+                <span id="user-email-badge" style="font-size: 11px; color: var(--text-muted);"></span>
+                <button onclick="logoutUser()" id="logout-btn" style="display:none; width:auto; padding:4px 8px; font-size:10px; background:#ef4444; color:white;">خروج</button>
+            </div>
         </header>
 
         <main class="app-content">
             
-            <!-- صفحه ورود با ایمیل -->
+            <!-- صفحه ورود و ثبت‌نام با پسورد و تأیید ایمیل -->
             <div id="login-page" class="page active">
-                <div style="text-align: center; margin: 30px 0;">
-                    <h2 style="font-size: 20px; color: #a78bfa; margin-bottom: 8px;">ورود به صرافی ابری</h2>
-                    <p style="font-size: 12px; color: var(--text-muted);">با ایمیل خود وارد شوید تا اطلاعات در Supabase ذخیره شود.</p>
+                <div style="text-align: center; margin: 20px 0;">
+                    <h2 style="font-size: 18px; color: #a78bfa; margin-bottom: 8px;">ورود یا ثبت‌نام در صرافی</h2>
+                    <p style="font-size: 11px; color: var(--text-muted);">برای امنیت اطلاعات، ایمیل و پسورد خود را وارد کنید.</p>
                 </div>
                 <div class="input-group">
                     <label>آدرس ایمیل</label>
-                    <input type="email" id="user-email" placeholder="example@gmail.com">
+                    <input type="email" id="auth-email" placeholder="example@gmail.com">
                 </div>
                 <div class="input-group">
-                    <label>کشور / واحد پول پایه</label>
-                    <div class="custom-select-trigger" onclick="openModal('country-modal')">
-                        <span id="selected-country-text">افغانستان (افغانی - AFN)</span>
-                        <span>▼</span>
-                    </div>
+                    <label>رمز عبور (Password)</label>
+                    <input type="password" id="auth-password" placeholder="حداقل ۶ کاراکتر...">
                 </div>
-                <button class="btn-primary" onclick="loginUser()" style="margin-top: 15px;">اتصال و ورود</button>
+                
+                <button class="btn-primary" onclick="handleSignIn()" style="margin-top: 5px;">ورود به حساب</button>
+                <button onclick="handleSignUp()" style="background:transparent; border:1px solid var(--primary); color:#a78bfa; margin-top:10px;">ساخت حساب جدید (ارسال ایمیل تأیید)</button>
             </div>
 
             <!-- داشبورد اصلی (لیست مشتریان) -->
@@ -337,7 +353,7 @@
 
             <!-- ثبت معامله -->
             <div id="transaction-page" class="page">
-                <h2 id="tx-title" style="font-size: 16px; margin-bottom: 16px;">ثبت معامله</h2>
+                <h2 style="font-size: 16px; margin-bottom: 16px;">ثبت معامله</h2>
                 <input type="hidden" id="active-client-id">
 
                 <div class="input-group">
@@ -349,7 +365,7 @@
                 </div>
 
                 <div class="input-group">
-                    <label>واحد پول معامله (تبدیل به افغانی)</label>
+                    <label>واحد پول معامله</label>
                     <div class="custom-select-trigger" onclick="openModal('currency-modal')">
                         <span id="selected-currency-text">دلار آمریکا (USD)</span>
                         <span>▼</span>
@@ -367,16 +383,7 @@
 
         </main>
 
-        <!-- پنجره‌های سفارشی انیمیشنی -->
-        <div id="country-modal" class="modal-overlay" onclick="closeModal(event, 'country-modal')">
-            <div class="modal-content">
-                <h3 style="font-size: 14px; margin-bottom: 14px; color: #a78bfa;">انتخاب کشور و واحد پول پایه</h3>
-                <div class="modal-option" onclick="selectCountry('افغانستان', 'AFN')">افغانستان (افغانی - AFN)</div>
-                <div class="modal-option" onclick="selectCountry('ایران', 'IRT')">ایران (تومان - IRT)</div>
-                <div class="modal-option" onclick="selectCountry('آمریکا', 'USD')">آمریکا (دلار - USD)</div>
-            </div>
-        </div>
-
+        <!-- پنجره‌های انتخاب -->
         <div id="currency-modal" class="modal-overlay" onclick="closeModal(event, 'currency-modal')">
             <div class="modal-content">
                 <h3 style="font-size: 14px; margin-bottom: 14px; color: #a78bfa;">انتخاب واحد پول</h3>
@@ -397,24 +404,25 @@
     </div>
 
     <script>
-        // تنظیمات اتصال به Supabase با کلید جدید و صحیح Publishable
         const SUPABASE_URL = 'https://hvsymjkbmpmvjycwenbd.supabase.co';
         const SUPABASE_KEY = 'sb_publishable_9pkhkb88LNXJw457Sx8dpA_0E231JwH';
         
-        // راه‌اندازی کلاینت Supabase
         const supabaseClient = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
 
-        let currentCountry = 'افغانستان';
-        let currentBaseCurrency = 'AFN';
         let selectedCurrencyVal = 'USD';
         let selectedTxTypeVal = 'credit';
         let currentUserEmail = '';
         let appData = { clients: [] };
 
-        document.addEventListener('DOMContentLoaded', () => {
-            const savedEmail = localStorage.getItem('lastUserEmail');
-            if (savedEmail) {
-                document.getElementById('user-email').value = savedEmail;
+        // بررسی خودکار نشست کاربر هنگام باز شدن صفحه (بدون نیاز به ورود دوباره)
+        document.addEventListener('DOMContentLoaded', async () => {
+            const { data: { session } } = await supabaseClient.auth.getSession();
+            if (session && session.user) {
+                currentUserEmail = session.user.email;
+                document.getElementById('user-email-badge').innerText = currentUserEmail;
+                document.getElementById('logout-btn').style.display = 'block';
+                await loadDataFromSupabase();
+                showPage('dashboard-page');
             }
         });
 
@@ -433,13 +441,6 @@
             }
         }
 
-        function selectCountry(country, currency) {
-            currentCountry = country;
-            currentBaseCurrency = currency;
-            document.getElementById('selected-country-text').innerText = `${country} (${currency})`;
-            document.getElementById('country-modal').classList.remove('active');
-        }
-
         function selectCurrency(code, label) {
             selectedCurrencyVal = code;
             document.getElementById('selected-currency-text').innerText = label;
@@ -452,24 +453,53 @@
             document.getElementById('txtype-modal').classList.remove('active');
         }
 
-        // ورود کاربر و بارگذاری داده‌ها از Supabase
-        async function loginUser() {
-            const emailInput = document.getElementById('user-email').value.trim();
-            if (!emailInput || !emailInput.includes('@')) {
-                alert('لطفاً یک ایمیل معتبر وارد کنید.');
+        // ثبت‌نام جدید (ارسال ایمیل تأیید)
+        async function handleSignUp() {
+            const email = document.getElementById('auth-email').value.trim();
+            const password = document.getElementById('auth-password').value.trim();
+            if (!email || password.length < 6) {
+                alert('لطفاً ایمیل معتبر و پسورد حداقل ۶ کاراکتری وارد کنید.');
                 return;
             }
 
-            currentUserEmail = emailInput;
-            localStorage.setItem('lastUserEmail', currentUserEmail);
-            document.getElementById('user-email-badge').innerText = currentUserEmail;
-
-            // خواندن اطلاعات از جدول Supabase
-            await loadDataFromSupabase();
-            showPage('dashboard-page');
+            const { data, error } = await supabaseClient.auth.signUp({ email, password });
+            if (error) {
+                alert('خطا در ثبت‌نام: ' + error.message);
+            } else {
+                alert('ثبت‌نام انجام شد! لطفاً ایمیل خود را چک کنید و روی لینک تأیید (Verification) کلیک کنید تا حساب شما فعال شود.');
+            }
         }
 
-        // گرفتن داده‌ها از دیتابیس Supabase
+        // ورود به حساب با ایمیل و پسورد
+        async function handleSignIn() {
+            const email = document.getElementById('auth-email').value.trim();
+            const password = document.getElementById('auth-password').value.trim();
+            if (!email || !password) {
+                alert('لطفاً ایمیل و پسورد را وارد کنید.');
+                return;
+            }
+
+            const { data, error } = await supabaseClient.auth.signInWithPassword({ email, password });
+            if (error) {
+                alert('خطا در ورود: اطلاعات نادرست است یا ایمیل تایید نشده.\n' + error.message);
+            } else {
+                currentUserEmail = data.user.email;
+                document.getElementById('user-email-badge').innerText = currentUserEmail;
+                document.getElementById('logout-btn').style.display = 'block';
+                await loadDataFromSupabase();
+                showPage('dashboard-page');
+            }
+        }
+
+        // خروج از حساب
+        async function logoutUser() {
+            await supabaseClient.auth.signOut();
+            currentUserEmail = '';
+            document.getElementById('logout-btn').style.display = 'none';
+            document.getElementById('user-email-badge').innerText = '';
+            showPage('login-page');
+        }
+
         async function loadDataFromSupabase() {
             try {
                 const { data, error } = await supabaseClient
@@ -482,19 +512,15 @@
                     appData = data.content;
                 } else {
                     appData = { clients: [] };
-                    await saveDatatoSupabase(); // ساخت رکورد جدید برای ایمیل جدید
+                    await saveDatatoSupabase();
                 }
             } catch (err) {
-                console.log('بارگذاری از حافظه محلی به عنوان پشتیبان');
-                const local = localStorage.getItem('db_' + currentUserEmail);
-                appData = local ? JSON.parse(local) : { clients: [] };
+                appData = { clients: [] };
             }
             renderDashboard();
         }
 
-        // ذخیره داده‌ها در دیتابیس Supabase
         async function saveDatatoSupabase() {
-            localStorage.setItem('db_' + currentUserEmail, JSON.stringify(appData));
             try {
                 await supabaseClient
                     .from('exchange_users')
@@ -572,10 +598,26 @@
                 let totalCredit = 0;
                 let totalDebit = 0;
 
-                client.transactions.forEach(tx => {
-                    if (tx.type === 'credit') totalCredit += tx.amountInBase;
-                    if (tx.type === 'debit') totalDebit += tx.amountInBase;
-                });
+                let txHtml = '';
+                if (client.transactions && client.transactions.length > 0) {
+                    txHtml = `<div class="transactions-list">`;
+                    client.transactions.forEach(tx => {
+                        if (tx.type === 'credit') totalCredit += tx.amountInBase;
+                        if (tx.type === 'debit') totalDebit += tx.amountInBase;
+
+                        const typeText = tx.type === 'credit' ? 'طلب (↑)' : 'بدهی (↓)';
+                        const typeColor = tx.type === 'credit' ? 'var(--credit-color)' : 'var(--debit-color)';
+                        
+                        txHtml += `
+                            <div class="tx-item">
+                                <span style="color:${typeColor}; font-weight:bold;">${typeText}</span>
+                                <span>${tx.rawAmount.toLocaleString()} ${tx.currency}</span>
+                                <span style="color:var(--text-muted); font-size:10px;">(معادل: ${tx.amountInBase.toLocaleString()} افغانی)</span>
+                            </div>
+                        `;
+                    });
+                    txHtml += `</div>`;
+                }
 
                 let balance = totalCredit - totalDebit;
 
@@ -600,6 +642,7 @@
                             <div class="stat-value" style="color:#a78bfa;">${balance.toLocaleString()}</div>
                         </div>
                     </div>
+                    ${txHtml}
                 `;
                 container.appendChild(card);
             });
