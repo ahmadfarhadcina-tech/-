@@ -4,6 +4,14 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Account Manager - صرافی ابری امن</title>
+    
+    <!-- تنظیمات PWA -->
+    <link rel="manifest" href="manifest.json">
+    <meta name="theme-color" content="#7c3aed">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="apple-mobile-web-app-title" content="صرافی ابری">
+
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <style>
         :root {
@@ -399,6 +407,15 @@
     </div>
 
     <script>
+        // ثبت Service Worker برای قابلیت PWA
+        if ('serviceWorker' in navigator) {
+            window.addEventListener('load', () => {
+                navigator.serviceWorker.register('./sw.js')
+                    .then(reg => console.log('Service Worker registered!', reg))
+                    .catch(err => console.log('Service Worker registration failed:', err));
+            });
+        }
+
         const SUPABASE_URL = 'https://hvsymjkbmpmvjycwenbd.supabase.co';
         const SUPABASE_KEY = 'sb_publishable_9pkhkb88LNXJw457Sx8dpA_0E231JwH';
         
@@ -409,9 +426,7 @@
         let currentUserEmail = '';
         let appData = { clients: [] };
 
-        // بررسی خودکار نشست کاربر هنگام تازه‌سازی صفحه بدون پرش صفحه لاگین
         document.addEventListener('DOMContentLoaded', async () => {
-            // مخفی کردن تمام صفحه‌ها در ابتدا تا وضعیت لاگین چک شود
             document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
 
             const { data: { session } } = await supabaseClient.auth.getSession();
@@ -420,9 +435,9 @@
                 document.getElementById('user-email-badge').innerText = currentUserEmail;
                 document.getElementById('logout-btn').style.display = 'block';
                 await loadDataFromSupabase();
-                showPage('dashboard-page'); // اگر لاگین بود مستقیم مستقیماً برو داشبورد
+                showPage('dashboard-page');
             } else {
-                showPage('login-page'); // اگر نبود برو صفحه لاگین
+                showPage('login-page');
             }
         });
 
@@ -465,7 +480,7 @@
             if (error) {
                 alert('خطا در ثبت‌نام: ' + error.message);
             } else {
-                alert('ثبت‌نام انجام شد! لطفاً ایمیل خود را چک کنید و روی لینک تأیید (Verification) کلیک کنید تا حساب شما فعال شود.');
+                alert('ثبت‌نام انجام شد! لطفاً ایمیل خود را چک کنید و روی لینک تأیید کلیک کنید تا حساب شما فعال شود.');
             }
         }
 
