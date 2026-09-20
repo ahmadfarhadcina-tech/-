@@ -2,347 +2,4021 @@
 <html lang="en" dir="ltr" id="html-root">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-<title id="page-title">Daily Accounting</title>
+<meta name="viewport" content="width=device-width,initial-scale=1.0,maximum-scale=1.0,user-scalable=no">
+<title>Daily Accounting</title>
+
 <link rel="manifest" href="manifest.json">
 <meta name="theme-color" content="#7c3aed">
+
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
 <style>
-:root{--primary:#7c3aed;--primary-dark:#6d28d9;--bg:#0f172a;--card:#1e293b;--text:#f8fafc;--muted:#94a3b8;--border:#334155;--green:#10b981;--red:#ef4444;--radius:16px}
-*{box-sizing:border-box;margin:0;padding:0;font-family:Tahoma,sans-serif;-webkit-tap-highlight-color:transparent}
-body{background:var(--bg);color:var(--text);min-height:100vh}
-.app{width:100%;min-height:100vh;background:var(--card);display:flex;flex-direction:column}
-@media(min-width:768px){body{padding:20px;background:radial-gradient(circle,#1e293b,#0f172a)}.app{max-width:1200px;height:92vh;min-height:0;margin:auto;border:1px solid var(--border);border-radius:24px;overflow:hidden;box-shadow:0 30px 60px #000c}}
-header{background:linear-gradient(135deg,#1e293b,#0f172a);padding:10px 16px;border-bottom:1px solid var(--border);display:flex;justify-content:space-between;align-items:center;gap:8px;z-index:20}
-header h1{font-size:15px;color:var(--primary)}
-.header-controls{display:flex;align-items:center;gap:8px}
-.profile-badge{display:none;align-items:center;gap:8px;background:#0f172a;border:1px solid var(--border);padding:4px 10px;border-radius:30px;cursor:pointer}
-.avatar{width:30px;height:30px;border-radius:50%;object-fit:cover;background:var(--primary);display:flex;align-items:center;justify-content:center;color:#fff;font-weight:bold}
-.rates{background:#0f172a;padding:8px 16px;font-size:11px;color:#38bdf8;border-bottom:1px solid var(--border);display:flex;justify-content:space-around;gap:15px;overflow:auto;white-space:nowrap}
-main{position:relative;flex:1;overflow:hidden}
-.page{position:absolute;inset:0;padding:20px;background:var(--card);overflow-y:auto;opacity:0;pointer-events:none;transform:translateY(15px);transition:.3s}
-.page.active{opacity:1;pointer-events:auto;transform:none;z-index:5}
-.box{max-width:450px;margin:20px auto;width:100%}
-h2{font-size:18px;color:var(--primary);margin-bottom:20px}
-.group{margin-bottom:18px}.group label{display:block;font-size:13px;color:var(--muted);margin-bottom:8px}
-input,select{width:100%;padding:14px 16px;background:#0f172a;border:1px solid var(--border);border-radius:var(--radius);color:var(--text);font-size:14px;outline:none}
-input:focus,select:focus{border-color:var(--primary);box-shadow:0 0 0 3px #7c3aed40}
-button{cursor:pointer;border:0;padding:14px 20px;border-radius:var(--radius);font-size:15px;font-weight:600;width:100%}
-.primary{background:var(--primary);color:white;box-shadow:0 4px 15px #7c3aed66}.secondary{background:transparent;color:var(--muted);margin-top:12px}
-.profile-preview{width:85px;height:85px;border-radius:50%;background:var(--primary);margin:0 auto 10px;display:flex;align-items:center;justify-content:center;font-size:32px;overflow:hidden;border:2px solid var(--border)}
-.upload{width:auto!important;padding:6px 14px!important;font-size:12px!important;background:#3b82f6;color:#fff}
-.card{background:#0f172a;border:1px solid var(--border);border-radius:var(--radius);padding:18px;margin-bottom:16px}
-.card-head{display:flex;justify-content:space-between;align-items:center;gap:8px;margin-bottom:14px}.name{font-size:17px;font-weight:bold}
-.stats{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-bottom:14px;text-align:center}.stat{background:#1e293b;padding:10px 8px;border-radius:12px;border:1px solid var(--border)}
-.stat small{display:block;color:var(--muted);font-size:11px;margin-bottom:4px}.stat b{font-size:12px}
-.tx-list{border-top:1px solid var(--border);padding-top:12px;margin-top:10px;max-height:250px;overflow:auto}
-.tx{display:flex;justify-content:space-between;gap:8px;padding:10px 12px;background:#1e293b;border-radius:10px;margin-bottom:8px;font-size:12px}
-.tx-date{margin-top:5px;font-size:10px;color:#38bdf8;line-height:1.7}
-.smallbtn{width:auto!important;padding:5px 9px!important;font-size:10px!important;border-radius:7px!important}
-.green{background:var(--green);color:white}.red{background:var(--red);color:white}.blue{background:#3b82f6;color:white}
-.fab{position:fixed;right:30px;bottom:30px;width:60px;height:60px;border-radius:50%;background:var(--primary);color:#fff;font-size:30px;display:none;align-items:center;justify-content:center;z-index:50}
-[dir=rtl] .fab{right:auto;left:30px}
-.menu{position:relative}.dots{width:36px!important;padding:5px!important;background:transparent;color:var(--muted);font-size:20px}
-.dropdown{display:none;position:absolute;right:0;top:40px;min-width:160px;background:#1e293b;border:1px solid var(--border);border-radius:12px;z-index:60}
-.dropdown.active{display:block}.dropdown button{background:transparent;color:var(--red);text-align:left;padding:12px;font-size:12px}
-.modal{position:fixed;inset:0;background:#0f172adc;backdrop-filter:blur(8px);display:none;align-items:center;justify-content:center;z-index:100}
-.modal.active{display:flex}.modal-box{background:#1e293b;width:90%;max-width:420px;border:1px solid var(--border);border-radius:24px;padding:24px}
-.option{padding:14px 16px;background:#0f172a;border:1px solid var(--border);border-radius:var(--radius);margin-bottom:10px;display:flex;justify-content:space-between;cursor:pointer}
-#toast{position:fixed;left:50%;bottom:20px;transform:translateX(-50%);background:#111827;color:#fff;padding:12px 18px;border-radius:12px;display:none;z-index:1000;font-size:13px;max-width:90%;text-align:center}
+:root{
+ --primary:#7c3aed;
+ --primary-dark:#6d28d9;
+ --bg:#0f172a;
+ --card:#1e293b;
+ --text:#f8fafc;
+ --muted:#94a3b8;
+ --border:#334155;
+ --green:#10b981;
+ --red:#ef4444;
+ --blue:#3b82f6;
+ --radius:16px;
+}
+
+*{
+ box-sizing:border-box;
+ margin:0;
+ padding:0;
+ font-family:Tahoma,sans-serif;
+ -webkit-tap-highlight-color:transparent;
+}
+
+body{
+ background:var(--bg);
+ color:var(--text);
+ min-height:100vh;
+}
+
+.app{
+ width:100%;
+ min-height:100vh;
+ background:var(--card);
+ display:flex;
+ flex-direction:column;
+}
+
+@media(min-width:768px){
+ body{
+  padding:20px;
+  background:radial-gradient(circle,#1e293b,#0f172a);
+ }
+ .app{
+  max-width:1200px;
+  height:92vh;
+  min-height:0;
+  margin:auto;
+  border:1px solid var(--border);
+  border-radius:24px;
+  overflow:hidden;
+  box-shadow:0 30px 60px #000c;
+ }
+}
+
+header{
+ background:linear-gradient(135deg,#1e293b,#0f172a);
+ padding:10px 16px;
+ border-bottom:1px solid var(--border);
+ display:flex;
+ justify-content:space-between;
+ align-items:center;
+ gap:8px;
+ z-index:20;
+}
+
+header h1{
+ font-size:15px;
+ color:var(--primary);
+}
+
+.header-controls{
+ display:flex;
+ align-items:center;
+ gap:8px;
+}
+
+.profile-badge{
+ display:none;
+ align-items:center;
+ gap:8px;
+ background:#0f172a;
+ border:1px solid var(--border);
+ padding:4px 10px;
+ border-radius:30px;
+ cursor:pointer;
+}
+
+.avatar{
+ width:30px;
+ height:30px;
+ border-radius:50%;
+ object-fit:cover;
+ background:var(--primary);
+ display:flex;
+ align-items:center;
+ justify-content:center;
+ color:#fff;
+ font-weight:bold;
+}
+
+.rates{
+ background:#0f172a;
+ padding:8px 16px;
+ font-size:11px;
+ color:#38bdf8;
+ border-bottom:1px solid var(--border);
+ display:flex;
+ justify-content:space-around;
+ gap:15px;
+ overflow:auto;
+ white-space:nowrap;
+}
+
+.location-status{
+ background:#111827;
+ color:var(--muted);
+ font-size:10px;
+ padding:6px 14px;
+ text-align:center;
+ border-bottom:1px solid var(--border);
+}
+
+main{
+ position:relative;
+ flex:1;
+ overflow:hidden;
+}
+
+.page{
+ position:absolute;
+ inset:0;
+ padding:20px;
+ background:var(--card);
+ overflow-y:auto;
+ opacity:0;
+ pointer-events:none;
+ transform:translateY(15px);
+ transition:.3s;
+}
+
+.page.active{
+ opacity:1;
+ pointer-events:auto;
+ transform:none;
+ z-index:5;
+}
+
+.box{
+ max-width:450px;
+ margin:20px auto;
+ width:100%;
+}
+
+h2{
+ font-size:18px;
+ color:var(--primary);
+ margin-bottom:20px;
+}
+
+.group{
+ margin-bottom:18px;
+}
+
+.group label{
+ display:block;
+ font-size:13px;
+ color:var(--muted);
+ margin-bottom:8px;
+}
+
+input{
+ width:100%;
+ padding:14px 16px;
+ background:#0f172a;
+ border:1px solid var(--border);
+ border-radius:var(--radius);
+ color:var(--text);
+ font-size:14px;
+ outline:none;
+}
+
+input:focus{
+ border-color:var(--primary);
+ box-shadow:0 0 0 3px #7c3aed40;
+}
+
+button{
+ cursor:pointer;
+ border:0;
+ padding:14px 20px;
+ border-radius:var(--radius);
+ font-size:15px;
+ font-weight:600;
+ width:100%;
+}
+
+.primary{
+ background:var(--primary);
+ color:white;
+ box-shadow:0 4px 15px #7c3aed66;
+}
+
+.secondary{
+ background:transparent;
+ color:var(--muted);
+ margin-top:12px;
+}
+
+.profile-preview{
+ width:85px;
+ height:85px;
+ border-radius:50%;
+ background:var(--primary);
+ margin:0 auto 10px;
+ display:flex;
+ align-items:center;
+ justify-content:center;
+ font-size:32px;
+ overflow:hidden;
+ border:2px solid var(--border);
+}
+
+.upload{
+ width:auto!important;
+ padding:6px 14px!important;
+ font-size:12px!important;
+ background:#3b82f6;
+ color:#fff;
+}
+
+.card{
+ background:#0f172a;
+ border:1px solid var(--border);
+ border-radius:var(--radius);
+ padding:18px;
+ margin-bottom:16px;
+}
+
+.card-head{
+ display:flex;
+ justify-content:space-between;
+ align-items:center;
+ gap:8px;
+ margin-bottom:14px;
+}
+
+.name{
+ font-size:17px;
+ font-weight:bold;
+}
+
+.stats{
+ display:grid;
+ grid-template-columns:repeat(3,1fr);
+ gap:10px;
+ margin-bottom:14px;
+ text-align:center;
+}
+
+.stat{
+ background:#1e293b;
+ padding:10px 8px;
+ border-radius:12px;
+ border:1px solid var(--border);
+}
+
+.stat small{
+ display:block;
+ color:var(--muted);
+ font-size:11px;
+ margin-bottom:4px;
+}
+
+.stat b{
+ font-size:12px;
+}
+
+.tx-list{
+ border-top:1px solid var(--border);
+ padding-top:12px;
+ margin-top:10px;
+ max-height:300px;
+ overflow:auto;
+}
+
+.tx{
+ display:flex;
+ justify-content:space-between;
+ gap:8px;
+ padding:12px;
+ background:#1e293b;
+ border-radius:12px;
+ margin-bottom:8px;
+ font-size:12px;
+}
+
+.tx-date{
+ margin-top:7px;
+ font-size:10px;
+ color:#38bdf8;
+ line-height:1.9;
+}
+
+.date-line{
+ display:block;
+}
+
+.smallbtn{
+ width:auto!important;
+ padding:5px 9px!important;
+ font-size:10px!important;
+ border-radius:7px!important;
+}
+
+.green{
+ background:var(--green);
+ color:white;
+}
+
+.red{
+ background:var(--red);
+ color:white;
+}
+
+.blue{
+ background:#3b82f6;
+ color:white;
+}
+
+.fab{
+ position:fixed;
+ right:30px;
+ bottom:30px;
+ width:60px;
+ height:60px;
+ border-radius:50%;
+ background:var(--primary);
+ color:#fff;
+ font-size:30px;
+ display:none;
+ align-items:center;
+ justify-content:center;
+ z-index:50;
+}
+
+[dir=rtl] .fab{
+ right:auto;
+ left:30px;
+}
+
+.menu{
+ position:relative;
+}
+
+.dots{
+ width:36px!important;
+ padding:5px!important;
+ background:transparent;
+ color:var(--muted);
+ font-size:20px;
+}
+
+.dropdown{
+ display:none;
+ position:absolute;
+ right:0;
+ top:40px;
+ min-width:180px;
+ background:#1e293b;
+ border:1px solid var(--border);
+ border-radius:12px;
+ z-index:60;
+}
+
+.dropdown.active{
+ display:block;
+}
+
+.dropdown button{
+ background:transparent;
+ color:var(--red);
+ text-align:left;
+ padding:12px;
+ font-size:12px;
+}
+
+.modal{
+ position:fixed;
+ inset:0;
+ background:#020617cc;
+ backdrop-filter:blur(10px);
+ display:none;
+ align-items:flex-end;
+ justify-content:center;
+ z-index:1000;
+}
+
+.modal.active{
+ display:flex;
+}
+
+.modal-box{
+ background:#1e293b;
+ width:100%;
+ max-width:500px;
+ max-height:85vh;
+ overflow-y:auto;
+ border:1px solid var(--border);
+ border-radius:26px 26px 0 0;
+ padding:20px;
+ box-shadow:0 -20px 60px #0008;
+ animation:modalUp .25s ease;
+}
+
+@keyframes modalUp{
+ from{transform:translateY(100%)}
+ to{transform:translateY(0)}
+}
+
+.modal-title{
+ font-size:17px;
+ font-weight:bold;
+ color:var(--text);
+ margin-bottom:5px;
+}
+
+.modal-subtitle{
+ color:var(--muted);
+ font-size:11px;
+ margin-bottom:18px;
+}
+
+.option{
+ padding:14px 16px;
+ background:#0f172a;
+ border:1px solid var(--border);
+ border-radius:var(--radius);
+ margin-bottom:10px;
+ display:flex;
+ justify-content:space-between;
+ align-items:center;
+ cursor:pointer;
+ transition:.2s;
+}
+
+.option:hover,
+.option.selected{
+ border-color:var(--primary);
+ background:#172033;
+}
+
+.option-left{
+ display:flex;
+ align-items:center;
+ gap:10px;
+}
+
+.option-icon{
+ width:34px;
+ height:34px;
+ border-radius:10px;
+ display:flex;
+ align-items:center;
+ justify-content:center;
+ background:#1e293b;
+}
+
+.check{
+ color:var(--primary);
+ font-weight:bold;
+}
+
+.color-grid{
+ display:grid;
+ grid-template-columns:repeat(3,1fr);
+ gap:10px;
+}
+
+.color-option{
+ padding:12px;
+ border-radius:14px;
+ border:2px solid transparent;
+ background:#0f172a;
+ cursor:pointer;
+ text-align:center;
+ font-size:11px;
+ color:var(--muted);
+}
+
+.color-circle{
+ width:32px;
+ height:32px;
+ border-radius:50%;
+ margin:0 auto 6px;
+}
+
+.color-option.selected{
+ border-color:#fff;
+}
+
+.custom-select{
+ width:100%;
+ padding:14px 16px;
+ background:#0f172a;
+ border:1px solid var(--border);
+ border-radius:var(--radius);
+ color:var(--text);
+ font-size:14px;
+ cursor:pointer;
+ display:flex;
+ align-items:center;
+ justify-content:space-between;
+}
+
+.custom-select span:last-child{
+ color:var(--muted);
+}
+
+.date-picker{
+ background:#0f172a;
+ border:1px solid var(--border);
+ border-radius:20px;
+ padding:15px;
+}
+
+.date-top{
+ display:flex;
+ justify-content:space-between;
+ align-items:center;
+ margin-bottom:15px;
+}
+
+.date-nav{
+ width:40px!important;
+ height:40px;
+ padding:0!important;
+ background:#1e293b;
+ color:#fff;
+}
+
+.month-title{
+ text-align:center;
+ font-weight:bold;
+ color:var(--text);
+}
+
+.weekdays,
+.calendar-grid{
+ display:grid;
+ grid-template-columns:repeat(7,1fr);
+ gap:5px;
+}
+
+.weekdays div{
+ text-align:center;
+ color:var(--muted);
+ font-size:10px;
+ padding:5px 0;
+}
+
+.day{
+ min-height:38px;
+ display:flex;
+ align-items:center;
+ justify-content:center;
+ border-radius:9px;
+ cursor:pointer;
+ font-size:12px;
+}
+
+.day:hover{
+ background:#1e293b;
+}
+
+.day.selected{
+ background:var(--primary);
+ color:#fff;
+}
+
+.day.today{
+ border:1px solid var(--primary);
+}
+
+.day.empty{
+ cursor:default;
+}
+
+.date-preview{
+ background:#1e293b;
+ border-radius:14px;
+ padding:12px;
+ margin-bottom:12px;
+ color:#38bdf8;
+ font-size:11px;
+ line-height:1.8;
+}
+
+.modal-close{
+ margin-top:10px;
+ background:transparent;
+ color:var(--muted);
+ border:1px solid var(--border);
+}
+
+#toast{
+ position:fixed;
+ left:50%;
+ bottom:20px;
+ transform:translateX(-50%);
+ background:#111827;
+ color:#fff;
+ padding:12px 18px;
+ border-radius:12px;
+ display:none;
+ z-index:3000;
+ font-size:13px;
+ max-width:90%;
+ text-align:center;
+}
+
+.empty-state{
+ text-align:center;
+ color:var(--muted);
+ margin-top:60px;
+ line-height:2;
+}
+
+.geo-button{
+ background:#0f172a;
+ border:1px solid var(--border);
+ color:#38bdf8;
+ margin-top:8px;
+ font-size:12px;
+ padding:10px;
+}
+
+@media(max-width:500px){
+ .page{
+  padding:14px;
+ }
+ .tx{
+  flex-direction:column;
+ }
+ .tx > div:last-child{
+  align-items:flex-start!important;
+ }
+}
 </style>
 </head>
+
 <body>
+
 <div class="app">
+
 <header>
 <h1 id="header-title">Daily Accounting</h1>
+
 <div class="header-controls">
-<div id="profile-badge" class="profile-badge" onclick="openProfilePage()">
-<div id="header-avatar"><div class="avatar">U</div></div>
-<span id="header-name">User</span>
+
+<div id="profile-badge"
+     class="profile-badge"
+     onclick="openProfilePage()">
+
+<div id="header-avatar">
+<div class="avatar">U</div>
 </div>
-<button id="logout-btn" onclick="logoutUser()" style="display:none;width:auto;padding:6px 9px;font-size:10px;background:#ef4444;color:#fff">Logout</button>
+
+<span id="header-name">User</span>
+
+</div>
+
+<button id="logout-btn"
+onclick="logoutUser()"
+style="display:none;width:auto;padding:6px 9px;font-size:10px;background:#ef4444;color:#fff">
+Logout
+</button>
+
 </div>
 </header>
-<div class="rates" id="rates"><span>🔄 Loading rates...</span></div>
+
+<div class="rates" id="rates">
+<span>🔄 Loading rates...</span>
+</div>
+
+<div class="location-status" id="location-status">
+📍 Location: Detecting...
+</div>
 
 <main>
+
+<!-- LOGIN -->
+
 <section id="login-page" class="page">
+
 <div class="box">
-<div style="text-align:center;margin:40px 0 30px"><h2>Sign In or Register</h2><p style="font-size:12px;color:var(--muted)">Log in to access your cloud accounts.</p></div>
-<div class="group"><label>Email Address</label><input type="email" id="auth-email" placeholder="example@gmail.com"></div>
-<div class="group"><label>Password</label><input type="password" id="auth-password" placeholder="At least 6 characters"></div>
-<button class="primary" onclick="handleSignIn()">Sign In</button>
-<button onclick="handleSignUp()" style="background:transparent;border:1px solid var(--primary);color:var(--primary);margin-top:12px">Create New Account</button>
+
+<div style="text-align:center;margin:40px 0 30px">
+
+<h2>Sign In or Register</h2>
+
+<p style="font-size:12px;color:var(--muted)">
+Log in to access your cloud accounts.
+</p>
+
 </div>
+
+<div class="group">
+<label>Email Address</label>
+<input
+type="email"
+id="auth-email"
+placeholder="example@gmail.com">
+</div>
+
+<div class="group">
+<label>Password</label>
+<input
+type="password"
+id="auth-password"
+placeholder="At least 6 characters">
+</div>
+
+<button
+class="primary"
+onclick="handleSignIn()">
+Sign In
+</button>
+
+<button
+onclick="handleSignUp()"
+style="background:transparent;border:1px solid var(--primary);color:var(--primary);margin-top:12px">
+Create New Account
+</button>
+
+</div>
+
 </section>
+
+
+<!-- PROFILE -->
 
 <section id="profile-page" class="page">
+
 <div class="box">
+
 <h2>Profile Settings</h2>
+
 <div style="text-align:center;margin-bottom:20px">
-<div id="profile-preview" class="profile-preview">U</div>
-<input type="file" id="avatar-input" accept="image/*" style="display:none" onchange="handleImageUpload(event)">
-<button class="upload" onclick="document.getElementById('avatar-input').click()">📷 Upload Photo</button>
+
+<div id="profile-preview"
+class="profile-preview">
+U
 </div>
-<div class="group"><label>Full Name / Username</label><input id="profile-name" placeholder="Enter your name"></div>
-<div class="group"><label>Phone Number</label><input id="profile-phone" placeholder="+93 700 000 000"></div>
-<div class="group"><label>City / ولایت</label>
-<select id="profile-location"><option value="Kabul">کابل</option><option value="Kandahar">قندهار</option><option value="Mazar">مزار شریف</option><option value="Jawzjan">جوزجان - شبرغان</option><option value="Herat">هرات</option><option value="Nangarhar">ننگرهار - جلال‌آباد</option></select></div>
-<div class="group"><label>App Theme Color</label>
-<select id="theme-color" onchange="setThemeColor(this.value)"><option value="#7c3aed">Purple</option><option value="#3b82f6">Blue</option><option value="#10b981">Emerald Green</option><option value="#f59e0b">Amber Gold</option><option value="#ec4899">Pink</option><option value="#64748b">Dark Slate</option></select></div>
-<div class="group"><label>Language / زبان</label><select id="language"><option value="en">English</option><option value="fa">فارسی</option></select></div>
-<button class="primary" onclick="saveProfileSettings()">Save Profile</button>
-<button class="secondary" onclick="showPage('dashboard-page')">Cancel</button>
+
+<input
+type="file"
+id="avatar-input"
+accept="image/*"
+style="display:none"
+onchange="handleImageUpload(event)">
+
+<button
+class="upload"
+onclick="document.getElementById('avatar-input').click()">
+📷 Upload Photo
+</button>
+
 </div>
+
+
+<div class="group">
+
+<label>Full Name / Username</label>
+
+<input
+id="profile-name"
+placeholder="Enter your name">
+
+</div>
+
+
+<div class="group">
+
+<label>Phone Number</label>
+
+<input
+id="profile-phone"
+placeholder="+93 700 000 000">
+
+</div>
+
+
+<div class="group">
+
+<label>City / ولایت</label>
+
+<div
+class="custom-select"
+onclick="openCityPicker()">
+
+<span id="location-display">
+جوزجان - شبرغان
+</span>
+
+<span>⌄</span>
+
+</div>
+
+</div>
+
+
+<div class="group">
+
+<label>App Theme Color</label>
+
+<div
+class="custom-select"
+onclick="openThemePicker()">
+
+<span id="theme-display">
+Purple
+</span>
+
+<span>⌄</span>
+
+</div>
+
+</div>
+
+
+<div class="group">
+
+<label>Language / زبان</label>
+
+<div
+class="custom-select"
+onclick="openLanguagePicker()">
+
+<span id="language-display">
+English
+</span>
+
+<span>⌄</span>
+
+</div>
+
+</div>
+
+
+<button
+class="primary"
+onclick="saveProfileSettings()">
+Save Profile
+</button>
+
+<button
+class="secondary"
+onclick="showPage('dashboard-page')">
+Cancel
+</button>
+
+</div>
+
 </section>
 
-<section id="dashboard-page" class="page"><div id="accounts-list"></div></section>
 
-<section id="add-client-page" class="page">
-<div class="box"><h2>Add New Client</h2>
-<div class="group"><label>Client Name</label><input id="client-name" placeholder="Person or company name"></div>
-<button class="primary" onclick="saveClient()">Save Client to Database</button>
-<button class="secondary" onclick="showPage('dashboard-page')">Cancel</button>
-</div>
+<!-- DASHBOARD -->
+
+<section
+id="dashboard-page"
+class="page">
+
+<div id="accounts-list"></div>
+
 </section>
 
-<section id="transaction-page" class="page">
-<div class="box"><h2>Record Transaction</h2><input type="hidden" id="active-client-id">
-<div class="group"><label>Transaction Type</label><select id="tx-type"><option value="credit">Credit (↑)</option><option value="debit">Debit (↓)</option></select></div>
-<div class="group"><label>Currency</label><select id="tx-currency"><option value="AFN">AFN</option><option value="USD">USD</option><option value="EUR">EUR</option><option value="TRY">TRY</option></select></div>
-<div class="group"><label>Amount</label><input type="number" id="tx-amount" placeholder="Enter amount"></div>
-<div class="group"><label>Transaction Date</label><input type="date" id="tx-date"></div>
-<button class="primary" onclick="saveTransaction()">Save Transaction</button><button class="secondary" onclick="showPage('dashboard-page')">Back</button>
+
+<!-- ADD CLIENT -->
+
+<section
+id="add-client-page"
+class="page">
+
+<div class="box">
+
+<h2>Add New Client</h2>
+
+<div class="group">
+
+<label>Client Name</label>
+
+<input
+id="client-name"
+placeholder="Person or company name">
+
 </div>
+
+<button
+class="primary"
+onclick="saveClient()">
+Save Client to Database
+</button>
+
+<button
+class="secondary"
+onclick="showPage('dashboard-page')">
+Cancel
+</button>
+
+</div>
+
 </section>
 
-<section id="edit-page" class="page">
-<div class="box"><h2>Edit Transaction</h2><input type="hidden" id="edit-client-id"><input type="hidden" id="edit-tx-index">
-<div class="group"><label>Transaction Type</label><select id="edit-type"><option value="credit">Credit (↑)</option><option value="debit">Debit (↓)</option></select></div>
-<div class="group"><label>Currency</label><select id="edit-currency"><option value="AFN">AFN</option><option value="USD">USD</option><option value="EUR">EUR</option><option value="TRY">TRY</option></select></div>
-<div class="group"><label>Amount</label><input type="number" id="edit-amount"></div>
-<div class="group"><label>Transaction Date</label><input type="date" id="edit-date"></div>
-<button class="primary" onclick="updateTransaction()">Update Transaction</button><button class="secondary" onclick="showPage('dashboard-page')">Cancel</button>
+
+<!-- TRANSACTION -->
+
+<section
+id="transaction-page"
+class="page">
+
+<div class="box">
+
+<h2>Record Transaction</h2>
+
+<input
+type="hidden"
+id="active-client-id">
+
+
+<div class="group">
+
+<label>Transaction Type</label>
+
+<div
+class="custom-select"
+onclick="openTransactionTypePicker()">
+
+<span id="tx-type-display">
+Credit (↑)
+</span>
+
+<span>⌄</span>
+
 </div>
+
+</div>
+
+
+<div class="group">
+
+<label>Currency</label>
+
+<div
+class="custom-select"
+onclick="openCurrencyPicker('tx')">
+
+<span id="tx-currency-display">
+AFN
+</span>
+
+<span>⌄</span>
+
+</div>
+
+</div>
+
+
+<div class="group">
+
+<label>Amount</label>
+
+<input
+type="number"
+id="tx-amount"
+placeholder="Enter amount">
+
+</div>
+
+
+<div class="group">
+
+<label>Transaction Date</label>
+
+<div
+class="custom-select"
+onclick="openDatePicker('tx')">
+
+<span id="tx-date-display">
+Select date
+</span>
+
+<span>📅</span>
+
+</div>
+
+</div>
+
+
+<button
+class="primary"
+onclick="saveTransaction()">
+Save Transaction
+</button>
+
+<button
+class="secondary"
+onclick="showPage('dashboard-page')">
+Back
+</button>
+
+</div>
+
 </section>
+
+
+<!-- EDIT -->
+
+<section
+id="edit-page"
+class="page">
+
+<div class="box">
+
+<h2>Edit Transaction</h2>
+
+<input type="hidden" id="edit-client-id">
+<input type="hidden" id="edit-tx-index">
+
+
+<div class="group">
+
+<label>Transaction Type</label>
+
+<div
+class="custom-select"
+onclick="openEditTypePicker()">
+
+<span id="edit-type-display">
+Credit (↑)
+</span>
+
+<span>⌄</span>
+
+</div>
+
+</div>
+
+
+<div class="group">
+
+<label>Currency</label>
+
+<div
+class="custom-select"
+onclick="openCurrencyPicker('edit')">
+
+<span id="edit-currency-display">
+AFN
+</span>
+
+<span>⌄</span>
+
+</div>
+
+</div>
+
+
+<div class="group">
+
+<label>Amount</label>
+
+<input
+type="number"
+id="edit-amount">
+
+</div>
+
+
+<div class="group">
+
+<label>Transaction Date</label>
+
+<div
+class="custom-select"
+onclick="openDatePicker('edit')">
+
+<span id="edit-date-display">
+Select date
+</span>
+
+<span>📅</span>
+
+</div>
+
+</div>
+
+
+<button
+class="primary"
+onclick="updateTransaction()">
+Update Transaction
+</button>
+
+<button
+class="secondary"
+onclick="showPage('dashboard-page')">
+Cancel
+</button>
+
+</div>
+
+</section>
+
 </main>
 
-<div id="fab" class="fab" onclick="showPage('add-client-page')">+</div>
+
+<div
+id="fab"
+class="fab"
+onclick="showPage('add-client-page')">
++
 </div>
 
-<div id="confirm-modal" class="modal"><div class="modal-box"><h3 style="color:#ef4444;margin-bottom:12px">Confirm Deletion</h3><p id="confirm-text" style="color:var(--muted);font-size:13px;margin-bottom:20px"></p><div style="display:flex;gap:10px"><button id="confirm-yes" class="red">Yes, Delete</button><button onclick="closeConfirm()" style="background:#0f172a;color:#fff;border:1px solid var(--border)">Cancel</button></div></div></div>
+</div>
+
+
+<!-- CONFIRM -->
+
+<div
+id="confirm-modal"
+class="modal">
+
+<div class="modal-box">
+
+<div class="modal-title"
+style="color:#ef4444">
+Confirm Deletion
+</div>
+
+<p
+id="confirm-text"
+style="color:var(--muted);font-size:13px;margin:15px 0 20px">
+</p>
+
+<div style="display:flex;gap:10px">
+
+<button
+id="confirm-yes"
+class="red">
+Yes, Delete
+</button>
+
+<button
+onclick="closeConfirm()"
+style="background:#0f172a;color:#fff;border:1px solid var(--border)">
+Cancel
+</button>
+
+</div>
+
+</div>
+
+</div>
+
+
+<!-- CITY MODAL -->
+
+<div
+id="city-modal"
+class="modal">
+
+<div class="modal-box">
+
+<div class="modal-title">
+📍 Select City
+</div>
+
+<div class="modal-subtitle">
+Choose your city or detect it automatically.
+</div>
+
+<button
+class="geo-button"
+onclick="detectRealLocation()">
+📍 Detect My Real Location
+</button>
+
+<div id="city-options"
+style="margin-top:15px">
+</div>
+
+<button
+class="modal-close"
+onclick="closeModal('city-modal')">
+Cancel
+</button>
+
+</div>
+
+</div>
+
+
+<!-- THEME MODAL -->
+
+<div
+id="theme-modal"
+class="modal">
+
+<div class="modal-box">
+
+<div class="modal-title">
+🎨 Choose Theme
+</div>
+
+<div class="modal-subtitle">
+Select the main color of the application.
+</div>
+
+<div
+id="theme-options"
+class="color-grid">
+</div>
+
+<button
+class="modal-close"
+onclick="closeModal('theme-modal')">
+Cancel
+</button>
+
+</div>
+
+</div>
+
+
+<!-- LANGUAGE MODAL -->
+
+<div
+id="language-modal"
+class="modal">
+
+<div class="modal-box">
+
+<div class="modal-title">
+🌐 Language / زبان
+</div>
+
+<div class="modal-subtitle">
+Choose application language.
+</div>
+
+<div id="language-options"></div>
+
+<button
+class="modal-close"
+onclick="closeModal('language-modal')">
+Cancel
+</button>
+
+</div>
+
+</div>
+
+
+<!-- TRANSACTION TYPE -->
+
+<div
+id="tx-type-modal"
+class="modal">
+
+<div class="modal-box">
+
+<div class="modal-title">
+↕️ Transaction Type
+</div>
+
+<div class="modal-subtitle">
+Choose the transaction direction.
+</div>
+
+<div id="tx-type-options"></div>
+
+<button
+class="modal-close"
+onclick="closeModal('tx-type-modal')">
+Cancel
+</button>
+
+</div>
+
+</div>
+
+
+<!-- CURRENCY -->
+
+<div
+id="currency-modal"
+class="modal">
+
+<div class="modal-box">
+
+<div class="modal-title">
+💰 Currency
+</div>
+
+<div class="modal-subtitle">
+Select transaction currency.
+</div>
+
+<div id="currency-options"></div>
+
+<button
+class="modal-close"
+onclick="closeModal('currency-modal')">
+Cancel
+</button>
+
+</div>
+
+</div>
+
+
+<!-- DATE -->
+
+<div
+id="date-modal"
+class="modal">
+
+<div class="modal-box">
+
+<div class="modal-title">
+📅 Select Transaction Date
+</div>
+
+<div class="modal-subtitle">
+The date will automatically be shown in Gregorian, Solar Hijri and Islamic Hijri.
+</div>
+
+<div
+id="date-preview"
+class="date-preview">
+Select a date
+</div>
+
+<div class="date-picker">
+
+<div class="date-top">
+
+<button
+class="date-nav"
+onclick="changeCalendarMonth(-1)">
+‹
+</button>
+
+<div
+id="month-title"
+class="month-title">
+</div>
+
+<button
+class="date-nav"
+onclick="changeCalendarMonth(1)">
+›
+</button>
+
+</div>
+
+<div
+id="weekdays"
+class="weekdays">
+</div>
+
+<div
+id="calendar-grid"
+class="calendar-grid">
+</div>
+
+</div>
+
+<button
+class="primary"
+style="margin-top:12px"
+onclick="confirmDatePicker()">
+Confirm Date
+</button>
+
+<button
+class="modal-close"
+onclick="closeModal('date-modal')">
+Cancel
+</button>
+
+</div>
+
+</div>
+
+
 <div id="toast"></div>
 
+
 <script>
-const SUPABASE_URL='https://hvsymjkbmpmvjycwenbd.supabase.co';
-const SUPABASE_KEY='sb_publishable_9pkhkb88LNXJw457Sx8dpA_0E231JwH';
-const supabaseClient=supabase.createClient(SUPABASE_URL,SUPABASE_KEY);
+
+/* =========================================================
+   SUPABASE
+========================================================= */
+
+const SUPABASE_URL =
+'https://hvsymjkbmpmvjycwenbd.supabase.co';
+
+const SUPABASE_KEY =
+'sb_publishable_9pkhkb88LNXJw457Sx8dpA_0E231JwH';
+
+const supabaseClient =
+supabase.createClient(
+ SUPABASE_URL,
+ SUPABASE_KEY
+);
+
+
+/* =========================================================
+   GLOBAL STATE
+========================================================= */
 
 let currentUser=null;
-let appData={clients:[]};
-let userProfile={name:'',phone:'',location:'Jawzjan',avatar:'',themeColor:'#7c3aed',language:'en'};
-let rates={AFN:1,USD:71,EUR:77,TRY:2.2};
 
-function toast(msg){const e=document.getElementById('toast');e.innerText=msg;e.style.display='block';clearTimeout(window.__toast);window.__toast=setTimeout(()=>e.style.display='none',3000)}
-function setThemeColor(c){document.documentElement.style.setProperty('--primary',c);document.documentElement.style.setProperty('--primary-dark',c)}
-function showPage(id){document.querySelectorAll('.page').forEach(p=>p.classList.remove('active'));document.getElementById(id).classList.add('active');document.getElementById('fab').style.display=id==='dashboard-page'&&currentUser?'flex':'none'}
-function showError(prefix,error){console.error(prefix,error);toast(prefix+': '+(error?.message||error||'Unknown error'))}
+let appData={
+ clients:[]
+};
+
+let userProfile={
+ name:'',
+ phone:'',
+ location:'Jawzjan',
+ avatar:'',
+ themeColor:'#7c3aed',
+ language:'en'
+};
+
+let rates={
+ AFN:1,
+ USD:71,
+ EUR:77,
+ TRY:2.2
+};
+
+let detectedCity='';
+
+let pickerState={
+ type:'',
+ date:'',
+ year:0,
+ month:0,
+ selectedDate:''
+};
+
+
+/* =========================================================
+   BASIC HELPERS
+========================================================= */
+
+function toast(msg){
+
+ const e=document.getElementById('toast');
+
+ e.innerText=msg;
+ e.style.display='block';
+
+ clearTimeout(window.__toast);
+
+ window.__toast=setTimeout(()=>{
+  e.style.display='none';
+ },3500);
+}
+
+
+function escapeHtml(s){
+
+ return String(s??'').replace(
+  /[&<>"']/g,
+  m=>({
+   '&':'&amp;',
+   '<':'&lt;',
+   '>':'&gt;',
+   '"':'&quot;',
+   "'":'&#039;'
+  }[m])
+ );
+}
+
+
+function setThemeColor(c){
+
+ document.documentElement
+ .style.setProperty('--primary',c);
+
+ document.documentElement
+ .style.setProperty('--primary-dark',c);
+}
+
+
+function showPage(id){
+
+ document
+ .querySelectorAll('.page')
+ .forEach(p=>p.classList.remove('active'));
+
+ document
+ .getElementById(id)
+ .classList.add('active');
+
+ document
+ .getElementById('fab')
+ .style.display =
+ id==='dashboard-page' && currentUser
+ ? 'flex'
+ : 'none';
+}
+
+
+function showError(prefix,error){
+
+ console.error(prefix,error);
+
+ toast(
+  prefix+
+  ': '+
+  (error?.message||error||'Unknown error')
+ );
+}
+
+
+function closeModal(id){
+
+ document
+ .getElementById(id)
+ .classList.remove('active');
+}
+
+
+/* =========================================================
+   AUTH
+========================================================= */
 
 async function handleSignUp(){
- const email=document.getElementById('auth-email').value.trim();
- const password=document.getElementById('auth-password').value;
- if(!email||password.length<6)return toast('Enter a valid email and password (minimum 6 characters).');
- const {data,error}=await supabaseClient.auth.signUp({email,password});
- if(error)return showError('Sign up error',error);
- toast(data.session?'Account created and signed in.':'Account created. Check your email for confirmation.');
+
+ const email=
+ document.getElementById('auth-email')
+ .value.trim();
+
+ const password=
+ document.getElementById('auth-password')
+ .value;
+
+ if(!email || password.length<6){
+
+  return toast(
+   'Enter a valid email and password (minimum 6 characters).'
+  );
+ }
+
+ const {data,error}=
+ await supabaseClient.auth.signUp({
+  email,
+  password
+ });
+
+ if(error)
+  return showError('Sign up error',error);
+
+ toast(
+  data.session
+  ? 'Account created and signed in.'
+  : 'Account created. Check your email for confirmation.'
+ );
 }
+
 
 async function handleSignIn(){
- const email=document.getElementById('auth-email').value.trim();
- const password=document.getElementById('auth-password').value;
- const {data,error}=await supabaseClient.auth.signInWithPassword({email,password});
- if(error)return showError('Sign in error',error);
+
+ const email=
+ document.getElementById('auth-email')
+ .value.trim();
+
+ const password=
+ document.getElementById('auth-password')
+ .value;
+
+ const {data,error}=
+ await supabaseClient.auth.signInWithPassword({
+  email,
+  password
+ });
+
+ if(error)
+  return showError('Sign in error',error);
+
  currentUser=data.user;
+
  await loadDataFromSupabase();
+
  showPage('dashboard-page');
+
  updateHeader();
+
+ detectRealLocation(true);
 }
 
+
 async function logoutUser(){
+
  await supabaseClient.auth.signOut();
- currentUser=null;appData={clients:[]};
- document.getElementById('profile-badge').style.display='none';
- document.getElementById('logout-btn').style.display='none';
+
+ currentUser=null;
+
+ appData={
+  clients:[]
+ };
+
+ document.getElementById(
+  'profile-badge'
+ ).style.display='none';
+
+ document.getElementById(
+  'logout-btn'
+ ).style.display='none';
+
  showPage('login-page');
 }
 
+
+/* =========================================================
+   HEADER
+========================================================= */
+
 function updateHeader(){
+
  if(!currentUser)return;
- document.getElementById('profile-badge').style.display='flex';
- document.getElementById('logout-btn').style.display='block';
- const name=userProfile.name||currentUser.email.split('@')[0];
- document.getElementById('header-name').innerText=name;
- const a=document.getElementById('header-avatar');
- a.innerHTML=userProfile.avatar?`<img class="avatar" src="${escapeHtml(userProfile.avatar)}">`:`<div class="avatar">${escapeHtml(name.charAt(0).toUpperCase())}</div>`;
+
+ document.getElementById(
+  'profile-badge'
+ ).style.display='flex';
+
+ document.getElementById(
+  'logout-btn'
+ ).style.display='block';
+
+ const name=
+ userProfile.name ||
+ currentUser.email.split('@')[0];
+
+ document.getElementById(
+  'header-name'
+ ).innerText=name;
+
+ const a=
+ document.getElementById('header-avatar');
+
+ a.innerHTML=
+ userProfile.avatar
+ ?
+ `<img class="avatar"
+ src="${escapeHtml(userProfile.avatar)}">`
+ :
+ `<div class="avatar">
+ ${escapeHtml(name.charAt(0).toUpperCase())}
+ </div>`;
 }
 
-function escapeHtml(s){return String(s??'').replace(/[&<>"']/g,m=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#039;'}[m]))}
+
+/* =========================================================
+   LOAD / SAVE SUPABASE
+========================================================= */
 
 async function loadDataFromSupabase(){
+
  if(!currentUser)return;
- const {data,error}=await supabaseClient.from('exchange_users').select('*').eq('user_id',currentUser.id).maybeSingle();
- if(error){showError('Database load error',error);return}
- if(data){
-   appData=data.content&&typeof data.content==='object'?data.content:{clients:[]};
-   userProfile=Object.assign({name:currentUser.email.split('@')[0],phone:'',location:'Jawzjan',avatar:'',themeColor:'#7c3aed',language:'en'},data.profile||{});
- }else{
-   appData={clients:[]};
-   userProfile={name:currentUser.email.split('@')[0],phone:'',location:'Jawzjan',avatar:'',themeColor:'#7c3aed',language:'en'};
-   await saveDatatoSupabase();
+
+ const {data,error}=
+ await supabaseClient
+ .from('exchange_users')
+ .select('*')
+ .eq('user_id',currentUser.id)
+ .maybeSingle();
+
+ if(error){
+
+  showError(
+   'Database load error',
+   error
+  );
+
+  return;
  }
- setThemeColor(userProfile.themeColor||'#7c3aed');
- updateHeader();renderDashboard();fetchExchangeRatesByLocation(userProfile.location);
+
+
+ if(data){
+
+  appData=
+   data.content &&
+   typeof data.content==='object'
+   ?
+   data.content
+   :
+   {clients:[]};
+
+  userProfile=
+   Object.assign(
+    {
+     name:currentUser.email.split('@')[0],
+     phone:'',
+     location:'Jawzjan',
+     avatar:'',
+     themeColor:'#7c3aed',
+     language:'en'
+    },
+    data.profile||{}
+   );
+
+ }else{
+
+  appData={
+   clients:[]
+  };
+
+  userProfile={
+   name:currentUser.email.split('@')[0],
+   phone:'',
+   location:'Jawzjan',
+   avatar:'',
+   themeColor:'#7c3aed',
+   language:'en'
+  };
+
+  await saveDatatoSupabase();
+ }
+
+
+ setThemeColor(
+  userProfile.themeColor||'#7c3aed'
+ );
+
+ updateProfileDisplays();
+
+ updateHeader();
+
+ renderDashboard();
+
+ fetchExchangeRates();
+
+ updateLocationDisplay(
+  userProfile.location,
+  false
+ );
 }
+
 
 async function saveDatatoSupabase(){
- if(!currentUser){showError('Save error','No logged-in user');return false}
- const payload={user_id:currentUser.id,email:currentUser.email,content:appData,profile:userProfile};
- const {data,error}=await supabaseClient.from('exchange_users').upsert(payload,{onConflict:'user_id'}).select().single();
- if(error){showError('Database save error',error);return false}
- console.log('Saved:',data);return true;
+
+ if(!currentUser){
+
+  showError(
+   'Save error',
+   'No logged-in user'
+  );
+
+  return false;
+ }
+
+ const payload={
+  user_id:currentUser.id,
+  email:currentUser.email,
+  content:appData,
+  profile:userProfile
+ };
+
+ const {data,error}=
+ await supabaseClient
+ .from('exchange_users')
+ .upsert(
+  payload,
+  {
+   onConflict:'user_id'
+  }
+ )
+ .select()
+ .single();
+
+ if(error){
+
+  showError(
+   'Database save error',
+   error
+  );
+
+  return false;
+ }
+
+ console.log('Saved:',data);
+
+ return true;
 }
+
+
+/* =========================================================
+   PROFILE
+========================================================= */
 
 async function handleImageUpload(event){
- const file=event.target.files?.[0];if(!file||!currentUser)return;
- if(!file.type.startsWith('image/'))return toast('Please select an image.');
- if(file.size>5*1024*1024)return toast('Image must be smaller than 5 MB.');
- const ext=(file.name.split('.').pop()||'jpg').toLowerCase();
- const path=`${currentUser.id}/avatar.${ext}`;
- const {error:uploadError}=await supabaseClient.storage.from('user-uploads').upload(path,file,{upsert:true,contentType:file.type});
- if(uploadError)return showError('Photo upload error',uploadError);
- const {data}=supabaseClient.storage.from('user-uploads').getPublicUrl(path);
- userProfile.avatar=data.publicUrl+'?v='+Date.now();
- document.getElementById('profile-preview').innerHTML=`<img src="${escapeHtml(userProfile.avatar)}" style="width:100%;height:100%;object-fit:cover">`;
- const saved=await saveDatatoSupabase();
- if(saved){updateHeader();toast('Photo uploaded and saved successfully.')}
+
+ const file=
+ event.target.files?.[0];
+
+ if(!file || !currentUser)return;
+
+ if(!file.type.startsWith('image/'))
+  return toast('Please select an image.');
+
+ if(file.size>5*1024*1024)
+  return toast('Image must be smaller than 5 MB.');
+
+ const ext=
+ (
+  file.name.split('.').pop() ||
+  'jpg'
+ ).toLowerCase();
+
+ const path=
+ `${currentUser.id}/avatar.${ext}`;
+
+ const {
+  error:uploadError
+ }=
+ await supabaseClient
+ .storage
+ .from('user-uploads')
+ .upload(
+  path,
+  file,
+  {
+   upsert:true,
+   contentType:file.type
+  }
+ );
+
+ if(uploadError)
+  return showError(
+   'Photo upload error',
+   uploadError
+  );
+
+ const {data}=
+ supabaseClient
+ .storage
+ .from('user-uploads')
+ .getPublicUrl(path);
+
+ userProfile.avatar=
+ data.publicUrl+
+ '?v='+
+ Date.now();
+
+ document.getElementById(
+  'profile-preview'
+ ).innerHTML=
+ `<img
+ src="${escapeHtml(userProfile.avatar)}"
+ style="width:100%;height:100%;object-fit:cover">`;
+
+ const saved=
+ await saveDatatoSupabase();
+
+ if(saved){
+
+  updateHeader();
+
+  toast(
+   'Photo uploaded and saved successfully.'
+  );
+ }
 }
 
+
 function openProfilePage(){
- document.getElementById('profile-name').value=userProfile.name||'';
- document.getElementById('profile-phone').value=userProfile.phone||'';
- document.getElementById('profile-location').value=userProfile.location||'Jawzjan';
- document.getElementById('theme-color').value=userProfile.themeColor||'#7c3aed';
- document.getElementById('language').value=userProfile.language||'en';
- const p=document.getElementById('profile-preview');
- if(userProfile.avatar)p.innerHTML=`<img src="${escapeHtml(userProfile.avatar)}" style="width:100%;height:100%;object-fit:cover">`;
- else p.innerText=(userProfile.name||currentUser?.email||'U').charAt(0).toUpperCase();
+
+ document.getElementById(
+  'profile-name'
+ ).value=
+ userProfile.name||'';
+
+ document.getElementById(
+  'profile-phone'
+ ).value=
+ userProfile.phone||'';
+
+ updateProfileDisplays();
+
+ const p=
+ document.getElementById(
+  'profile-preview'
+ );
+
+ if(userProfile.avatar){
+
+  p.innerHTML=
+  `<img
+  src="${escapeHtml(userProfile.avatar)}"
+  style="width:100%;height:100%;object-fit:cover">`;
+
+ }else{
+
+  p.innerText=
+  (
+   userProfile.name ||
+   currentUser?.email ||
+   'U'
+  )
+  .charAt(0)
+  .toUpperCase();
+ }
+
  showPage('profile-page');
 }
 
-async function saveProfileSettings(){
- userProfile.name=document.getElementById('profile-name').value.trim();
- userProfile.phone=document.getElementById('profile-phone').value.trim();
- userProfile.location=document.getElementById('profile-location').value;
- userProfile.themeColor=document.getElementById('theme-color').value;
- userProfile.language=document.getElementById('language').value;
- setThemeColor(userProfile.themeColor);
- const saved=await saveDatatoSupabase();
- if(saved){updateHeader();fetchExchangeRatesByLocation(userProfile.location);showPage('dashboard-page');toast('Profile saved successfully.')}
+
+function updateProfileDisplays(){
+
+ const cityNames={
+  Kabul:'کابل',
+  Kandahar:'قندهار',
+  Mazar:'مزار شریف',
+  Jawzjan:'جوزجان - شبرغان',
+  Herat:'هرات',
+  Nangarhar:'ننگرهار - جلال‌آباد'
+ };
+
+ const themeNames={
+  '#7c3aed':'Purple',
+  '#3b82f6':'Blue',
+  '#10b981':'Emerald Green',
+  '#f59e0b':'Amber Gold',
+  '#ec4899':'Pink',
+  '#64748b':'Dark Slate'
+ };
+
+ const languageNames={
+  en:'English',
+  fa:'فارسی'
+ };
+
+ document.getElementById(
+  'location-display'
+ ).innerText=
+ cityNames[userProfile.location] ||
+ userProfile.location ||
+ 'Select city';
+
+ document.getElementById(
+  'theme-display'
+ ).innerText=
+ themeNames[userProfile.themeColor] ||
+ 'Purple';
+
+ document.getElementById(
+  'language-display'
+ ).innerText=
+ languageNames[userProfile.language] ||
+ 'English';
 }
+
+
+async function saveProfileSettings(){
+
+ userProfile.name=
+ document.getElementById(
+  'profile-name'
+ ).value.trim();
+
+ userProfile.phone=
+ document.getElementById(
+  'profile-phone'
+ ).value.trim();
+
+ setThemeColor(
+  userProfile.themeColor
+ );
+
+ updateProfileDisplays();
+
+ const saved=
+ await saveDatatoSupabase();
+
+ if(saved){
+
+  updateHeader();
+
+  fetchExchangeRates();
+
+  showPage('dashboard-page');
+
+  toast(
+   'Profile saved successfully.'
+  );
+ }
+}
+
+
+/* =========================================================
+   CITY PICKER
+========================================================= */
+
+const cityList=[
+ {
+  id:'Kabul',
+  name:'کابل',
+  icon:'🏙️'
+ },
+ {
+  id:'Kandahar',
+  name:'قندهار',
+  icon:'🏜️'
+ },
+ {
+  id:'Mazar',
+  name:'مزار شریف',
+  icon:'🕌'
+ },
+ {
+  id:'Jawzjan',
+  name:'جوزجان - شبرغان',
+  icon:'📍'
+ },
+ {
+  id:'Herat',
+  name:'هرات',
+  icon:'🏛️'
+ },
+ {
+  id:'Nangarhar',
+  name:'ننگرهار - جلال‌آباد',
+  icon:'🌴'
+ }
+];
+
+
+function openCityPicker(){
+
+ const box=
+ document.getElementById(
+  'city-options'
+ );
+
+ box.innerHTML='';
+
+ cityList.forEach(city=>{
+
+  const selected=
+   userProfile.location===city.id;
+
+  box.insertAdjacentHTML(
+   'beforeend',
+   `
+   <div
+   class="option ${selected?'selected':''}"
+   onclick="selectCity('${city.id}')">
+
+   <div class="option-left">
+
+   <div class="option-icon">
+   ${city.icon}
+   </div>
+
+   <span>${city.name}</span>
+
+   </div>
+
+   ${selected
+    ?'<span class="check">✓</span>'
+    :''}
+
+   </div>
+   `
+  );
+ });
+
+ document
+ .getElementById('city-modal')
+ .classList.add('active');
+}
+
+
+function selectCity(city){
+
+ userProfile.location=city;
+
+ updateProfileDisplays();
+
+ closeModal('city-modal');
+
+ updateLocationDisplay(city,false);
+
+ toast('City selected.');
+}
+
+
+function updateLocationDisplay(city,real){
+
+ const names={
+  Kabul:'کابل',
+  Kandahar:'قندهار',
+  Mazar:'مزار شریف',
+  Jawzjan:'جوزجان - شبرغان',
+  Herat:'هرات',
+  Nangarhar:'ننگرهار - جلال‌آباد'
+ };
+
+ const text=
+ names[city] ||
+ city ||
+ 'Unknown';
+
+ document.getElementById(
+  'location-status'
+ ).innerText=
+ real
+ ?
+ `📍 Real Location: ${text}`
+ :
+ `📍 Selected Location: ${text}`;
+}
+
+
+/* =========================================================
+   REAL LOCATION
+========================================================= */
+
+function detectRealLocation(silent=false){
+
+ if(!navigator.geolocation){
+
+  if(!silent)
+   toast('Geolocation is not supported.');
+
+  return;
+ }
+
+ if(!silent)
+  toast('Requesting your location...');
+
+ navigator.geolocation.getCurrentPosition(
+  async position=>{
+
+   const lat=
+    position.coords.latitude;
+
+   const lon=
+    position.coords.longitude;
+
+   try{
+
+    /*
+      Reverse geocoding through Nominatim.
+      The browser asks for location permission only.
+    */
+
+    const response=
+    await fetch(
+     `https://nominatim.openstreetmap.org/reverse?format=jsonv2&lat=${encodeURIComponent(lat)}&lon=${encodeURIComponent(lon)}&zoom=10&accept-language=fa`,
+     {
+      headers:{
+       'Accept':'application/json'
+      }
+     }
+    );
+
+    const data=
+    await response.json();
+
+    const address=
+    data.address||{};
+
+    const rawCity=
+    (
+     address.city ||
+     address.town ||
+     address.municipality ||
+     address.county ||
+     ''
+    ).toLowerCase();
+
+    let city=null;
+
+    if(
+     rawCity.includes('kabul') ||
+     rawCity.includes('کابل')
+    ){
+     city='Kabul';
+    }
+
+    else if(
+     rawCity.includes('kandahar') ||
+     rawCity.includes('قندهار')
+    ){
+     city='Kandahar';
+    }
+
+    else if(
+     rawCity.includes('mazar') ||
+     rawCity.includes('مزار')
+    ){
+     city='Mazar';
+    }
+
+    else if(
+     rawCity.includes('sheberghan') ||
+     rawCity.includes('shibergan') ||
+     rawCity.includes('jawzjan') ||
+     rawCity.includes('jowzjan') ||
+     rawCity.includes('شبرغان') ||
+     rawCity.includes('جوزجان')
+    ){
+     city='Jawzjan';
+    }
+
+    else if(
+     rawCity.includes('herat') ||
+     rawCity.includes('هرات')
+    ){
+     city='Herat';
+    }
+
+    else if(
+     rawCity.includes('jalal') ||
+     rawCity.includes('nangarhar') ||
+     rawCity.includes('جلال') ||
+     rawCity.includes('ننگرهار')
+    ){
+     city='Nangarhar';
+    }
+
+    if(city){
+
+     userProfile.location=city;
+
+     detectedCity=city;
+
+     updateProfileDisplays();
+
+     updateLocationDisplay(
+      city,
+      true
+     );
+
+     await saveDatatoSupabase();
+
+     if(!silent)
+      toast(
+       'Real location detected and saved.'
+      );
+
+    }else{
+
+     document.getElementById(
+      'location-status'
+     ).innerText=
+     `📍 Location detected: ${escapeHtml(
+      address.city ||
+      address.town ||
+      'Afghanistan'
+     )}`;
+
+     if(!silent)
+      toast(
+       'Your location was detected, but this city is not in the city list.'
+      );
+    }
+
+   }catch(error){
+
+    console.error(error);
+
+    if(!silent)
+     toast(
+      'Location detected, but city lookup failed.'
+     );
+   }
+
+  },
+
+  error=>{
+
+   console.warn(error);
+
+   if(!silent){
+
+    if(error.code===1)
+     toast(
+      'Location permission was denied.'
+     );
+
+    else
+     toast(
+      'Could not detect your location.'
+     );
+   }
+  },
+
+  {
+   enableHighAccuracy:true,
+   timeout:10000,
+   maximumAge:300000
+  }
+ );
+}
+
+
+/* =========================================================
+   THEME PICKER
+========================================================= */
+
+const themes=[
+ {
+  color:'#7c3aed',
+  name:'Purple'
+ },
+ {
+  color:'#3b82f6',
+  name:'Blue'
+ },
+ {
+  color:'#10b981',
+  name:'Emerald Green'
+ },
+ {
+  color:'#f59e0b',
+  name:'Amber Gold'
+ },
+ {
+  color:'#ec4899',
+  name:'Pink'
+ },
+ {
+  color:'#64748b',
+  name:'Dark Slate'
+ }
+];
+
+
+function openThemePicker(){
+
+ const box=
+ document.getElementById(
+  'theme-options'
+ );
+
+ box.innerHTML='';
+
+ themes.forEach(theme=>{
+
+  const selected=
+   userProfile.themeColor===theme.color;
+
+  box.insertAdjacentHTML(
+   'beforeend',
+   `
+   <div
+   class="color-option ${selected?'selected':''}"
+   onclick="selectTheme('${theme.color}','${theme.name}')">
+
+   <div
+   class="color-circle"
+   style="background:${theme.color}">
+   </div>
+
+   ${theme.name}
+
+   </div>
+   `
+  );
+ });
+
+ document
+ .getElementById('theme-modal')
+ .classList.add('active');
+}
+
+
+function selectTheme(color,name){
+
+ userProfile.themeColor=color;
+
+ setThemeColor(color);
+
+ updateProfileDisplays();
+
+ closeModal('theme-modal');
+
+ toast(
+  `${name} theme selected.`
+ );
+}
+
+
+/* =========================================================
+   LANGUAGE
+========================================================= */
+
+function openLanguagePicker(){
+
+ const box=
+ document.getElementById(
+  'language-options'
+ );
+
+ box.innerHTML='';
+
+ const languages=[
+  ['en','🇬🇧','English'],
+  ['fa','🇦🇫','فارسی']
+ ];
+
+ languages.forEach(item=>{
+
+  const selected=
+   userProfile.language===item[0];
+
+  box.insertAdjacentHTML(
+   'beforeend',
+   `
+   <div
+   class="option ${selected?'selected':''}"
+   onclick="selectLanguage('${item[0]}','${item[2]}')">
+
+   <div class="option-left">
+
+   <div class="option-icon">
+   ${item[1]}
+   </div>
+
+   <span>${item[2]}</span>
+
+   </div>
+
+   ${selected
+    ?'<span class="check">✓</span>'
+    :''}
+
+   </div>
+   `
+  );
+ });
+
+ document
+ .getElementById('language-modal')
+ .classList.add('active');
+}
+
+
+function selectLanguage(lang,name){
+
+ userProfile.language=lang;
+
+ updateProfileDisplays();
+
+ closeModal('language-modal');
+
+ /*
+   We keep the database value.
+   Full translation can be added without
+   changing the database structure.
+ */
+
+ toast(
+  `${name} selected.`
+ );
+}
+
+
+/* =========================================================
+   CLIENTS
+========================================================= */
 
 async function saveClient(){
- const name=document.getElementById('client-name').value.trim();if(!name)return toast('Enter client name.');
- appData.clients.push({id:crypto.randomUUID?crypto.randomUUID():String(Date.now()),name,transactions:[]});
- const saved=await saveDatatoSupabase();
- if(saved){document.getElementById('client-name').value='';renderDashboard();showPage('dashboard-page');}
+
+ const name=
+ document.getElementById(
+  'client-name'
+ ).value.trim();
+
+ if(!name)
+  return toast(
+   'Enter client name.'
+  );
+
+ appData.clients.push({
+
+  id:
+   crypto.randomUUID
+   ?
+   crypto.randomUUID()
+   :
+   String(Date.now()),
+
+  name,
+
+  transactions:[]
+ });
+
+ const saved=
+ await saveDatatoSupabase();
+
+ if(saved){
+
+  document.getElementById(
+   'client-name'
+  ).value='';
+
+  renderDashboard();
+
+  showPage('dashboard-page');
+ }
 }
 
-function openTransactionPage(id){document.getElementById('active-client-id').value=id;document.getElementById('tx-amount').value='';document.getElementById('tx-date').value='';showPage('transaction-page')}
 
-function convertToAFN(amount,currency){return amount*(rates[currency]||1)}
+/* =========================================================
+   TRANSACTION PICKERS
+========================================================= */
+
+let temporaryTxType='credit';
+
+let temporaryCurrency='AFN';
+
+function openTransactionTypePicker(){
+
+ temporaryTxType=
+ document.getElementById(
+  'tx-type-display'
+ ).dataset.value ||
+ 'credit';
+
+ renderTransactionTypeOptions(
+  'tx-type-options',
+  'tx'
+ );
+
+ document
+ .getElementById('tx-type-modal')
+ .classList.add('active');
+}
+
+
+function openEditTypePicker(){
+
+ temporaryTxType=
+ document.getElementById(
+  'edit-type-display'
+ ).dataset.value ||
+ 'credit';
+
+ renderTransactionTypeOptions(
+  'tx-type-options',
+  'edit'
+ );
+
+ document
+ .getElementById('tx-type-modal')
+ .classList.add('active');
+}
+
+
+function renderTransactionTypeOptions(id,target){
+
+ const box=
+ document.getElementById(id);
+
+ box.innerHTML='';
+
+ const options=[
+  {
+   id:'credit',
+   name:'Credit (↑)',
+   icon:'🟢'
+  },
+  {
+   id:'debit',
+   name:'Debit (↓)',
+   icon:'🔴'
+  }
+ ];
+
+ options.forEach(o=>{
+
+  box.insertAdjacentHTML(
+   'beforeend',
+   `
+   <div
+   class="option ${temporaryTxType===o.id?'selected':''}"
+   onclick="selectTransactionType('${o.id}','${target}')">
+
+   <div class="option-left">
+
+   <div class="option-icon">
+   ${o.icon}
+   </div>
+
+   <span>${o.name}</span>
+
+   </div>
+
+   ${
+    temporaryTxType===o.id
+    ?'<span class="check">✓</span>'
+    :''
+   }
+
+   </div>
+   `
+  );
+ });
+}
+
+
+function selectTransactionType(type,target){
+
+ temporaryTxType=type;
+
+ const text=
+ type==='credit'
+ ?'Credit (↑)'
+ :'Debit (↓)';
+
+ if(target==='tx'){
+
+  const el=
+  document.getElementById(
+   'tx-type-display'
+  );
+
+  el.innerText=text;
+  el.dataset.value=type;
+
+ }else{
+
+  const el=
+  document.getElementById(
+   'edit-type-display'
+  );
+
+  el.innerText=text;
+  el.dataset.value=type;
+ }
+
+ closeModal('tx-type-modal');
+}
+
+
+/* =========================================================
+   CURRENCY PICKER
+========================================================= */
+
+function openCurrencyPicker(target){
+
+ const current=
+ target==='tx'
+ ?
+ document.getElementById(
+  'tx-currency-display'
+ ).dataset.value ||
+ 'AFN'
+ :
+ document.getElementById(
+  'edit-currency-display'
+ ).dataset.value ||
+ 'AFN';
+
+ temporaryCurrency=current;
+
+ const box=
+ document.getElementById(
+  'currency-options'
+ );
+
+ box.innerHTML='';
+
+ const currencies=[
+  ['AFN','🇦🇫','Afghan Afghani'],
+  ['USD','🇺🇸','US Dollar'],
+  ['EUR','🇪🇺','Euro'],
+  ['TRY','🇹🇷','Turkish Lira']
+ ];
+
+ currencies.forEach(c=>{
+
+  const selected=
+   current===c[0];
+
+  box.insertAdjacentHTML(
+   'beforeend',
+   `
+   <div
+   class="option ${selected?'selected':''}"
+   onclick="selectCurrency('${c[0]}','${target}')">
+
+   <div class="option-left">
+
+   <div class="option-icon">
+   ${c[1]}
+   </div>
+
+   <div>
+   <div>${c[0]}</div>
+   <small style="color:var(--muted)">
+   ${c[2]}
+   </small>
+   </div>
+
+   </div>
+
+   ${selected
+    ?'<span class="check">✓</span>'
+    :''}
+
+   </div>
+   `
+  );
+ });
+
+ document
+ .getElementById('currency-modal')
+ .classList.add('active');
+}
+
+
+function selectCurrency(currency,target){
+
+ temporaryCurrency=currency;
+
+ const el=
+ target==='tx'
+ ?
+ document.getElementById(
+  'tx-currency-display'
+ )
+ :
+ document.getElementById(
+  'edit-currency-display'
+ );
+
+ el.innerText=currency;
+
+ el.dataset.value=currency;
+
+ closeModal('currency-modal');
+}
+
+
+/* =========================================================
+   DATE PICKER
+========================================================= */
+
+function openTransactionPage(id){
+
+ document.getElementById(
+  'active-client-id'
+ ).value=id;
+
+ document.getElementById(
+  'tx-amount'
+ ).value='';
+
+ document.getElementById(
+  'tx-type-display'
+ ).innerText='Credit (↑)';
+
+ document.getElementById(
+  'tx-type-display'
+ ).dataset.value='credit';
+
+ document.getElementById(
+  'tx-currency-display'
+ ).innerText='AFN';
+
+ document.getElementById(
+  'tx-currency-display'
+ ).dataset.value='AFN';
+
+ document.getElementById(
+  'tx-date-display'
+ ).innerText='Select date';
+
+ document.getElementById(
+  'tx-date-display'
+ ).dataset.value='';
+
+ showPage('transaction-page');
+}
+
+
+function openDatePicker(target){
+
+ pickerState.type=target;
+
+ const existing=
+ target==='tx'
+ ?
+ document.getElementById(
+  'tx-date-display'
+ ).dataset.value
+ :
+ document.getElementById(
+  'edit-date-display'
+ ).dataset.value;
+
+ let baseDate=
+ existing ||
+ new Date()
+ .toISOString()
+ .slice(0,10);
+
+ pickerState.selectedDate=baseDate;
+
+ const d=
+ new Date(
+  baseDate+'T00:00:00'
+ );
+
+ pickerState.year=d.getFullYear();
+ pickerState.month=d.getMonth();
+
+ renderCalendar();
+
+ document
+ .getElementById('date-modal')
+ .classList.add('active');
+}
+
+
+function changeCalendarMonth(delta){
+
+ pickerState.month+=delta;
+
+ if(pickerState.month<0){
+
+  pickerState.month=11;
+  pickerState.year--;
+
+ }
+
+ if(pickerState.month>11){
+
+  pickerState.month=0;
+  pickerState.year++;
+ }
+
+ renderCalendar();
+}
+
+
+function renderCalendar(){
+
+ const year=
+ pickerState.year;
+
+ const month=
+ pickerState.month;
+
+ const monthNames=[
+  'January',
+  'February',
+  'March',
+  'April',
+  'May',
+  'June',
+  'July',
+  'August',
+  'September',
+  'October',
+  'November',
+  'December'
+ ];
+
+ document.getElementById(
+  'month-title'
+ ).innerText=
+ `${monthNames[month]} ${year}`;
+
+
+ const weekdays=[
+  'Sun',
+  'Mon',
+  'Tue',
+  'Wed',
+  'Thu',
+  'Fri',
+  'Sat'
+ ];
+
+ document.getElementById(
+  'weekdays'
+ ).innerHTML=
+ weekdays
+ .map(x=>`<div>${x}</div>`)
+ .join('');
+
+
+ const first=
+ new Date(
+  year,
+  month,
+  1
+ ).getDay();
+
+ const days=
+ new Date(
+  year,
+  month+1,
+  0
+ ).getDate();
+
+ let html='';
+
+ for(let i=0;i<first;i++){
+
+  html+=
+  `<div class="day empty"></div>`;
+ }
+
+ const today=
+ new Date()
+ .toISOString()
+ .slice(0,10);
+
+ for(let d=1;d<=days;d++){
+
+  const value=
+  `${year}-${String(month+1).padStart(2,'0')}-${String(d).padStart(2,'0')}`;
+
+  const selected=
+   value===pickerState.selectedDate;
+
+  const isToday=
+   value===today;
+
+  html+=
+  `
+  <div
+  class="day
+  ${selected?'selected':''}
+  ${isToday?'today':''}"
+  onclick="selectCalendarDate('${value}')">
+  ${d}
+  </div>
+  `;
+ }
+
+ document.getElementById(
+  'calendar-grid'
+ ).innerHTML=html;
+
+ updateDatePreview();
+}
+
+
+function selectCalendarDate(value){
+
+ pickerState.selectedDate=value;
+
+ renderCalendar();
+}
+
+
+function updateDatePreview(){
+
+ if(!pickerState.selectedDate){
+
+  document.getElementById(
+   'date-preview'
+  ).innerText='Select a date';
+
+  return;
+ }
+
+ const dates=
+ formatDates(
+  pickerState.selectedDate
+ );
+
+ document.getElementById(
+  'date-preview'
+ ).innerHTML=
+ `
+ <span class="date-line">
+ ☀️ <b>هجری شمسی:</b>
+ ${escapeHtml(dates.solar)}
+ </span>
+
+ <span class="date-line">
+ 📅 <b>میلادی:</b>
+ ${escapeHtml(dates.gregorian)}
+ </span>
+
+ <span class="date-line">
+ 🌙 <b>هجری قمری:</b>
+ ${escapeHtml(dates.hijri)}
+ </span>
+ `;
+}
+
+
+function confirmDatePicker(){
+
+ if(!pickerState.selectedDate)
+  return toast(
+   'Please select a date.'
+  );
+
+ const dates=
+ formatDates(
+  pickerState.selectedDate
+ );
+
+ const el=
+ pickerState.type==='tx'
+ ?
+ document.getElementById(
+  'tx-date-display'
+ )
+ :
+ document.getElementById(
+  'edit-date-display'
+ );
+
+ el.dataset.value=
+ pickerState.selectedDate;
+
+ el.innerText=
+ dates.solar;
+
+ closeModal('date-modal');
+}
+
+
+/* =========================================================
+   DATE CONVERSION
+========================================================= */
 
 function formatDates(dateVal){
- const d=new Date(dateVal+'T00:00:00');
- let solar=dateVal,hijri='';
- try{solar=d.toLocaleDateString('fa-IR-u-ca-persian',{year:'numeric',month:'2-digit',day:'2-digit'})}catch{}
- try{hijri=d.toLocaleDateString('en-US-u-ca-islamic-umalqura',{year:'numeric',month:'numeric',day:'numeric'})}catch{}
- return {gregorian:d.toLocaleDateString('en-GB'),solar,hijri};
+
+ const d=
+ new Date(
+  dateVal+'T00:00:00'
+ );
+
+ let solar='';
+
+ let hijri='';
+
+ try{
+
+  solar=
+  d.toLocaleDateString(
+   'fa-IR-u-ca-persian',
+   {
+    year:'numeric',
+    month:'long',
+    day:'numeric'
+   }
+  );
+
+ }catch{
+
+  solar=dateVal;
+ }
+
+
+ try{
+
+  hijri=
+  d.toLocaleDateString(
+   'ar-SA-u-ca-islamic-umalqura',
+   {
+    year:'numeric',
+    month:'long',
+    day:'numeric'
+   }
+  );
+
+ }catch{
+
+  hijri=dateVal;
+ }
+
+ return{
+
+  gregorian:
+   d.toLocaleDateString(
+    'en-GB',
+    {
+     year:'numeric',
+     month:'long',
+     day:'numeric'
+    }
+   ),
+
+  solar,
+
+  hijri
+ };
 }
+
+
+/* =========================================================
+   SAVE TRANSACTION
+========================================================= */
+
+function convertToAFN(
+ amount,
+ currency
+){
+
+ return amount*
+ (
+  rates[currency] ||
+  1
+ );
+}
+
 
 async function saveTransaction(){
- const id=document.getElementById('active-client-id').value;
- const amount=Number(document.getElementById('tx-amount').value);
- const date=document.getElementById('tx-date').value;
- if(!amount||amount<=0)return toast('Enter a valid amount.');
- if(!date)return toast('Select transaction date.');
- const c=appData.clients.find(x=>String(x.id)===String(id));if(!c)return toast('Client not found.');
- const dates=formatDates(date);
- c.transactions.push({type:document.getElementById('tx-type').value,currency:document.getElementById('tx-currency').value,rawAmount:amount,amountInBase:convertToAFN(amount,document.getElementById('tx-currency').value),...dates,rawDate:date});
- const saved=await saveDatatoSupabase();
- if(saved){renderDashboard();showPage('dashboard-page');}
+
+ const id=
+ document.getElementById(
+  'active-client-id'
+ ).value;
+
+ const amount=
+ Number(
+  document.getElementById(
+   'tx-amount'
+  ).value
+ );
+
+ const date=
+ document.getElementById(
+  'tx-date-display'
+ ).dataset.value;
+
+ const type=
+ document.getElementById(
+  'tx-type-display'
+ ).dataset.value ||
+ 'credit';
+
+ const currency=
+ document.getElementById(
+  'tx-currency-display'
+ ).dataset.value ||
+ 'AFN';
+
+
+ if(!amount || amount<=0)
+  return toast(
+   'Enter a valid amount.'
+  );
+
+
+ if(!date)
+  return toast(
+   'Select transaction date.'
+  );
+
+
+ const c=
+ appData.clients.find(
+  x=>String(x.id)===String(id)
+ );
+
+ if(!c)
+  return toast(
+   'Client not found.'
+  );
+
+
+ const dates=
+ formatDates(date);
+
+
+ c.transactions.push({
+
+  type,
+
+  currency,
+
+  rawAmount:amount,
+
+  amountInBase:
+   convertToAFN(
+    amount,
+    currency
+   ),
+
+  ...dates,
+
+  rawDate:date
+ });
+
+
+ const saved=
+ await saveDatatoSupabase();
+
+ if(saved){
+
+  renderDashboard();
+
+  showPage(
+   'dashboard-page'
+  );
+
+  toast(
+   'Transaction saved successfully.'
+  );
+ }
 }
 
-function openEdit(clientId,index){
- const c=appData.clients.find(x=>String(x.id)===String(clientId));const tx=c?.transactions[index];if(!tx)return;
- document.getElementById('edit-client-id').value=clientId;document.getElementById('edit-tx-index').value=index;
- document.getElementById('edit-type').value=tx.type;document.getElementById('edit-currency').value=tx.currency;document.getElementById('edit-amount').value=tx.rawAmount;document.getElementById('edit-date').value=tx.rawDate||'';showPage('edit-page');
+
+/* =========================================================
+   EDIT TRANSACTION
+========================================================= */
+
+function openEdit(
+ clientId,
+ index
+){
+
+ const c=
+ appData.clients.find(
+  x=>String(x.id)===String(clientId)
+ );
+
+ const tx=
+ c?.transactions[index];
+
+ if(!tx)return;
+
+ document.getElementById(
+  'edit-client-id'
+ ).value=clientId;
+
+ document.getElementById(
+  'edit-tx-index'
+ ).value=index;
+
+
+ document.getElementById(
+  'edit-type-display'
+ ).innerText=
+ tx.type==='credit'
+ ?'Credit (↑)'
+ :'Debit (↓)';
+
+ document.getElementById(
+  'edit-type-display'
+ ).dataset.value=
+ tx.type;
+
+
+ document.getElementById(
+  'edit-currency-display'
+ ).innerText=
+ tx.currency;
+
+ document.getElementById(
+  'edit-currency-display'
+ ).dataset.value=
+ tx.currency;
+
+
+ document.getElementById(
+  'edit-amount'
+ ).value=
+ tx.rawAmount;
+
+
+ const dateEl=
+ document.getElementById(
+  'edit-date-display'
+ );
+
+ dateEl.dataset.value=
+ tx.rawDate||'';
+
+ dateEl.innerText=
+ tx.rawDate
+ ?
+ formatDates(tx.rawDate).solar
+ :
+ 'Select date';
+
+
+ showPage('edit-page');
 }
+
 
 async function updateTransaction(){
- const id=document.getElementById('edit-client-id').value,index=Number(document.getElementById('edit-tx-index').value);
- const amount=Number(document.getElementById('edit-amount').value),date=document.getElementById('edit-date').value;
- if(!amount||amount<=0||!date)return toast('Enter amount and date.');
- const c=appData.clients.find(x=>String(x.id)===String(id));if(!c)return;
- const currency=document.getElementById('edit-currency').value,dates=formatDates(date);
- c.transactions[index]={type:document.getElementById('edit-type').value,currency,rawAmount:amount,amountInBase:convertToAFN(amount,currency),...dates,rawDate:date};
- const saved=await saveDatatoSupabase();if(saved){renderDashboard();showPage('dashboard-page');}
+
+ const id=
+ document.getElementById(
+  'edit-client-id'
+ ).value;
+
+ const index=
+ Number(
+  document.getElementById(
+   'edit-tx-index'
+  ).value
+ );
+
+ const amount=
+ Number(
+  document.getElementById(
+   'edit-amount'
+  ).value
+ );
+
+ const date=
+ document.getElementById(
+  'edit-date-display'
+ ).dataset.value;
+
+ if(!amount || amount<=0 || !date)
+  return toast(
+   'Enter amount and date.'
+  );
+
+
+ const c=
+ appData.clients.find(
+  x=>String(x.id)===String(id)
+ );
+
+ if(!c)return;
+
+
+ const currency=
+ document.getElementById(
+  'edit-currency-display'
+ ).dataset.value ||
+ 'AFN';
+
+ const type=
+ document.getElementById(
+  'edit-type-display'
+ ).dataset.value ||
+ 'credit';
+
+ const dates=
+ formatDates(date);
+
+
+ c.transactions[index]={
+
+  type,
+
+  currency,
+
+  rawAmount:amount,
+
+  amountInBase:
+   convertToAFN(
+    amount,
+    currency
+   ),
+
+  ...dates,
+
+  rawDate:date
+ };
+
+
+ const saved=
+ await saveDatatoSupabase();
+
+ if(saved){
+
+  renderDashboard();
+
+  showPage(
+   'dashboard-page'
+  );
+
+  toast(
+   'Transaction updated.'
+  );
+ }
 }
 
-function askDelete(message,callback){
- const modal=document.getElementById('confirm-modal');document.getElementById('confirm-text').innerText=message;modal.classList.add('active');
- const b=document.getElementById('confirm-yes');b.onclick=()=>{modal.classList.remove('active');callback()}
-}
-function closeConfirm(){document.getElementById('confirm-modal').classList.remove('active')}
 
-function deleteClient(id){askDelete('Delete this client and all transactions?',async()=>{appData.clients=appData.clients.filter(c=>String(c.id)!==String(id));if(await saveDatatoSupabase())renderDashboard()})}
-function deleteTransaction(id,index){askDelete('Delete this transaction?',async()=>{const c=appData.clients.find(x=>String(x.id)===String(id));if(c){c.transactions.splice(index,1);if(await saveDatatoSupabase())renderDashboard()}})}
-function toggleMenu(e,id){e.stopPropagation();document.querySelectorAll('.dropdown').forEach(x=>x.classList.remove('active'));document.getElementById('menu-'+id).classList.toggle('active')}
-window.addEventListener('click',()=>document.querySelectorAll('.dropdown').forEach(x=>x.classList.remove('active')));
+/* =========================================================
+   DELETE
+========================================================= */
+
+function askDelete(
+ message,
+ callback
+){
+
+ const modal=
+ document.getElementById(
+  'confirm-modal'
+ );
+
+ document.getElementById(
+  'confirm-text'
+ ).innerText=message;
+
+ modal.classList.add('active');
+
+ const b=
+ document.getElementById(
+  'confirm-yes'
+ );
+
+ b.onclick=()=>{
+
+  modal.classList.remove(
+   'active'
+  );
+
+  callback();
+ };
+}
+
+
+function closeConfirm(){
+
+ document
+ .getElementById(
+  'confirm-modal'
+ )
+ .classList.remove('active');
+}
+
+
+function deleteClient(id){
+
+ askDelete(
+  'Delete this client and all transactions?',
+  async()=>{
+
+   appData.clients=
+   appData.clients.filter(
+    c=>String(c.id)!==String(id)
+   );
+
+   if(
+    await saveDatatoSupabase()
+   )
+    renderDashboard();
+  }
+ );
+}
+
+
+function deleteTransaction(
+ id,
+ index
+){
+
+ askDelete(
+  'Delete this transaction?',
+  async()=>{
+
+   const c=
+   appData.clients.find(
+    x=>String(x.id)===String(id)
+   );
+
+   if(c){
+
+    c.transactions.splice(
+     index,
+     1
+    );
+
+    if(
+     await saveDatatoSupabase()
+    )
+     renderDashboard();
+   }
+  }
+ );
+}
+
+
+function toggleMenu(
+ e,
+ id
+){
+
+ e.stopPropagation();
+
+ document
+ .querySelectorAll('.dropdown')
+ .forEach(
+  x=>x.classList.remove('active')
+ );
+
+ document
+ .getElementById(
+  'menu-'+id
+ )
+ .classList.toggle('active');
+}
+
+
+window.addEventListener(
+ 'click',
+ ()=>{
+  document
+  .querySelectorAll('.dropdown')
+  .forEach(
+   x=>x.classList.remove('active')
+  );
+ }
+);
+
+
+/* =========================================================
+   DASHBOARD
+========================================================= */
 
 function renderDashboard(){
- const box=document.getElementById('accounts-list');box.innerHTML='';
- if(!appData.clients?.length){box.innerHTML='<div style="text-align:center;color:var(--muted);margin-top:60px">No accounts registered yet.<br>Click the + button.</div>';return}
+
+ const box=
+ document.getElementById(
+  'accounts-list'
+ );
+
+ box.innerHTML='';
+
+
+ if(!appData.clients?.length){
+
+  box.innerHTML=
+  `
+  <div class="empty-state">
+  No accounts registered yet.<br>
+  Click the + button.
+  </div>
+  `;
+
+  return;
+ }
+
+
  appData.clients.forEach(c=>{
-  let credit=0,debit=0,txHtml='';
-  (c.transactions||[]).forEach((tx,i)=>{
-   if(tx.type==='credit')credit+=Number(tx.amountInBase)||0;else debit+=Number(tx.amountInBase)||0;
-   txHtml+=`<div class="tx"><div style="max-width:65%"><b style="color:${tx.type==='credit'?'var(--green)':'var(--red)'}">${tx.type==='credit'?'Credit (↑)':'Debit (↓)'}</b><div style="font-size:14px;font-weight:bold;margin-top:4px">${Number(tx.rawAmount).toLocaleString()} ${escapeHtml(tx.currency)}</div><div class="tx-date">☀️ ${escapeHtml(tx.solar||'-')}<br>📅 ${escapeHtml(tx.gregorian||'-')}<br>🌙 ${escapeHtml(tx.hijri||'-')}</div></div><div style="display:flex;flex-direction:column;align-items:flex-end;gap:5px"><span style="font-size:10px;color:var(--muted)">~${(Number(tx.amountInBase)||0).toFixed(0)} AFN</span><div><button class="smallbtn blue" onclick="openEdit('${c.id}',${i})">Edit</button> <button class="smallbtn red" onclick="deleteTransaction('${c.id}',${i})">Delete</button></div></div></div>`
+
+  let credit=0;
+
+  let debit=0;
+
+  let txHtml='';
+
+
+  (c.transactions||[])
+  .forEach((tx,i)=>{
+
+   if(tx.type==='credit')
+    credit+=
+    Number(tx.amountInBase)||0;
+   else
+    debit+=
+    Number(tx.amountInBase)||0;
+
+
+   txHtml+=
+   `
+   <div class="tx">
+
+   <div style="max-width:70%">
+
+   <b style="
+   color:${tx.type==='credit'
+    ?'var(--green)'
+    :'var(--red)'}">
+
+   ${
+    tx.type==='credit'
+    ?
+    'Credit (↑)'
+    :
+    'Debit (↓)'
+   }
+
+   </b>
+
+
+   <div
+   style="
+   font-size:14px;
+   font-weight:bold;
+   margin-top:5px">
+
+   ${Number(
+    tx.rawAmount
+   ).toLocaleString()}
+   ${escapeHtml(tx.currency)}
+
+   </div>
+
+
+   <div class="tx-date">
+
+   <span class="date-line">
+   ☀️ <b>هجری شمسی:</b>
+   ${escapeHtml(
+    tx.solar||'-'
+   )}
+   </span>
+
+   <span class="date-line">
+   📅 <b>میلادی:</b>
+   ${escapeHtml(
+    tx.gregorian||'-'
+   )}
+   </span>
+
+   <span class="date-line">
+   🌙 <b>هجری قمری:</b>
+   ${escapeHtml(
+    tx.hijri||'-'
+   )}
+   </span>
+
+   </div>
+
+   </div>
+
+
+   <div
+   style="
+   display:flex;
+   flex-direction:column;
+   align-items:flex-end;
+   gap:5px">
+
+   <span
+   style="
+   font-size:10px;
+   color:var(--muted)">
+
+   ~${(
+    Number(tx.amountInBase)||0
+   ).toFixed(0)} AFN
+
+   </span>
+
+
+   <div>
+
+   <button
+   class="smallbtn blue"
+   onclick="openEdit('${c.id}',${i})">
+
+   Edit
+
+   </button>
+
+   <button
+   class="smallbtn red"
+   onclick="deleteTransaction('${c.id}',${i})">
+
+   Delete
+
+   </button>
+
+   </div>
+
+   </div>
+
+   </div>
+   `;
   });
-  box.insertAdjacentHTML('beforeend',`<div class="card"><div class="card-head"><div class="name">${escapeHtml(c.name)}</div><div style="display:flex;align-items:center;gap:5px"><button class="smallbtn primary" onclick="openTransactionPage('${c.id}')">+ Transaction</button><div class="menu"><button class="dots" onclick="toggleMenu(event,'${c.id}')">⋮</button><div id="menu-${c.id}" class="dropdown"><button onclick="deleteClient('${c.id}')">🗑️ Delete Full Account</button></div></div></div></div><div class="stats"><div class="stat"><small>Balance</small><b style="color:var(--primary)">${(credit-debit).toFixed(0)} AFN</b></div><div class="stat"><small>Debit</small><b style="color:var(--red)">${debit.toFixed(0)} AFN</b></div><div class="stat"><small>Credit</small><b style="color:var(--green)">${credit.toFixed(0)} AFN</b></div></div>${txHtml?`<div class="tx-list">${txHtml}</div>`:''}</div>`)
- })
+
+
+  box.insertAdjacentHTML(
+   'beforeend',
+   `
+   <div class="card">
+
+   <div class="card-head">
+
+   <div class="name">
+   ${escapeHtml(c.name)}
+   </div>
+
+
+   <div
+   style="
+   display:flex;
+   align-items:center;
+   gap:5px">
+
+   <button
+   class="smallbtn primary"
+   onclick="openTransactionPage('${c.id}')">
+
+   + Transaction
+
+   </button>
+
+
+   <div class="menu">
+
+   <button
+   class="dots"
+   onclick="toggleMenu(event,'${c.id}')">
+
+   ⋮
+
+   </button>
+
+
+   <div
+   id="menu-${c.id}"
+   class="dropdown">
+
+   <button
+   onclick="deleteClient('${c.id}')">
+
+   🗑️ Delete Full Account
+
+   </button>
+
+   </div>
+
+   </div>
+
+   </div>
+
+   </div>
+
+
+   <div class="stats">
+
+   <div class="stat">
+
+   <small>Balance</small>
+
+   <b
+   style="color:var(--primary)">
+
+   ${(credit-debit).toFixed(0)}
+   AFN
+
+   </b>
+
+   </div>
+
+
+   <div class="stat">
+
+   <small>Debit</small>
+
+   <b
+   style="color:var(--red)">
+
+   ${debit.toFixed(0)}
+   AFN
+
+   </b>
+
+   </div>
+
+
+   <div class="stat">
+
+   <small>Credit</small>
+
+   <b
+   style="color:var(--green)">
+
+   ${credit.toFixed(0)}
+   AFN
+
+   </b>
+
+   </div>
+
+   </div>
+
+
+   ${
+    txHtml
+    ?
+    `<div class="tx-list">${txHtml}</div>`
+    :
+    ''
+   }
+
+   </div>
+   `
+  );
+
+ });
 }
 
-async function fetchExchangeRatesByLocation(city){
+
+/* =========================================================
+   EXCHANGE RATES
+========================================================= */
+
+async function fetchExchangeRates(){
+
  try{
-  const controller=new AbortController();const timer=setTimeout(()=>controller.abort(),5000);
-  const r=await fetch('https://open.er-api.com/v6/latest/USD',{signal:controller.signal});clearTimeout(timer);
-  const d=await r.json();const base=d?.rates?.AFN||71;const offsets={Kabul:0,Kandahar:.3,Mazar:.15,Jawzjan:.2,Herat:-.2,Nangarhar:.1};const usd=base+(offsets[city]||0);
-  rates.USD=usd;rates.EUR=usd/(d?.rates?.EUR||.92);rates.TRY=usd/(d?.rates?.TRY||32.5);
-  document.getElementById('rates').innerHTML=`<span>🇦🇫 AFN: 1</span><span>💵 USD: ${usd.toFixed(2)}</span><span>💶 EUR: ${rates.EUR.toFixed(1)}</span><span>🇹🇷 TRY: ${rates.TRY.toFixed(2)}</span>`;
- }catch{document.getElementById('rates').innerHTML='<span>📴 Offline rates</span>'}
+
+  const controller=
+  new AbortController();
+
+  const timer=
+  setTimeout(
+   ()=>controller.abort(),
+   7000
+  );
+
+
+  const response=
+  await fetch(
+   'https://open.er-api.com/v6/latest/AFN',
+   {
+    signal:controller.signal
+   }
+  );
+
+  clearTimeout(timer);
+
+
+  const data=
+  await response.json();
+
+
+  if(
+   data &&
+   data.result==='success' &&
+   data.rates
+  ){
+
+   /*
+     AFN is the BASE currency.
+     Therefore AFN = 1.
+   */
+
+   rates.AFN=1;
+
+   /*
+     API returns how many units of
+     another currency equal one AFN.
+     To display "USD: XX AFN",
+     we invert it.
+   */
+
+   if(data.rates.USD)
+    rates.USD=
+     1/data.rates.USD;
+
+   if(data.rates.EUR)
+    rates.EUR=
+     1/data.rates.EUR;
+
+   if(data.rates.TRY)
+    rates.TRY=
+     1/data.rates.TRY;
+
+
+   document.getElementById(
+    'rates'
+   ).innerHTML=
+   `
+   <span>🇦🇫 AFN: 1</span>
+
+   <span>
+   💵 USD: ${rates.USD.toFixed(2)}
+   </span>
+
+   <span>
+   💶 EUR: ${rates.EUR.toFixed(2)}
+   </span>
+
+   <span>
+   🇹🇷 TRY: ${rates.TRY.toFixed(2)}
+   </span>
+   `;
+
+  }else{
+
+   throw new Error(
+    'Invalid exchange-rate response'
+   );
+  }
+
+
+ }catch(error){
+
+  console.warn(
+   'Exchange rate error:',
+   error
+  );
+
+  document.getElementById(
+   'rates'
+  ).innerHTML=
+  `
+  <span>🇦🇫 AFN: 1</span>
+  <span>💵 USD: --</span>
+  <span>💶 EUR: --</span>
+  <span>🇹🇷 TRY: --</span>
+  `;
+ }
 }
 
-window.addEventListener('DOMContentLoaded',async()=>{
- if('serviceWorker'in navigator)navigator.serviceWorker.register('./sw.js').catch(console.error);
- const {data,error}=await supabaseClient.auth.getSession();
- if(error)console.error(error);
- if(data.session?.user){
-   currentUser=data.session.user;await loadDataFromSupabase();showPage('dashboard-page');
- }else{showPage('login-page');fetchExchangeRatesByLocation('Jawzjan')}
-});
-supabaseClient.auth.onAuthStateChange(async(event,session)=>{
- if(session?.user&&!currentUser){currentUser=session.user;await loadDataFromSupabase();showPage('dashboard-page');updateHeader()}
-});
+
+/* =========================================================
+   STARTUP
+========================================================= */
+
+window.addEventListener(
+ 'DOMContentLoaded',
+ async()=>{
+
+  if(
+   'serviceWorker' in navigator
+  ){
+
+   navigator.serviceWorker
+   .register('./sw.js')
+   .catch(console.error);
+  }
+
+
+  const {
+   data,
+   error
+  }=
+  await supabaseClient
+  .auth
+  .getSession();
+
+
+  if(error)
+   console.error(error);
+
+
+  if(
+   data.session?.user
+  ){
+
+   currentUser=
+   data.session.user;
+
+   await loadDataFromSupabase();
+
+   showPage(
+    'dashboard-page'
+   );
+
+   detectRealLocation(true);
+
+  }else{
+
+   showPage(
+    'login-page'
+   );
+
+   fetchExchangeRates();
+
+   /*
+     We don't request GPS before login.
+   */
+  }
+ });
+
+
+supabaseClient
+.auth
+.onAuthStateChange(
+ async(event,session)=>{
+
+  if(
+   session?.user &&
+   !currentUser
+  ){
+
+   currentUser=
+   session.user;
+
+   await loadDataFromSupabase();
+
+   showPage(
+    'dashboard-page'
+   );
+
+   updateHeader();
+
+   detectRealLocation(true);
+  }
+ }
+);
+
 </script>
+
 </body>
 </html>
