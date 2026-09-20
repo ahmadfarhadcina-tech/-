@@ -2909,217 +2909,270 @@ function backToSignup(){
    VERIFY OTP
 ========================================================= */
 
-async function verifySignupCode(){
-
- if(!pendingSignup){
-
-  return toast(
-   userProfile.language==='fa'
-   ?'اطلاعات ثبت‌نام پیدا نشد.'
-   :'Sign-up information was not found.'
-  );
- }
-
- const code=
- document.getElementById(
-  'otp-code'
- ).value.trim();
-
- if(!/^\d{6}$/.test(code)){
-
-  return toast(
-   t('otpInvalid')
-  );
- }
-
- const verifyButton=
- document.getElementById(
-  'verify-otp-btn'
- );
-
- const oldText=
- verifyButton.innerText;
-
- verifyButton.disabled=true;
- verifyButton.style.opacity='.6';
-
- try{
-
-  const {data,error}=
-  await supabaseClient
-  .functions
-  .invoke(
-   'verify-email-code',
-   {
-    body:{
-     email:pendingSignup.email,
-     code
+async function verifySignupCode() {
+    if (!pendingSignup) {
+        return toast(
+            userProfile.language === 'fa'
+                ? 'اطلاعات ثبت‌نام پیدا نشد.'
+                : 'Signup information was not found.'
+        );
     }
-   }
-  );
 
-  if(error){
+    const codeInput = document.getElementById('otp-code');
+    const verifyButton = document.getElementById('verify-otp-btn');
 
-   let message=
-    error.message ||
-    t('otpVerifyError');
+    const code = codeInput.value.trim();
 
-   if(error.context){
-
-    try{
-
-     const body=
-      await error.context.json();
-
-     if(body?.error)
-      message=body.error;
-
-     else if(body?.message)
-      message=body.message;
-
-    }catch(e){
-
-     console.warn(
-      'Could not read verification error:',
-      e
-     );
+    if (!/^\d{6}$/.test(code)) {
+        return toast(
+            userProfile.language === 'fa'
+                ? 'کد باید دقیقاً ۶ رقم باشد.'
+                : 'The code must be exactly 6 digits.'
+        );
     }
-   }
 
-   return showError(
-    userProfile.language==='fa'
-    ?'خطای تأیید'
-    :'Verification error',
-    {message}
-   );
-  }
+    const oldText = verifyButton.innerText;
 
-  if(!data?.success){
+    verifyButton.disabled = true;
+    verifyButton.style.opacity = '0.6';
 
-   return toast(
-    data?.error ||
-    t('otpVerifyError')
-   );
-  }
+    try {
+        /*
+         * Verify the 6-digit code directly through
+         * the Supabase Edge Function.
+         */
+        const response = await fetch(
+            `${SUPABASE_URL}/functions/v1/verify-email-code`,
+            {
+                method: 'POST',
 
+                headers: {
+                    'Content-Type': 'application/json',
+                    'apikey': SUPABASE_KEY,
+                    'Authorization': `Bearer ${SUPABASE_KEY}`
+                },
 
-  /*
-    The Edge Function has now confirmed
-    the email. Sign in normally using
-    the password kept only in memory.
-  */
+                body: JSON.stringify({
+                    email: pendingSignup.email,
+                    code: code
+                })
+            }
+        );
 
-  const email=
-   pendingSignup.email;
+        let data = {};
 
-  const password=
-   pendingSignup.password;
+        try {
+            data = await response.json();
+        } catch (jsonError) {
+            console.error(
+                'Could not read verification response:',
+                jsonError
+            );
+        }
 
-  const {data:loginData,error:loginError}=
-   await supabaseClient
-   .auth
-   .signInWithPassword({
-    email,
-    password
-   });
+        console.log(
+            'Verification response:',
+            response.status,
+            data
+        );
 
-  if(loginError){
+        /*
+         * Edge Function returned an error.
+         */
+        if (!response.ok || !data?.success) {
 
-   console.error(
-    'Automatic sign in error:',
-    loginError
-   );
+            const message =
+                data?.error ||
+                data?.message ||
+                (
+                    userProfile.language === 'fa'
+                        ? 'کد تأیید نادرست یا منقضی شده است.'
+                        : 'The verification code is incorrect or expired.'
+                );
 
-   pendingSignup=null;
+            return showError(
+                userProfile.language === 'fa'
+                    ? 'خطای تأیید'
+                    : 'Verification error',
+                {
+                    message: message
+                }
+            );
+        }
 
-   backToSignup();
+        /*
+         * The email is now verified.
+         *
+         * Sign in automatically using the password
+         * that is kept only in memory.
+         */
+        const email = pendingSignup.email;
+        const password = pendingSignup.password;
 
-   return showError(
-    userProfile.language==='fa'
-    ?'ایمیل تأیید شد، اما ورود خودکار انجام نشد'
-    :'Email verified, but automatic sign in failed',
-    loginError
-   );
-  }
+        const {
+            data: loginData,
+            error: loginError
+        } = await supabaseClient.auth.signInWithPassword({
+            email: email,
+            password: password
+        });
 
-  currentUser=
-   loginData.user;
+        if (loginError) {
 
-  pendingSignup=null;
+            console.error(
+                'Automatic sign-in error:',
+                loginError
+            );
 
-  document.getElementById(
-   'otp-section'
-  ).style.display='none';
+            pendingSignup = null;
 
-  document.getElementById(
-   'email-label'
-  ).parentElement
-  .style.display='block';
+            backToSignup();
 
-  document.getElementById(
-   'password-label'
-  ).parentElement
-  .style.display='block';
+            return showError(
+                userProfile.language === 'fa'
+                    ? 'ایمیل تأیید شد، اما ورود خودکار انجام نشد.'
+                    : 'Email verified, but automatic sign-in failed.',
+                loginError
+            );
+        }
 
-  document.getElementById(
-   'signin-btn'
-  ).style.display='block';
+        /*
+         * Login successful.
+         */
+        currentUser = loginData.user;
 
-  document.getElementById(
-   'signup-btn'
-  ).style.display='block';
+        pendingSignup = null;
 
-  document.getElementById(
-   'login-title'
-  ).innerText=
-   t('signInRegister');
+        /*
+         * Hide OTP section.
+         */
+        const otpSection =
+            document.getElementById('otp-section');
 
-  document.getElementById(
-   'login-description'
-  ).innerText=
-   t('cloudDescription');
+        if (otpSection) {
+            otpSection.style.display = 'none';
+        }
 
-  document.getElementById(
-   'otp-code'
-  ).value='';
+        /*
+         * Show email and password fields again.
+         */
+        const emailGroup =
+            document.getElementById('auth-email')?.parentElement;
 
-  document.getElementById(
-   'otp-email-display'
-  ).innerText='';
+        const passwordGroup =
+            document.getElementById('auth-password')?.parentElement;
 
-  await loadDataFromSupabase();
+        if (emailGroup) {
+            emailGroup.style.display = '';
+        }
 
-  showPage(
-   'dashboard-page'
-  );
+        if (passwordGroup) {
+            passwordGroup.style.display = '';
+        }
 
-  updateHeader();
+        /*
+         * Show Sign In and Create Account buttons.
+         */
+        const signInButton =
+            document.getElementById('signin-btn');
 
-  detectRealLocation(true);
+        const signUpButton =
+            document.getElementById('signup-btn');
 
-  toast(
-   t('otpVerified')
-  );
+        if (signInButton) {
+            signInButton.style.display = '';
+        }
 
- }catch(error){
+        if (signUpButton) {
+            signUpButton.style.display = '';
+        }
 
-  console.error(error);
+        /*
+         * Clear OTP input.
+         */
+        if (codeInput) {
+            codeInput.value = '';
+        }
 
-  showError(
-   userProfile.language==='fa'
-   ?'خطای تأیید'
-   :'Verification error',
-   error
-  );
+        /*
+         * Restore login page text.
+         */
+        const loginTitle =
+            document.getElementById('login-title');
 
- }finally{
+        const loginDescription =
+            document.getElementById('login-description');
 
-  verifyButton.disabled=false;
-  verifyButton.style.opacity='1';
-  verifyButton.innerText=oldText;
- }
+        if (loginTitle) {
+            loginTitle.innerText =
+                t('signInRegister');
+        }
+
+        if (loginDescription) {
+            loginDescription.innerText =
+                t('cloudDescription');
+        }
+
+        /*
+         * Load the user's saved data from Supabase.
+         */
+        await loadDataFromSupabase();
+
+        /*
+         * Open dashboard.
+         */
+        showPage('dashboard-page');
+
+        updateHeader();
+
+        /*
+         * Update real location if this function
+         * already exists in the app.
+         */
+        if (typeof detectRealLocation === 'function') {
+            detectRealLocation(true);
+        }
+
+        /*
+         * Success message.
+         */
+        toast(
+            userProfile.language === 'fa'
+                ? 'حساب شما با موفقیت ساخته شد.'
+                : 'Your account has been created successfully.'
+        );
+
+    } catch (error) {
+
+        console.error(
+            'Verification error:',
+            error
+        );
+
+        let message =
+            error?.message ||
+            (
+                userProfile.language === 'fa'
+                    ? 'ارتباط با سرویس تأیید برقرار نشد.'
+                    : 'Could not connect to the verification service.'
+            );
+
+        showError(
+            userProfile.language === 'fa'
+                ? 'خطای تأیید'
+                : 'Verification error',
+            {
+                message: message
+            }
+        );
+
+    } finally {
+
+        verifyButton.disabled = false;
+        verifyButton.style.opacity = '1';
+        verifyButton.innerText = oldText;
+    }
 }
-
 
 /* =========================================================
    RESEND OTP
