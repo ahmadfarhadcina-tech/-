@@ -2942,7 +2942,7 @@ async function verifySignupCode() {
          * the Supabase Edge Function.
          */
         const response = await fetch(
-            `${SUPABASE_URL}/functions/v1/verify-email-code`,
+            `${SUPABASE_URL}/functions/v1/dynamic-processor`,
             {
                 method: 'POST',
 
