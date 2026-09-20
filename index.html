@@ -315,7 +315,7 @@
 
         <main class="app-content">
             
-            <div id="login-page" class="page active">
+            <div id="login-page" class="page">
                 <div style="text-align: center; margin: 30px 0;">
                     <h2 style="font-size: 18px; color: #a78bfa; margin-bottom: 8px;">ورود یا ثبت‌نام در صرافی</h2>
                     <p style="font-size: 11px; color: var(--text-muted);">ایمیل و پسورد خود را وارد کنید.</p>
@@ -409,15 +409,20 @@
         let currentUserEmail = '';
         let appData = { clients: [] };
 
-        // بررسی خودکار نشست کاربر هنگام تازه‌سازی صفحه
+        // بررسی خودکار نشست کاربر هنگام تازه‌سازی صفحه بدون پرش صفحه لاگین
         document.addEventListener('DOMContentLoaded', async () => {
+            // مخفی کردن تمام صفحه‌ها در ابتدا تا وضعیت لاگین چک شود
+            document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+
             const { data: { session } } = await supabaseClient.auth.getSession();
             if (session && session.user) {
                 currentUserEmail = session.user.email;
                 document.getElementById('user-email-badge').innerText = currentUserEmail;
                 document.getElementById('logout-btn').style.display = 'block';
                 await loadDataFromSupabase();
-                showPage('dashboard-page');
+                showPage('dashboard-page'); // اگر لاگین بود مستقیم مستقیماً برو داشبورد
+            } else {
+                showPage('login-page'); // اگر نبود برو صفحه لاگین
             }
         });
 
