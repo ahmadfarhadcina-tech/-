@@ -1,17 +1,12 @@
 <!DOCTYPE html>
 <html lang="en" dir="ltr" id="html-root">
-
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1.0,maximum-scale=1.0,user-scalable=no">
-
-<title>Daily Accounting - Home</title>
-
+<title>Daily Accounting</title>
 <link rel="manifest" href="manifest.json">
 <meta name="theme-color" content="#7c3aed">
-
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-
 <style>
 :root{--primary:#7c3aed;--primary-dark:#6d28d9;--bg:#0f172a;--card:#1e293b;--text:#f8fafc;--muted:#94a3b8;--border:#334155;--green:#10b981;--red:#ef4444;--blue:#3b82f6;--radius:16px;}
 *{box-sizing:border-box;margin:0;padding:0;font-family:Tahoma,sans-serif;-webkit-tap-highlight-color:transparent;}
@@ -41,10 +36,8 @@ button{cursor:pointer;border:0;padding:14px 20px;border-radius:var(--radius);fon
 #toast{position:fixed;left:50%;bottom:20px;transform:translateX(-50%);background:#111827;color:#fff;padding:12px 18px;border-radius:12px;display:none;z-index:3000;font-size:13px;max-width:90%;text-align:center;}
 </style>
 </head>
-
 <body>
 <script src="sarafi-api.js"></script>
- 
 <div class="app">
 <header>
 <h1 id="header-title">Daily Accounting</h1>
@@ -56,10 +49,8 @@ button{cursor:pointer;border:0;padding:14px 20px;border-radius:var(--radius);fon
 <button id="logout-btn" onclick="logoutUser()" style="display:none;width:auto;padding:6px 9px;font-size:10px;background:#ef4444;color:#fff">Logout</button>
 </div>
 </header>
-
 <div class="rates" id="rates"><span>🔄 Loading rates...</span></div>
 <div class="location-status" id="location-status">📍 Location: Detecting...</div>
-
 <main>
 <section id="login-page" class="page active">
 <div class="box">
@@ -77,8 +68,6 @@ button{cursor:pointer;border:0;padding:14px 20px;border-radius:var(--radius);fon
 </div>
 <button id="signin-btn" class="primary" onclick="handleSignIn()">Sign In</button>
 <button id="signup-btn" onclick="handleSignUp()" style="background:transparent;border:1px solid var(--primary);color:var(--primary);margin-top:12px">Create New Account</button>
-
-<!-- OTP -->
 <div id="otp-section" style="display:none;margin-top:20px">
 <div style="text-align:center;margin:25px 0 20px">
 <h3 id="otp-title" style="font-size:17px;color:var(--primary);margin-bottom:8px">Verify Your Email</h3>
@@ -97,80 +86,47 @@ button{cursor:pointer;border:0;padding:14px 20px;border-radius:var(--radius);fon
 </section>
 </main>
 </div>
-
 <div id="toast"></div>
-
 <script>
 const SUPABASE_URL = 'https://hvsymjkbmpmvjycwenbd.supabase.co';
 const SUPABASE_KEY = 'sb_publishable_9pkhkb88LNXJw457Sx8dpA_0E231JwH';
 const supabaseClient = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
-
-let currentUser = null;
-let appData = { clients: [] };
-let userProfile = { name: '', phone: '', location: 'Jawzjan', avatar: '', themeColor: '#7c3aed', language: 'en' };
-let rates = { AFN: 1 };
-let pendingSignup = null;
-
-function toast(msg){
- const e=document.getElementById('toast');
- e.innerText=msg; e.style.display='block';
- clearTimeout(window.__toast);
- window.__toast=setTimeout(()=>{e.style.display='none';},3500);
-}
-
-function escapeHtml(s){
- return String(s??'').replace(/[&<>"']/g,m=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#039;'}[m]));
-}
-
+let currentUser = null, pendingSignup = null;
+function toast(msg){ const e=document.getElementById('toast'); e.innerText=msg; e.style.display='block'; clearTimeout(window.__toast); window.__toast=setTimeout(()=>{e.style.display='none';},3500); }
 async function handleSignIn(){
- const email=document.getElementById('auth-email').value.trim();
- const password=document.getElementById('auth-password').value;
- const {data,error}=await supabaseClient.auth.signInWithPassword({email,password});
- if(error) return toast('Sign in error: ' + error.message);
- currentUser=data.user;
- window.location.href='transactions.html';
+ const email = document.getElementById('auth-email').value.trim();
+ const password = document.getElementById('auth-password').value;
+ const {data,error} = await supabaseClient.auth.signInWithPassword({email,password});
+ if(error) return alert(error.message);
+ currentUser = data.user;
+ window.location.href = 'transactions.html';
 }
-
 async function handleSignUp(){
- const email=document.getElementById('auth-email').value.trim();
- const password=document.getElementById('auth-password').value;
- if(!email || password.length<6) return toast('Enter valid email and password.');
- const {data,error}=await supabaseClient.functions.invoke('smooth-responder',{body:{email,password}});
- if(error) return toast('Signup error');
- pendingSignup={email,password};
+ const email = document.getElementById('auth-email').value.trim();
+ const password = document.getElementById('auth-password').value;
+ if(!email || password.length<6) return toast('Enter email & password');
+ const {data,error} = await supabaseClient.functions.invoke('smooth-responder',{body:{email,password}});
+ if(error) return toast(error.message);
+ pendingSignup = {email, password};
  document.getElementById('email-label').parentElement.style.display='none';
  document.getElementById('password-label').parentElement.style.display='none';
  document.getElementById('signin-btn').style.display='none';
  document.getElementById('signup-btn').style.display='none';
  document.getElementById('otp-section').style.display='block';
- toast('OTP sent to email');
 }
-
 async function verifySignupCode(){
- const code=document.getElementById('otp-code').value.trim();
- if(!code) return toast('Enter verification code.');
- const response=await fetch(`${SUPABASE_URL}/functions/v1/dynamic-processor`,{
-  method:'POST',
-  headers:{'Content-Type':'application/json','apikey':SUPABASE_URL,'Authorization':`Bearer ${SUPABASE_KEY}`},
-  body:JSON.stringify({email:pendingSignup.email,code})
- });
- const data=await response.json();
- if(!data?.success) return toast('Invalid verification code.');
- const {data:loginData}=await supabaseClient.auth.signInWithPassword({email:pendingSignup.email,password:pendingSignup.password});
- currentUser=loginData.user;
- window.location.href='transactions.html';
+ const code = document.getElementById('otp-code').value.trim();
+ const res = await fetch(`${SUPABASE_URL}/functions/v1/dynamic-processor`,{method:'POST',headers:{'Content-Type':'application/json','apikey':SUPABASE_KEY,'Authorization':`Bearer ${SUPABASE_KEY}`},body:JSON.stringify({email:pendingSignup.email,code})});
+ const data = await res.json();
+ if(!data?.success) return toast('Invalid code');
+ const {data:loginData} = await supabaseClient.auth.signInWithPassword({email:pendingSignup.email,password:pendingSignup.password});
+ currentUser = loginData.user;
+ window.location.href = 'transactions.html';
 }
-
-async function logoutUser(){
- await supabaseClient.auth.signOut();
- window.location.reload();
-}
-
+function backToSignup(){ pendingSignup=null; location.reload(); }
 window.addEventListener('DOMContentLoaded', async()=>{
- const {data}=await supabaseClient.auth.getSession();
- if(data.session?.user){
-  window.location.href='transactions.html';
- }
+ const {data} = await supabaseClient.auth.getSession();
+ if(data.session?.user) window.location.href = 'transactions.html';
 });
 </script>
 </body>
