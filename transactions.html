@@ -6,13 +6,13 @@
 <title>Daily Accounting - Transactions</title>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <style>
-:root{--primary:#7c3aed;--bg:#0f172a;--card:#1e293b;--text:#f8fafc;--muted:#94a3b8;--border:#334155;--green:#10b981;--red:#ef4444;--radius:16px;}
+:root{--primary:#7c3aed;--primary-dark:#6d28d9;--bg:#0f172a;--card:#1e293b;--text:#f8fafc;--muted:#94a3b8;--border:#334155;--green:#10b981;--red:#ef4444;--blue:#3b82f6;--radius:16px;}
 *{box-sizing:border-box;margin:0;padding:0;font-family:Tahoma,sans-serif;}
 body{background:var(--bg);color:var(--text);min-height:100vh;}
 .app{width:100%;max-width:1200px;margin:0 auto;min-height:100vh;background:var(--card);display:flex;flex-direction:column;}
 header{background:linear-gradient(135deg,#1e293b,#0f172a);padding:14px 22px;border-bottom:1px solid var(--border);display:flex;justify-content:space-between;align-items:center;}
 header h1{font-size:18px;color:var(--primary);}
-.page{padding:30px;}
+.page{padding:30px;flex:1;}
 .card{background:#0f172a;border:1px solid var(--border);border-radius:var(--radius);padding:18px;margin-bottom:16px;}
 .card-head{display:flex;justify-content:space-between;align-items:center;margin-bottom:14px;}
 .name{font-size:17px;font-weight:bold;}
@@ -33,27 +33,21 @@ header h1{font-size:18px;color:var(--primary);}
 <button class="smallbtn red" onclick="logoutUser()">Logout</button>
 </div>
 </header>
-
 <main class="page">
 <div id="accounts-list"></div>
 </main>
-
-<div id="fab" class="fab" onclick="openAddClientPrompt()">+</div>
+<div id="fab" class="fab" onclick="addClientPrompt()">+</div>
 </div>
-
 <script>
 const SUPABASE_URL = 'https://hvsymjkbmpmvjycwenbd.supabase.co';
 const SUPABASE_KEY = 'sb_publishable_9pkhkb88LNXJw457Sx8dpA_0E231JwH';
 const supabaseClient = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
-
-let currentUser = null;
-let appData = { clients: [] };
+let currentUser = null, appData = { clients: [] };
 
 async function loadData(){
  const {data:{session}} = await supabaseClient.auth.getSession();
  if(!session){ window.location.href='index.html'; return; }
  currentUser = session.user;
- 
  const {data} = await supabaseClient.from('exchange_users').select('*').eq('user_id', currentUser.id).maybeSingle();
  if(data && data.content) appData = data.content;
  renderDashboard();
@@ -66,7 +60,7 @@ function renderDashboard(){
   box.innerHTML = `<div style="text-align:center;color:var(--muted);margin-top:60px;">No accounts registered yet.<br>Click the + button.</div>`;
   return;
  }
- appData.clients.forEach((c, idx)=>{
+ appData.clients.forEach((c)=>{
   box.insertAdjacentHTML('beforeend', `
    <div class="card">
     <div class="card-head">
@@ -78,8 +72,8 @@ function renderDashboard(){
  });
 }
 
-async function openAddClientPrompt(){
- const name = prompt('Enter client name:');
+async function addClientPrompt(){
+ const name = prompt('Client Name:');
  if(!name) return;
  appData.clients.push({ id: String(Date.now()), name, transactions: [] });
  await supabaseClient.from('exchange_users').upsert({ user_id: currentUser.id, email: currentUser.email, content: appData }, { onConflict: 'user_id' });
