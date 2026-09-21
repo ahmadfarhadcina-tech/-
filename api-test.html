@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html lang="fa" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <title>API Test</title>
+</head>
+<body>
+
+<h2>تست نرخ سرای شهزاده</h2>
+<div id="result">در حال دریافت...</div>
+
+<script>
+fetch("https://sarafi.af/fa/exchange-rates/sarai-shahzada")
+    .then(response => response.text())
+    .then(data => {
+        console.log(data);
+        document.getElementById("result").innerText =
+            "اطلاعات از SARAFI.AF دریافت شد";
+    })
+    .catch(error => {
+        console.error(error);
+        document.getElementById("result").innerText =
+            "دریافت اطلاعات ناموفق بود";
+    });
+</script>
+
+</body>
+</html>
