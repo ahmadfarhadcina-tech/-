@@ -3,6 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1.0,maximum-scale=1.0,user-scalable=no">
+
 <title>Daily Accounting</title>
 
 <link rel="manifest" href="manifest.json">
@@ -46,14 +47,6 @@ html,body{
 body{
  min-height:100vh;
  overflow-x:hidden;
-}
-
-button,input{
- font:inherit;
-}
-
-button{
- cursor:pointer;
 }
 
 .app{
@@ -149,6 +142,10 @@ header h1{
  transform:scale(.92);
 }
 
+/* =========================
+   RATES
+========================= */
+
 .rates{
  background:#0b1220;
  padding:8px 14px;
@@ -188,6 +185,18 @@ header h1{
  color:#64748b;
  font-size:9px;
 }
+
+.rate-error{
+ color:#f59e0b;
+ font-size:10px;
+}
+
+.rate-ok{
+ color:#10b981;
+ font-size:9px;
+}
+
+/* ========================= */
 
 .location-status{
  background:#111827;
@@ -349,15 +358,15 @@ button:active{
 .accounts{
  display:flex;
  flex-direction:column;
- gap:14px;
+ gap:10px;
 }
 
 .client-card{
  background:linear-gradient(145deg,#263449,#182333);
  border:1px solid var(--border);
- border-radius:18px;
+ border-radius:16px;
  overflow:hidden;
- box-shadow:0 8px 25px #00000020;
+ box-shadow:0 6px 18px #00000020;
  animation:cardIn .3s ease;
 }
 
@@ -376,7 +385,7 @@ button:active{
  display:flex;
  align-items:center;
  justify-content:space-between;
- padding:14px;
+ padding:11px 12px;
  border-bottom:1px solid #ffffff0d;
 }
 
@@ -385,7 +394,7 @@ button:active{
 }
 
 .client-name{
- font-size:15px;
+ font-size:14px;
  font-weight:bold;
  color:#fff;
  overflow:hidden;
@@ -394,33 +403,33 @@ button:active{
 }
 
 .transaction-count{
- font-size:10px;
+ font-size:9px;
  color:var(--muted);
- margin-top:4px;
+ margin-top:3px;
 }
 
 .client-balance{
- padding:12px 14px;
+ padding:9px 10px;
  display:grid;
  grid-template-columns:repeat(3,1fr);
- gap:8px;
+ gap:6px;
 }
 
 .balance-box{
  background:#0f172a66;
- border-radius:12px;
- padding:10px 6px;
+ border-radius:10px;
+ padding:8px 5px;
  text-align:center;
 }
 
 .balance-label{
  color:var(--muted);
- font-size:9px;
- margin-bottom:5px;
+ font-size:8px;
+ margin-bottom:4px;
 }
 
 .balance-value{
- font-size:11px;
+ font-size:10px;
  font-weight:bold;
  direction:ltr;
 }
@@ -442,11 +451,11 @@ button:active{
 }
 
 .tx-row{
- padding:12px 14px;
+ padding:10px 12px;
  border-bottom:1px solid #ffffff0b;
  display:flex;
  flex-direction:column;
- gap:8px;
+ gap:6px;
 }
 
 .tx-row:last-child{
@@ -463,18 +472,18 @@ button:active{
 .tx-direction{
  display:flex;
  align-items:center;
- gap:7px;
+ gap:6px;
  min-width:0;
 }
 
 .tx-icon{
- width:29px;
- height:29px;
- border-radius:9px;
+ width:27px;
+ height:27px;
+ border-radius:8px;
  display:flex;
  align-items:center;
  justify-content:center;
- font-size:13px;
+ font-size:12px;
  flex-shrink:0;
 }
 
@@ -489,12 +498,12 @@ button:active{
 }
 
 .tx-type{
- font-size:11px;
+ font-size:10px;
  color:#fff;
 }
 
 .tx-amount{
- font-size:12px;
+ font-size:11px;
  font-weight:bold;
  direction:ltr;
  white-space:nowrap;
@@ -511,29 +520,29 @@ button:active{
 .tx-dates{
  display:flex;
  flex-wrap:wrap;
- gap:5px;
+ gap:4px;
  color:var(--muted);
- font-size:9px;
+ font-size:8px;
  line-height:1.7;
 }
 
 .date-chip{
  background:#0f172a;
  border:1px solid #ffffff0a;
- border-radius:7px;
- padding:2px 6px;
+ border-radius:6px;
+ padding:2px 5px;
 }
 
 .tx-actions{
  display:flex;
- gap:7px;
+ gap:5px;
 }
 
 .tx-action{
  width:auto;
- padding:6px 9px;
- border-radius:8px;
- font-size:9px;
+ padding:5px 8px;
+ border-radius:7px;
+ font-size:8px;
  margin:0;
 }
 
@@ -552,23 +561,23 @@ button:active{
 }
 
 .menu-btn{
- width:35px;
- height:35px;
+ width:32px;
+ height:32px;
  padding:0;
  border-radius:50%;
  background:#0f172a;
  color:#94a3b8;
- font-size:19px;
+ font-size:18px;
 }
 
 .menu-popup{
  position:absolute;
  right:0;
- top:41px;
- min-width:135px;
+ top:37px;
+ min-width:130px;
  background:#111827;
  border:1px solid var(--border);
- border-radius:12px;
+ border-radius:11px;
  padding:5px;
  z-index:30;
  box-shadow:0 15px 35px #0008;
@@ -587,12 +596,12 @@ button:active{
 
 .menu-item{
  width:100%;
- padding:10px;
+ padding:9px;
  border-radius:8px;
  background:transparent;
  color:#fff;
  text-align:left;
- font-size:11px;
+ font-size:10px;
 }
 
 [dir=rtl] .menu-item{
@@ -826,15 +835,19 @@ button:active{
 }
 
 @media(max-width:380px){
+
  .client-balance{
   grid-template-columns:1fr;
  }
+
  .header-controls{
   gap:4px;
  }
+
  #header-name{
   display:none;
  }
+
 }
 </style>
 </head>
@@ -844,7 +857,10 @@ button:active{
 <div class="app">
 
 <header>
- <h1 id="header-title">Daily Accounting</h1>
+
+ <h1 id="header-title">
+  Daily Accounting
+ </h1>
 
  <div class="header-controls">
 
@@ -857,6 +873,7 @@ button:active{
    </div>
 
    <span id="header-name">User</span>
+
   </div>
 
   <button
@@ -867,15 +884,23 @@ button:active{
   </button>
 
  </div>
+
 </header>
 
+
 <div class="rates" id="rates">
- <span>🔄 Loading rates...</span>
+
+ <span id="rates-status">
+  🔄 Loading rates...
+ </span>
+
 </div>
+
 
 <div class="location-status" id="location-status">
  📍 Location: Detecting...
 </div>
+
 
 <main>
 
@@ -896,23 +921,36 @@ button:active{
 
   </div>
 
+
   <div class="group" id="email-group">
-   <label id="email-label">Email Address</label>
+
+   <label id="email-label">
+    Email Address
+   </label>
+
    <input
     type="email"
     id="auth-email"
     placeholder="example@gmail.com"
     autocomplete="email">
+
   </div>
 
+
   <div class="group" id="password-group">
-   <label id="password-label">Password</label>
+
+   <label id="password-label">
+    Password
+   </label>
+
    <input
     type="password"
     id="auth-password"
     placeholder="At least 6 characters"
     autocomplete="current-password">
+
   </div>
+
 
   <button
    id="signin-btn"
@@ -921,12 +959,14 @@ button:active{
    Sign In
   </button>
 
+
   <button
    id="signup-btn"
    onclick="handleSignUp()"
    style="background:transparent;border:1px solid var(--primary);color:var(--primary);margin-top:12px">
    Create New Account
   </button>
+
 
   <div id="otp-section"
        style="display:none;margin-top:20px">
@@ -952,7 +992,9 @@ button:active{
 
    </div>
 
+
    <div class="group">
+
     <label id="otp-label">
      Verification Code
     </label>
@@ -964,7 +1006,9 @@ button:active{
      autocomplete="one-time-code"
      maxlength="6"
      placeholder="Enter 6-digit code">
+
    </div>
+
 
    <button
     id="verify-otp-btn"
@@ -973,12 +1017,14 @@ button:active{
     Verify Code
    </button>
 
+
    <button
     id="resend-otp-btn"
     class="secondary"
     onclick="resendSignupCode()">
     Resend Code
    </button>
+
 
    <button
     id="back-signup-btn"
@@ -1013,16 +1059,24 @@ button:active{
 
  </div>
 
- <div id="accounts-list" class="accounts">
+
+ <div id="accounts-list"
+      class="accounts">
+
   <div class="loading">
+
    <span class="spinner"></span>
+
    Loading...
+
   </div>
+
  </div>
 
 </section>
 
 </main>
+
 
 <button
  id="fab"
@@ -1041,17 +1095,29 @@ button:active{
   id="home-nav"
   class="nav-item active"
   onclick="goHome()">
+
   <span>⌂</span>
-  <span id="nav-home-text">Home</span>
+
+  <span id="nav-home-text">
+   Home
+  </span>
+
  </button>
+
 
  <button
   id="transactions-nav"
   class="nav-item"
   onclick="goTransactions()">
+
   <span>⇄</span>
-  <span id="nav-transactions-text">Transactions</span>
+
+  <span id="nav-transactions-text">
+   Transactions
+  </span>
+
  </button>
+
 
  <button
   id="profile-nav"
@@ -1063,7 +1129,9 @@ button:active{
    U
   </div>
 
-  <span id="nav-profile-text">Profile</span>
+  <span id="nav-profile-text">
+   Profile
+  </span>
 
  </button>
 
@@ -1102,6 +1170,7 @@ button:active{
   </div>
 
  </div>
+
 </div>
 
 
@@ -1109,6 +1178,7 @@ button:active{
 
 
 <script>
+
 /* =========================================================
    SUPABASE
 ========================================================= */
@@ -1127,18 +1197,18 @@ supabase.createClient(
 
 
 /* =========================================================
-   GLOBAL DATA
+   GLOBAL
 ========================================================= */
 
-let currentUser = null;
+let currentUser=null;
 
-let pendingSignup = null;
+let pendingSignup=null;
 
-let appData = {
+let appData={
  clients:[]
 };
 
-let userProfile = {
+let userProfile={
  name:'',
  phone:'',
  location:'Jawzjan',
@@ -1147,24 +1217,30 @@ let userProfile = {
  language:'en'
 };
 
-let rates = {
+let rates={
  AFN:1
 };
 
-let deleteClientId = null;
+let ratesLoaded=false;
 
-let realtimeChannel = null;
+let ratesError=false;
 
-let refreshTimer = null;
+let deleteClientId=null;
 
-let lastCloudSignature = '';
+let realtimeChannel=null;
+
+let refreshTimer=null;
+
+let ratesTimer=null;
+
+let lastCloudSignature='';
 
 
 /* =========================================================
    TRANSLATIONS
 ========================================================= */
 
-const translations = {
+const translations={
 
  en:{
   home:'Home',
@@ -1220,14 +1296,20 @@ const translations = {
 
 };
 
+
 function lang(){
- return userProfile.language === 'fa'
+
+ return userProfile.language==='fa'
   ? 'fa'
   : 'en';
+
 }
 
+
 function t(key){
+
  return translations[lang()][key] || key;
+
 }
 
 
@@ -1237,19 +1319,19 @@ function t(key){
 
 function toast(msg){
 
- const e =
- document.getElementById('toast');
+ const e=document.getElementById('toast');
 
- e.innerText = msg;
+ e.innerText=msg;
 
  e.classList.add('show');
 
  clearTimeout(window.__toast);
 
- window.__toast =
+ window.__toast=
  setTimeout(()=>{
   e.classList.remove('show');
  },3500);
+
 }
 
 
@@ -1261,18 +1343,22 @@ document.addEventListener(
  'click',
  function(e){
 
-  const target =
-  e.target.closest(
-   'button,.profile-badge,.client-card,.menu-item'
-  );
+  const target=
+   e.target.closest(
+    'button,.profile-badge,.client-card,.menu-item'
+   );
 
   if(!target) return;
 
-  target.classList.remove('click-animation');
+  target.classList.remove(
+   'click-animation'
+  );
 
   void target.offsetWidth;
 
-  target.classList.add('click-animation');
+  target.classList.add(
+   'click-animation'
+  );
 
  },
  true
@@ -1285,55 +1371,86 @@ document.addEventListener(
 
 function escapeHtml(value){
 
- return String(value ?? '')
-  .replace(/[&<>"']/g,function(m){
+ return String(value??'')
+  .replace(
+   /[&<>"']/g,
+   function(m){
 
-   return {
-    '&':'&amp;',
-    '<':'&lt;',
-    '>':'&gt;',
-    '"':'&quot;',
-    "'":'&#039;'
-   }[m];
+    return {
+     '&':'&amp;',
+     '<':'&lt;',
+     '>':'&gt;',
+     '"':'&quot;',
+     "'":'&#039;'
+    }[m];
 
-  });
+   }
+  );
 
 }
 
 
 function safeNumber(value){
 
- const n =
- Number(
-  String(value ?? '')
-   .replace(/,/g,'')
-   .trim()
- );
+ if(
+  value===null ||
+  value===undefined ||
+  value===''
+ ){
+  return 0;
+ }
+
+ if(
+  typeof value==='object'
+ ){
+
+  value=
+   value.amount ??
+   value.value ??
+   value.rate ??
+   value.price ??
+   value.buy ??
+   value.sell ??
+   0;
+
+ }
+
+ const n=
+  Number(
+   String(value)
+    .replace(/,/g,'')
+    .replace(/[^\d.-]/g,'')
+  );
 
  return Number.isFinite(n)
   ? n
   : 0;
+
 }
 
 
 function formatMoney(value){
 
  return safeNumber(value)
-  .toLocaleString('en-US',{
-   maximumFractionDigits:2
-  });
+  .toLocaleString(
+   'en-US',
+   {
+    maximumFractionDigits:2
+   }
+  );
 
 }
 
 
 function currencySymbol(code){
 
- const map = {
+ const map={
   AFN:'؋',
   USD:'$',
   EUR:'€',
   TRY:'₺',
   IRR:'﷼',
+  TOMAN:'تومان',
   CNY:'¥',
   PKR:'₨',
   INR:'₹',
@@ -1341,10 +1458,16 @@ function currencySymbol(code){
   AED:'د.إ',
   GBP:'£',
   JPY:'¥',
-  RUB:'₽'
+  RUB:'₽',
+  CAD:'C$',
+  AUD:'A$'
  };
 
- return map[code] || code;
+ return map[
+  String(code||'')
+   .toUpperCase()
+ ] || code;
+
 }
 
 
@@ -1358,9 +1481,13 @@ function setThemeColor(color){
 
  document.documentElement
   .style
-  .setProperty('--primary',color);
+  .setProperty(
+   '--primary',
+   color
+  );
 
- userProfile.themeColor = color;
+ userProfile.themeColor=color;
+
 }
 
 
@@ -1370,16 +1497,16 @@ function setThemeColor(color){
 
 async function handleSignIn(){
 
- const email =
- document
-  .getElementById('auth-email')
-  .value
-  .trim();
+ const email=
+  document
+   .getElementById('auth-email')
+   .value
+   .trim();
 
- const password =
- document
-  .getElementById('auth-password')
-  .value;
+ const password=
+  document
+   .getElementById('auth-password')
+   .value;
 
  if(!email || !password){
 
@@ -1395,7 +1522,7 @@ async function handleSignIn(){
  const {
   data,
   error
- } =
+ }=
  await supabaseClient.auth
   .signInWithPassword({
    email,
@@ -1409,8 +1536,7 @@ async function handleSignIn(){
   return;
  }
 
- currentUser =
- data.user;
+ currentUser=data.user;
 
  await loadDataFromSupabase();
 
@@ -1421,18 +1547,18 @@ async function handleSignIn(){
 
 async function handleSignUp(){
 
- const email =
- document
-  .getElementById('auth-email')
-  .value
-  .trim();
+ const email=
+  document
+   .getElementById('auth-email')
+   .value
+   .trim();
 
- const password =
- document
-  .getElementById('auth-password')
-  .value;
+ const password=
+  document
+   .getElementById('auth-password')
+   .value;
 
- if(!email || password.length < 6){
+ if(!email || password.length<6){
 
   toast(
    lang()==='fa'
@@ -1446,7 +1572,7 @@ async function handleSignUp(){
  const {
   data,
   error
- } =
+ }=
  await supabaseClient.functions
   .invoke(
    'smooth-responder',
@@ -1465,10 +1591,10 @@ async function handleSignUp(){
   return;
  }
 
- pendingSignup = {
+ pendingSignup={
   email,
   password,
-  userId:data?.user_id || ''
+  userId:data?.user_id||''
  };
 
  document
@@ -1521,11 +1647,11 @@ async function verifySignupCode(){
   return;
  }
 
- const code =
- document
-  .getElementById('otp-code')
-  .value
-  .trim();
+ const code=
+  document
+   .getElementById('otp-code')
+   .value
+   .trim();
 
  if(!/^\d{6}$/.test(code)){
 
@@ -1540,27 +1666,26 @@ async function verifySignupCode(){
 
  try{
 
-  const res =
-  await fetch(
-   `${SUPABASE_URL}/functions/v1/dynamic-processor`,
-   {
-    method:'POST',
+  const res=
+   await fetch(
+    `${SUPABASE_URL}/functions/v1/dynamic-processor`,
+    {
+     method:'POST',
 
-    headers:{
-     'Content-Type':'application/json',
-     'apikey':SUPABASE_KEY,
-     'Authorization':`Bearer ${SUPABASE_KEY}`
-    },
+     headers:{
+      'Content-Type':'application/json',
+      'apikey':SUPABASE_KEY,
+      'Authorization':`Bearer ${SUPABASE_KEY}`
+     },
 
-    body:JSON.stringify({
-     email:pendingSignup.email,
-     code
-    })
-   }
-  );
+     body:JSON.stringify({
+      email:pendingSignup.email,
+      code
+     })
+    }
+   );
 
-  const data =
-  await res.json();
+  const data=await res.json();
 
   if(!data?.success){
 
@@ -1576,12 +1701,12 @@ async function verifySignupCode(){
   const {
    data:loginData,
    error
-  } =
-  await supabaseClient.auth
-   .signInWithPassword({
-    email:pendingSignup.email,
-    password:pendingSignup.password
-   });
+  }=
+   await supabaseClient.auth
+    .signInWithPassword({
+     email:pendingSignup.email,
+     password:pendingSignup.password
+    });
 
   if(error){
 
@@ -1590,8 +1715,7 @@ async function verifySignupCode(){
    return;
   }
 
-  currentUser =
-  loginData.user;
+  currentUser=loginData.user;
 
   pendingSignup=null;
 
@@ -1627,17 +1751,17 @@ async function resendSignupCode(){
  const {
   data,
   error
- } =
- await supabaseClient.functions
-  .invoke(
-   'smooth-responder',
-   {
-    body:{
-     email:pendingSignup.email,
-     password:pendingSignup.password
+ }=
+  await supabaseClient.functions
+   .invoke(
+    'smooth-responder',
+    {
+     body:{
+      email:pendingSignup.email,
+      password:pendingSignup.password
+     }
     }
-   }
-  );
+   );
 
  if(error){
 
@@ -1646,9 +1770,9 @@ async function resendSignupCode(){
   return;
  }
 
- pendingSignup.userId =
- data?.user_id ||
- pendingSignup.userId;
+ pendingSignup.userId=
+  data?.user_id||
+  pendingSignup.userId;
 
  toast(
   lang()==='fa'
@@ -1697,13 +1821,9 @@ function backToSignup(){
 async function logoutUser(){
 
  try{
-
   await supabaseClient.auth.signOut();
-
  }catch(e){
-
   console.error(e);
-
  }
 
  currentUser=null;
@@ -1718,6 +1838,7 @@ async function logoutUser(){
    .removeChannel(realtimeChannel);
 
   realtimeChannel=null;
+
  }
 
  if(refreshTimer){
@@ -1725,6 +1846,15 @@ async function logoutUser(){
   clearInterval(refreshTimer);
 
   refreshTimer=null;
+
+ }
+
+ if(ratesTimer){
+
+  clearInterval(ratesTimer);
+
+  ratesTimer=null;
+
  }
 
  showLogin();
@@ -1733,7 +1863,7 @@ async function logoutUser(){
 
 
 /* =========================================================
-   SUPABASE LOAD
+   LOAD SUPABASE
 ========================================================= */
 
 async function loadDataFromSupabase(){
@@ -1745,12 +1875,12 @@ async function loadDataFromSupabase(){
   const {
    data,
    error
-  } =
-  await supabaseClient
-   .from('exchange_users')
-   .select('*')
-   .eq('user_id',currentUser.id)
-   .maybeSingle();
+  }=
+   await supabaseClient
+    .from('exchange_users')
+    .select('*')
+    .eq('user_id',currentUser.id)
+    .maybeSingle();
 
   if(error){
 
@@ -1761,9 +1891,9 @@ async function loadDataFromSupabase(){
 
   if(data){
 
-   appData =
+   appData=
     data.content &&
-    typeof data.content === 'object'
+    typeof data.content==='object'
      ? data.content
      : {clients:[]};
 
@@ -1771,23 +1901,21 @@ async function loadDataFromSupabase(){
     appData.clients=[];
    }
 
-   userProfile =
-   Object.assign(
-    {
-     name:
-      currentUser.email
-       ? currentUser.email.split('@')[0]
-       : 'User',
-
-     phone:'',
-     location:'Jawzjan',
-     avatar:'',
-     themeColor:'#7c3aed',
-     language:'en'
-    },
-
-    data.profile || {}
-   );
+   userProfile=
+    Object.assign(
+     {
+      name:
+       currentUser.email
+        ? currentUser.email.split('@')[0]
+        : 'User',
+      phone:'',
+      location:'Jawzjan',
+      avatar:'',
+      themeColor:'#7c3aed',
+      language:'en'
+     },
+     data.profile||{}
+    );
 
   }else{
 
@@ -1800,7 +1928,6 @@ async function loadDataFromSupabase(){
      currentUser.email
       ? currentUser.email.split('@')[0]
       : 'User',
-
     phone:'',
     location:'Jawzjan',
     avatar:'',
@@ -1812,7 +1939,9 @@ async function loadDataFromSupabase(){
 
   }
 
-  setThemeColor(userProfile.themeColor);
+  setThemeColor(
+   userProfile.themeColor
+  );
 
   updateHeader();
 
@@ -1835,7 +1964,7 @@ async function loadDataFromSupabase(){
 
 
 /* =========================================================
-   SUPABASE SAVE
+   SAVE SUPABASE
 ========================================================= */
 
 async function saveDataToSupabase(){
@@ -1853,15 +1982,15 @@ async function saveDataToSupabase(){
 
   const {
    error
-  } =
-  await supabaseClient
-   .from('exchange_users')
-   .upsert(
-    payload,
-    {
-     onConflict:'user_id'
-    }
-   );
+  }=
+   await supabaseClient
+    .from('exchange_users')
+    .upsert(
+     payload,
+     {
+      onConflict:'user_id'
+     }
+    );
 
   if(error){
 
@@ -1888,11 +2017,15 @@ async function saveDataToSupabase(){
 
 function updateHeader(){
 
- const badge =
- document.getElementById('profile-badge');
+ const badge=
+  document.getElementById(
+   'profile-badge'
+  );
 
- const logout =
- document.getElementById('logout-btn');
+ const logout=
+  document.getElementById(
+   'logout-btn'
+  );
 
  if(!currentUser){
 
@@ -1909,78 +2042,84 @@ function updateHeader(){
 
  logout.innerText=t('logout');
 
- const name =
- userProfile.name ||
- (
-  currentUser.email
-   ? currentUser.email.split('@')[0]
-   : 'User'
- );
+ const name=
+  userProfile.name||
+  (
+   currentUser.email
+    ? currentUser.email.split('@')[0]
+    : 'User'
+  );
 
  document
   .getElementById('header-name')
   .innerText=name;
 
- const avatarBox =
- document.getElementById('header-avatar');
+ const avatarBox=
+  document.getElementById(
+   'header-avatar'
+  );
 
  if(userProfile.avatar){
 
   avatarBox.innerHTML=
    `<div class="avatar">
-      <img src="${escapeHtml(userProfile.avatar)}"
-           alt="Profile">
+     <img
+      src="${escapeHtml(userProfile.avatar)}"
+      alt="Profile">
     </div>`;
 
  }else{
 
   avatarBox.innerHTML=
    `<div class="avatar">
-      ${escapeHtml(
-       name.charAt(0).toUpperCase()
-      )}
+     ${escapeHtml(
+      name.charAt(0).toUpperCase()
+     )}
     </div>`;
 
  }
+
 }
 
 
 /* =========================================================
-   PROFILE NAV IMAGE
+   PROFILE NAV
 ========================================================= */
 
 function updateNavigationProfile(){
 
- const nav =
- document.getElementById(
-  'nav-profile-avatar'
- );
+ const nav=
+  document.getElementById(
+   'nav-profile-avatar'
+  );
 
- const name =
- userProfile.name ||
- (
-  currentUser?.email
-   ? currentUser.email.split('@')[0]
-   : 'U'
- );
+ const name=
+  userProfile.name||
+  (
+   currentUser?.email
+    ? currentUser.email.split('@')[0]
+    : 'U'
+  );
 
  if(userProfile.avatar){
 
   nav.innerHTML=
-   `<img src="${escapeHtml(userProfile.avatar)}"
-         alt="Profile">`;
+   `<img
+     src="${escapeHtml(userProfile.avatar)}"
+     alt="Profile">`;
 
  }else{
 
-  nav.innerText =
+  nav.innerText=
    name.charAt(0).toUpperCase();
 
  }
+
 }
 
 
 /* =========================================================
-   PAGE NAVIGATION
+   NAVIGATION
 ========================================================= */
 
 function showPage(){
@@ -2058,11 +2197,7 @@ function goHome(){
 
 function goTransactions(){
 
- if(!currentUser){
-
-  return;
-
- }
+ if(!currentUser) return;
 
  window.location.href='transactions.html';
 
@@ -2071,11 +2206,7 @@ function goTransactions(){
 
 function goProfile(){
 
- if(!currentUser){
-
-  return;
-
- }
+ if(!currentUser) return;
 
  window.location.href='profile.html';
 
@@ -2088,8 +2219,10 @@ function goProfile(){
 
 function renderDashboard(){
 
- const container =
- document.getElementById('accounts-list');
+ const container=
+  document.getElementById(
+   'accounts-list'
+  );
 
  if(!container) return;
 
@@ -2101,82 +2234,270 @@ function renderDashboard(){
 
   container.innerHTML=`
    <div class="empty">
-    <div class="empty-icon">📒</div>
+
+    <div class="empty-icon">
+     📒
+    </div>
+
     <div class="empty-title">
      ${escapeHtml(t('noAccounts'))}
     </div>
+
     <div style="font-size:11px;line-height:1.8">
      ${escapeHtml(t('noAccountsText'))}
     </div>
+
    </div>
   `;
 
   return;
  }
 
- container.innerHTML =
- appData.clients
-  .map(renderClientCard)
-  .join('');
+ container.innerHTML=
+  appData.clients
+   .map(renderClientCard)
+   .join('');
 
 }
 
 
+/* =========================================================
+   IMPORTANT:
+   NORMALIZE TRANSACTION DIRECTION
+========================================================= */
+
+function getTransactionKind(tx){
+
+ /*
+   پشتیبانی از تمام ساختارهایی که
+   ممکن است transactions.html ذخیره کرده باشد.
+
+   مثبت:
+   in
+   credit
+   Credit
+   receive
+   received
+
+   منفی:
+   out
+   debit
+   Debit
+   pay
+   paid
+   send
+   sent
+ */
+
+ const direction=
+  String(
+   tx?.direction ??
+   tx?.type ??
+   tx?.transactionType ??
+   tx?.kind ??
+   ''
+  )
+  .trim()
+  .toLowerCase();
+
+ if(
+  direction==='in' ||
+  direction==='credit' ||
+  direction==='receive' ||
+  direction==='received' ||
+  direction==='incoming' ||
+  direction==='plus' ||
+  direction==='+'
+ ){
+
+  return 'credit';
+
+ }
+
+ if(
+  direction==='out' ||
+  direction==='debit' ||
+  direction==='pay' ||
+  direction==='paid' ||
+  direction==='send' ||
+  direction==='sent' ||
+  direction==='outgoing' ||
+  direction==='minus' ||
+  direction==='-'
+ ){
+
+  return 'debit';
+
+ }
+
+ /*
+   اگر direction مشخص نبود،
+   از signedAmount / amountInBase استفاده می‌کنیم.
+ */
+
+ const signedCandidates=[
+  tx?.signedAmountInBase,
+  tx?.signedAmount,
+  tx?.balanceChange
+ ];
+
+ for(const candidate of signedCandidates){
+
+  if(
+   candidate!==undefined &&
+   candidate!==null &&
+   candidate!==''
+  ){
+
+   const n=
+    Number(
+     String(candidate)
+      .replace(/,/g,'')
+   );
+
+   if(Number.isFinite(n)){
+
+    return n>=0
+     ? 'credit'
+     : 'debit';
+
+   }
+
+  }
+
+ }
+
+ /*
+   آخرین fallback:
+   اگر amountInBase منفی باشد،
+   معامله منفی است.
+ */
+
+ const base=
+  Number(
+   String(
+    tx?.amountInBase ??
+    tx?.totalAFN ??
+    tx?.amount ??
+    tx?.rawAmount ??
+    0
+   )
+   .replace(/,/g,'')
+  );
+
+ if(Number.isFinite(base) && base<0){
+  return 'debit';
+ }
+
+ return 'credit';
+
+}
+
+
+/* =========================================================
+   GET ABSOLUTE AMOUNT
+========================================================= */
+
+function getTransactionAmount(tx){
+
+ const candidates=[
+  tx?.amountInBase,
+  tx?.totalAFN,
+  tx?.amountAFN,
+  tx?.amount,
+  tx?.rawAmount
+ ];
+
+ for(const value of candidates){
+
+  if(
+   value!==undefined &&
+   value!==null &&
+   value!==''
+  ){
+
+   const n=
+    safeNumber(
+     Math.abs(
+      Number(
+       String(value)
+        .replace(/,/g,'')
+     )
+    )
+   );
+
+   if(n>0){
+    return n;
+   }
+
+  }
+
+ }
+
+ return 0;
+
+}
+
+
+/* =========================================================
+   CLIENT CARD
+========================================================= */
+
 function renderClientCard(client){
 
- const transactions =
- Array.isArray(client.transactions)
-  ? client.transactions
-  : [];
+ const transactions=
+  Array.isArray(client.transactions)
+   ? client.transactions
+   : [];
 
  let credit=0;
+
  let debit=0;
 
  transactions.forEach(tx=>{
 
-  const amount =
-   safeNumber(
-    tx.amountInBase ??
-    tx.amount ??
-    tx.rawAmount
-   );
+  const amount=
+   getTransactionAmount(tx);
 
-  if(
-   tx.type === 'credit' ||
-   tx.type === 'Credit'
-  ){
+  const kind=
+   getTransactionKind(tx);
 
-   credit += amount;
+  if(kind==='credit'){
+
+   credit+=amount;
 
   }else{
 
-   debit += amount;
+   debit+=amount;
 
   }
 
  });
 
- const balance =
- credit-debit;
+ const balance=
+  credit-debit;
 
- const balanceClass =
- balance>=0
-  ? 'credit'
-  : 'debit';
+ const balanceClass=
+  balance>0
+   ? 'credit'
+   : balance<0
+    ? 'debit'
+    : 'balance';
 
- const transactionRows =
- transactions
-  .map(
-   (tx,index)=>
-    renderTransaction(
-     tx,
-     index,
-     client.id
-    )
-  )
-  .join('');
+ const transactionRows=
+  transactions
+   .map(
+    (tx,index)=>
+     renderTransaction(
+      tx,
+      index,
+      client.id
+     )
+   )
+   .join('');
 
  return `
+
  <article class="client-card">
 
   <div class="client-head">
@@ -2194,6 +2515,7 @@ function renderClientCard(client){
 
    </div>
 
+
    <div class="card-menu">
 
     <button
@@ -2202,6 +2524,7 @@ function renderClientCard(client){
      ⋮
     </button>
 
+
     <div
      id="menu-${escapeHtml(client.id)}"
      class="menu-popup">
@@ -2209,7 +2532,9 @@ function renderClientCard(client){
      <button
       class="menu-item danger"
       onclick="openDeleteClient('${escapeHtml(client.id)}')">
+
       🗑️ ${escapeHtml(t('delete'))}
+
      </button>
 
     </div>
@@ -2233,6 +2558,7 @@ function renderClientCard(client){
 
    </div>
 
+
    <div class="balance-box">
 
     <div class="balance-label">
@@ -2245,6 +2571,7 @@ function renderClientCard(client){
 
    </div>
 
+
    <div class="balance-box">
 
     <div class="balance-label">
@@ -2252,7 +2579,17 @@ function renderClientCard(client){
     </div>
 
     <div class="balance-value ${balanceClass}">
-     ${formatMoney(balance)} AFN
+
+     ${
+      balance>0
+       ? '+'
+       : balance<0
+        ? '-'
+        : ''
+     }
+
+     ${formatMoney(Math.abs(balance))} AFN
+
     </div>
 
    </div>
@@ -2271,46 +2608,55 @@ function renderClientCard(client){
   }
 
  </article>
+
  `;
 
 }
 
 
 /* =========================================================
-   TRANSACTION DISPLAY
+   TRANSACTION
 ========================================================= */
 
-function renderTransaction(tx,index,clientId){
+function renderTransaction(
+ tx,
+ index,
+ clientId
+){
 
- const type =
-  tx.type === 'credit' ||
-  tx.type === 'Credit'
+ const kind=
+  getTransactionKind(tx);
+
+ const type=
+  kind==='credit'
    ? 'credit'
    : 'debit';
 
- const typeText =
+ const typeText=
   type==='credit'
    ? t('credit')
    : t('debit');
 
- const amount =
-  safeNumber(
-   tx.rawAmount ??
-   tx.amount
-  );
+ const amount=
+  getTransactionAmount(tx);
 
- const currency =
-  tx.currency || 'AFN';
+ const currency=
+  String(
+   tx.currency ||
+   tx.currencyCode ||
+   'AFN'
+  ).toUpperCase();
 
- const sign =
+ const sign=
   type==='credit'
    ? '+'
    : '-';
 
- const dates =
- getTransactionDates(tx);
+ const dates=
+  getTransactionDates(tx);
 
  return `
+
  <div class="tx-row">
 
   <div class="tx-main">
@@ -2327,11 +2673,14 @@ function renderTransaction(tx,index,clientId){
 
    </div>
 
+
    <div class="tx-amount ${type}">
+
     ${sign}
     ${formatMoney(amount)}
     ${escapeHtml(currencySymbol(currency))}
     ${escapeHtml(currency)}
+
    </div>
 
   </div>
@@ -2359,26 +2708,36 @@ function renderTransaction(tx,index,clientId){
    <button
     class="tx-action edit-btn"
     onclick="editTransaction('${escapeHtml(clientId)}',${index})">
+
     ✏️ ${escapeHtml(t('edit'))}
+
    </button>
+
 
    <button
     class="tx-action delete-btn"
     onclick="deleteTransaction('${escapeHtml(clientId)}',${index})">
+
     🗑️ ${escapeHtml(t('delete'))}
+
    </button>
 
   </div>
 
  </div>
+
  `;
 
 }
 
 
+/* =========================================================
+   DATES
+========================================================= */
+
 function getTransactionDates(tx){
 
- const raw =
+ const raw=
   tx.rawDate ||
   tx.date ||
   tx.transactionDate ||
@@ -2406,23 +2765,17 @@ function getTransactionDates(tx){
 }
 
 
-/* =========================================================
-   DATE SYSTEM
-   اول شمسی، بعد میلادی، بعد قمری
-========================================================= */
-
 function formatDates(date){
 
- const gregorian =
- new Intl.DateTimeFormat(
-  'en-GB',
-  {
-   year:'numeric',
-   month:'2-digit',
-   day:'2-digit'
-  }
- ).format(date);
-
+ const gregorian=
+  new Intl.DateTimeFormat(
+   'en-GB',
+   {
+    year:'numeric',
+    month:'2-digit',
+    day:'2-digit'
+   }
+  ).format(date);
 
  let solar='-';
 
@@ -2430,29 +2783,29 @@ function formatDates(date){
 
  try{
 
-  solar =
-  new Intl.DateTimeFormat(
-   'fa-AF-u-ca-persian',
-   {
-    year:'numeric',
-    month:'2-digit',
-    day:'2-digit'
-   }
-  ).format(date);
-
- }catch(e){
-
-  try{
-
-   solar =
+  solar=
    new Intl.DateTimeFormat(
-    'fa-u-ca-persian',
+    'fa-AF-u-ca-persian',
     {
      year:'numeric',
      month:'2-digit',
      day:'2-digit'
     }
    ).format(date);
+
+ }catch(e){
+
+  try{
+
+   solar=
+    new Intl.DateTimeFormat(
+     'fa-u-ca-persian',
+     {
+      year:'numeric',
+      month:'2-digit',
+      day:'2-digit'
+     }
+    ).format(date);
 
   }catch(e2){}
 
@@ -2461,23 +2814,9 @@ function formatDates(date){
 
  try{
 
-  hijri =
-  new Intl.DateTimeFormat(
-   'ar-SA-u-ca-islamic',
-   {
-    year:'numeric',
-    month:'2-digit',
-    day:'2-digit'
-   }
-  ).format(date);
-
- }catch(e){
-
-  try{
-
-   hijri =
+  hijri=
    new Intl.DateTimeFormat(
-    'en-u-ca-islamic',
+    'ar-SA-u-ca-islamic',
     {
      year:'numeric',
      month:'2-digit',
@@ -2485,11 +2824,25 @@ function formatDates(date){
     }
    ).format(date);
 
+ }catch(e){
+
+  try{
+
+   hijri=
+    new Intl.DateTimeFormat(
+     'en-u-ca-islamic',
+     {
+      year:'numeric',
+      month:'2-digit',
+      day:'2-digit'
+     }
+    ).format(date);
+
   }catch(e2){}
 
  }
 
- return {
+ return{
   solar,
   gregorian,
   hijri
@@ -2499,7 +2852,7 @@ function formatDates(date){
 
 
 /* =========================================================
-   CLIENT MENU
+   MENU
 ========================================================= */
 
 function toggleClientMenu(id){
@@ -2508,16 +2861,16 @@ function toggleClientMenu(id){
   .querySelectorAll('.menu-popup')
   .forEach(menu=>{
 
-   if(menu.id !== `menu-${id}`){
+   if(menu.id!==`menu-${id}`){
     menu.classList.remove('show');
    }
 
   });
 
- const menu =
- document.getElementById(
-  `menu-${id}`
- );
+ const menu=
+  document.getElementById(
+   `menu-${id}`
+  );
 
  if(menu){
 
@@ -2586,18 +2939,19 @@ async function confirmDeleteClient(){
 
  if(!deleteClientId) return;
 
- appData.clients =
- appData.clients.filter(
-  client=>String(client.id)!==
-   String(deleteClientId)
- );
+ appData.clients=
+  appData.clients.filter(
+   client=>
+    String(client.id)!==
+    String(deleteClientId)
+  );
 
  closeDeleteModal();
 
  renderDashboard();
 
- const ok =
- await saveDataToSupabase();
+ const ok=
+  await saveDataToSupabase();
 
  if(ok){
 
@@ -2618,21 +2972,30 @@ async function confirmDeleteClient(){
    DELETE TRANSACTION
 ========================================================= */
 
-async function deleteTransaction(clientId,index){
+async function deleteTransaction(
+ clientId,
+ index
+){
 
- const client =
- appData.clients.find(
-  c=>String(c.id)===String(clientId)
- );
+ const client=
+  appData.clients.find(
+   c=>String(c.id)===String(clientId)
+  );
 
  if(!client) return;
 
- const confirmed =
- confirm(
-  lang()==='fa'
-   ? 'آیا این معامله حذف شود؟'
-   : 'Delete this transaction?'
- );
+ /*
+   قبلاً confirm() استفاده شده بود.
+   این نسخه همان modal کارت را برای حذف
+   معامله نیز استفاده می‌کند.
+ */
+
+ const confirmed=
+  window.confirm(
+   lang()==='fa'
+    ? 'آیا این معامله حذف شود؟'
+    : 'Delete this transaction?'
+  );
 
  if(!confirmed) return;
 
@@ -2640,7 +3003,10 @@ async function deleteTransaction(clientId,index){
   client.transactions=[];
  }
 
- client.transactions.splice(index,1);
+ client.transactions.splice(
+  index,
+  1
+ );
 
  renderDashboard();
 
@@ -2658,13 +3024,16 @@ async function deleteTransaction(clientId,index){
 
 
 /* =========================================================
-   EDIT TRANSACTION
+   EDIT
 ========================================================= */
 
-function editTransaction(clientId,index){
+function editTransaction(
+ clientId,
+ index
+){
 
- const url =
- `transactions.html?client=${encodeURIComponent(clientId)}&edit=${index}`;
+ const url=
+  `transactions.html?client=${encodeURIComponent(clientId)}&edit=${index}`;
 
  window.location.href=url;
 
@@ -2677,19 +3046,19 @@ function editTransaction(clientId,index){
 
 function updateLocationDisplay(){
 
- const e =
- document.getElementById(
-  'location-status'
- );
+ const e=
+  document.getElementById(
+   'location-status'
+  );
 
  if(!e) return;
 
- const location =
- userProfile.location ||
- 'Jawzjan';
+ const location=
+  userProfile.location||
+  'Jawzjan';
 
- e.innerText =
- `📍 ${t('location')}: ${location}`;
+ e.innerText=
+  `📍 ${t('location')}: ${location}`;
 
 }
 
@@ -2698,54 +3067,51 @@ function detectRealLocation(){
 
  if(!navigator.geolocation){
 
-  document
-   .getElementById('location-status')
-   .innerText =
-   `📍 ${t('location')}: ${userProfile.location || t('detecting')}`;
+  updateLocationDisplay();
 
   return;
  }
 
  document
   .getElementById('location-status')
-  .innerText =
+  .innerText=
   `📍 ${t('location')}: ${t('detecting')}`;
 
  navigator.geolocation.getCurrentPosition(
 
   async position=>{
 
-   const lat =
+   const lat=
     position.coords.latitude;
 
-   const lon =
+   const lon=
     position.coords.longitude;
 
    try{
 
-    const response =
-    await fetch(
-     `https://nominatim.openstreetmap.org/reverse?format=jsonv2&lat=${encodeURIComponent(lat)}&lon=${encodeURIComponent(lon)}&zoom=10&accept-language=en`,
-     {
-      headers:{
-       'Accept':'application/json'
+    const response=
+     await fetch(
+      `https://nominatim.openstreetmap.org/reverse?format=jsonv2&lat=${encodeURIComponent(lat)}&lon=${encodeURIComponent(lon)}&zoom=10&accept-language=en`,
+      {
+       headers:{
+        'Accept':'application/json'
+       }
       }
-     }
-    );
+     );
 
-    const data =
-    await response.json();
+    const data=
+     await response.json();
 
-    const address =
-    data.address || {};
+    const address=
+     data.address||{};
 
-    const city =
-     address.city ||
-     address.town ||
-     address.municipality ||
-     address.county ||
-     address.state ||
-     userProfile.location ||
+    const city=
+     address.city||
+     address.town||
+     address.municipality||
+     address.county||
+     address.state||
+     userProfile.location||
      'Unknown';
 
     userProfile.location=city;
@@ -2787,33 +3153,48 @@ function detectRealLocation(){
 
 
 /* =========================================================
-   LIVE SARAFI API
+   SARAFI API
 ========================================================= */
+
+/*
+   نکته:
+   sarafi-api.js فعلی تو این تابع را دارد:
+
+   getSarafiRates()
+
+   پس دیگر دنبال getRates یا exchangeRates
+   نمی‌گردیم و مستقیماً همین تابع را صدا می‌زنیم.
+*/
+
 
 function normalizeRateValue(value){
 
- if(value === null || value === undefined){
+ if(
+  value===null ||
+  value===undefined
+ ){
   return null;
  }
 
- if(typeof value === 'object'){
+ if(typeof value==='object'){
 
-  value =
+  value=
    value.rate ??
    value.price ??
    value.value ??
    value.sell ??
    value.buy ??
+   value.amount ??
    null;
 
  }
 
- const n =
- Number(
-  String(value)
-   .replace(/,/g,'')
-   .replace(/[^\d.-]/g,'')
- );
+ const n=
+  Number(
+   String(value)
+    .replace(/,/g,'')
+    .replace(/[^\d.-]/g,'')
+  );
 
  return Number.isFinite(n)
   ? n
@@ -2822,130 +3203,234 @@ function normalizeRateValue(value){
 }
 
 
-async function readSarafiRates(){
+/*
+   این تابع حتی اگر API ساختارهای مختلفی
+   داشته باشد، تلاش می‌کند ارزها را پیدا کند.
+*/
 
- /*
-  sarafi-api.js می‌تواند یکی از این حالت‌ها را داشته باشد:
+function extractRatesObject(result){
 
-  window.sarafiRates
-  window.exchangeRates
-  window.rates
+ if(!result) return null;
 
-  یا:
-
-  getSarafiRates()
-  getExchangeRates()
-  getRates()
-
-  این صفحه همه این حالت‌ها را بررسی می‌کند.
- */
-
- try{
-
-  let result=null;
-
-  if(
-   typeof window.getSarafiRates ===
-   'function'
-  ){
-
-   result =
-    await window.getSarafiRates();
-
-  }else if(
-   typeof window.getExchangeRates ===
-   'function'
-  ){
-
-   result =
-    await window.getExchangeRates();
-
-  }else if(
-   typeof window.getRates ===
-   'function'
-  ){
-
-   result =
-    await window.getRates();
-
-  }else if(
-   window.sarafiRates
-  ){
-
-   result=window.sarafiRates;
-
-  }else if(
-   window.exchangeRates
-  ){
-
-   result=window.exchangeRates;
-
-  }else if(
-   window.rates
-  ){
-
-   result=window.rates;
-
-  }
-
-  if(!result){
-
-   return rates;
-
-  }
+ if(
+  typeof result==='object' &&
+  !Array.isArray(result)
+ ){
 
   if(result.rates){
-   result=result.rates;
+   return extractRatesObject(result.rates);
   }
 
   if(result.data?.rates){
-   result=result.data.rates;
-  }
-
-  if(typeof result !== 'object'){
-   return rates;
-  }
-
-  const newRates={
-   AFN:1
-  };
-
-  Object.keys(result).forEach(code=>{
-
-   const value =
-   normalizeRateValue(
-    result[code]
+   return extractRatesObject(
+    result.data.rates
    );
+  }
 
-   if(value !== null){
+  if(result.data){
+   const nested=
+    extractRatesObject(result.data);
 
-    newRates[
-     String(code).toUpperCase()
-    ]=value;
+   if(nested) return nested;
+  }
+
+  return result;
+
+ }
+
+ return null;
+
+}
+
+
+function collectCurrencyRates(
+ source,
+ output={}
+){
+
+ if(
+  !source ||
+  typeof source!=='object'
+ ){
+  return output;
+ }
+
+ Object.entries(source)
+  .forEach(([key,value])=>{
+
+   const code=
+    String(key)
+     .trim()
+     .toUpperCase();
+
+   /*
+     حالت:
+     USD: 67.5
+   */
+
+   const direct=
+    normalizeRateValue(value);
+
+   if(
+    direct!==null &&
+    /^[A-Z]{3,6}$/.test(code)
+   ){
+
+    output[code]=direct;
+
+   }
+
+   /*
+     حالت:
+     USD: {
+       buy: 67,
+       sell: 68
+     }
+   */
+
+   if(
+    value &&
+    typeof value==='object'
+   ){
+
+    const nestedRate=
+     normalizeRateValue(value);
+
+    if(
+     nestedRate!==null &&
+     /^[A-Z]{3,6}$/.test(code)
+    ){
+
+     output[code]=nestedRate;
+
+    }
+
+    /*
+      اگر داخل آبجکت currency/code وجود داشت
+    */
+
+    const nestedCode=
+     String(
+      value.code||
+      value.currency||
+      value.symbol||
+      ''
+     )
+     .trim()
+     .toUpperCase();
+
+    const nestedValue=
+     normalizeRateValue(value);
+
+    if(
+     nestedCode &&
+     nestedValue!==null
+    ){
+
+     output[nestedCode]=
+      nestedValue;
+
+    }
 
    }
 
   });
 
+ return output;
+
+}
+
+
+async function readSarafiRates(){
+
+ ratesError=false;
+
+ try{
+
+  if(
+   typeof window.getSarafiRates!=='function'
+  ){
+
+   ratesError=true;
+
+   return rates;
+
+  }
+
+  const result=
+   await window.getSarafiRates();
+
   /*
-   اگر API مقدار ارز را نسبت به AFN داده باشد
-   همان مقدار استفاده می‌شود.
+    اگر Worker فعلی Hello World بدهد،
+    JSON نیست و اینجا مشخص می‌شود.
   */
 
   if(
-   Object.keys(newRates).length>1
+   typeof result!=='object' ||
+   result===null
   ){
 
-   rates=newRates;
+   ratesError=true;
+
+   console.warn(
+    'SARAFI API did not return a rates JSON object:',
+    result
+   );
+
+   return rates;
+
+  }
+
+  const source=
+   extractRatesObject(result);
+
+  if(!source){
+
+   ratesError=true;
+
+   return rates;
+
+  }
+
+  const extracted=
+   collectCurrencyRates(
+    source,
+    {}
+   );
+
+  /*
+    AFN همیشه 1 است.
+  */
+
+  extracted.AFN=1;
+
+  /*
+    فقط وقتی واقعاً نرخ پیدا شده باشد،
+    rates را جایگزین می‌کنیم.
+  */
+
+  if(
+   Object.keys(extracted).length>1
+  ){
+
+   rates=extracted;
+
+   ratesLoaded=true;
+
+  }else{
+
+   ratesError=true;
 
   }
 
  }catch(error){
 
   console.error(
-   'sarafi-api.js:',
+   'SARAFI API:',
    error
   );
+
+  ratesError=true;
 
  }
 
@@ -2956,21 +3441,32 @@ async function readSarafiRates(){
 
 function getRate(code){
 
- const value =
- normalizeRateValue(
-  rates[code]
+ const normalized=
+  String(code||'')
+   .trim()
+   .toUpperCase();
+
+ if(normalized==='AFN'){
+  return 1;
+ }
+
+ return normalizeRateValue(
+  rates[normalized]
  );
 
- if(value === null) return null;
-
- return value;
 }
 
 
+/* =========================================================
+   RENDER RATES
+========================================================= */
+
 function renderRates(){
 
- const container =
- document.getElementById('rates');
+ const container=
+  document.getElementById(
+   'rates'
+  );
 
  if(!container) return;
 
@@ -2983,57 +3479,78 @@ function renderRates(){
   'CNY',
   'INR',
   'AED',
-  'SAR'
+  'SAR',
+  'GBP',
+  'JPY',
+  'RUB'
  ];
 
- const available =
- preferred.filter(
-  code=>getRate(code)!==null
- );
+ const available=
+  preferred.filter(
+   code=>getRate(code)!==null
+  );
+
+ /*
+   اگر API خراب باشد، Loading بی‌نهایت
+   نشان نمی‌دهیم.
+ */
 
  if(!available.length){
 
   container.innerHTML=
-   '<span>🔄 Loading rates...</span>';
-
-  return;
- }
-
- container.innerHTML =
- available
-  .map(code=>{
-
-   const value =
-    getRate(code);
-
-   return `
-    <div class="rate-item">
-     <span class="rate-code">
-      ${escapeHtml(code)}
-     </span>
-     <span>→</span>
-     <span class="rate-value">
-      ${formatMoney(value)} AFN
-     </span>
-    </div>
+   `
+   <span class="rate-error">
+    ⚠️ Rates API unavailable
+   </span>
    `;
 
-  })
-  .join('');
+  return;
+
+ }
+
+ container.innerHTML=
+  available
+   .map(code=>{
+
+    const value=
+     getRate(code);
+
+    return `
+     <div class="rate-item">
+
+      <span class="rate-code">
+       ${escapeHtml(code)}
+      </span>
+
+      <span>→</span>
+
+      <span class="rate-value">
+       ${formatMoney(value)} AFN
+      </span>
+
+     </div>
+    `;
+
+   })
+   .join('');
 
 
- const updated =
- document.createElement('span');
+ const updated=
+  document.createElement('span');
 
- updated.className='rate-updated';
+ updated.className='rate-ok';
 
- updated.innerText =
+ updated.innerText=
   '● LIVE';
 
  container.appendChild(updated);
 
 }
 
+
+/* =========================================================
+   UPDATE RATES
+========================================================= */
 
 async function updateRates(){
 
@@ -3044,10 +3561,9 @@ async function updateRates(){
 }
 
 
-/*
- اگر sarafi-api.js خودش هنگام تغییر نرخ
- event بفرستد، اینجا فوراً صفحه را آپدیت می‌کنیم.
-*/
+/* =========================================================
+   API EVENT
+========================================================= */
 
 window.addEventListener(
  'sarafiRatesUpdated',
@@ -3055,10 +3571,34 @@ window.addEventListener(
 
   if(event.detail){
 
-   rates =
-    event.detail.rates ||
-    event.detail ||
-    rates;
+   const incoming=
+    event.detail.rates||
+    event.detail;
+
+   if(
+    incoming &&
+    typeof incoming==='object'
+   ){
+
+    const extracted=
+     collectCurrencyRates(
+      incoming,
+      {}
+     );
+
+    extracted.AFN=1;
+
+    if(
+     Object.keys(extracted).length>1
+    ){
+
+     rates=extracted;
+
+     ratesLoaded=true;
+
+    }
+
+   }
 
   }
 
@@ -3068,20 +3608,8 @@ window.addEventListener(
 );
 
 
-/*
- برای اطمینان، API را مرتب بررسی می‌کنیم.
- این باعث می‌شود هر تغییر جدید API
- بدون refresh صفحه نمایش داده شود.
-*/
-
-setInterval(
- updateRates,
- 15000
-);
-
-
 /* =========================================================
-   REALTIME SUPABASE
+   REALTIME
 ========================================================= */
 
 function startRealtime(){
@@ -3091,60 +3619,44 @@ function startRealtime(){
  if(realtimeChannel){
 
   supabaseClient
-   .removeChannel(realtimeChannel);
+   .removeChannel(
+    realtimeChannel
+   );
 
  }
 
- realtimeChannel =
- supabaseClient
-  .channel(
-   `daily-accounting-${currentUser.id}`
-  )
-  .on(
-   'postgres_changes',
-   {
-    event:'*',
-    schema:'public',
-    table:'exchange_users',
-    filter:`user_id=eq.${currentUser.id}`
-   },
-   async payload=>{
+ realtimeChannel=
+  supabaseClient
+   .channel(
+    `daily-accounting-${currentUser.id}`
+   )
+   .on(
+    'postgres_changes',
+    {
+     event:'*',
+     schema:'public',
+     table:'exchange_users',
+     filter:`user_id=eq.${currentUser.id}`
+    },
+    async payload=>{
 
-    console.log(
-     'Cloud update:',
-     payload
-    );
+     console.log(
+      'Cloud update:',
+      payload
+     );
 
-    await loadDataFromSupabase();
+     await loadDataFromSupabase();
 
-   }
-  )
-  .subscribe();
+    }
+   )
+   .subscribe();
 
 }
 
 
 /* =========================================================
-   CROSS PAGE LIVE UPDATE
+   CROSS PAGE UPDATE
 ========================================================= */
-
-function getLocalSignature(){
-
- try{
-
-  return JSON.stringify({
-   content:appData,
-   profile:userProfile
-  });
-
- }catch(e){
-
-  return '';
-
- }
-
-}
-
 
 function broadcastUpdate(){
 
@@ -3177,129 +3689,163 @@ window.addEventListener(
 );
 
 
-/*
- اگر transactions.html داده را در Supabase
- ذخیره کند، این polling باعث می‌شود
- Home حداکثر چند ثانیه بعد آن را نشان دهد.
-*/
+/* =========================================================
+   CLOUD POLLING
+========================================================= */
 
 function startCloudPolling(){
 
  if(refreshTimer){
-  clearInterval(refreshTimer);
+
+  clearInterval(
+   refreshTimer
+  );
+
  }
 
- refreshTimer =
- setInterval(
-  async()=>{
+ refreshTimer=
+  setInterval(
+   async()=>{
 
-   if(!currentUser) return;
+    if(!currentUser) return;
 
-   try{
+    try{
 
-    const {
-     data,
-     error
-    } =
-    await supabaseClient
-     .from('exchange_users')
-     .select('content,profile')
-     .eq('user_id',currentUser.id)
-     .maybeSingle();
+     const {
+      data,
+      error
+     }=
+      await supabaseClient
+       .from('exchange_users')
+       .select(
+        'content,profile'
+       )
+       .eq(
+        'user_id',
+        currentUser.id
+       )
+       .maybeSingle();
 
-    if(error || !data) return;
+     if(error || !data) return;
 
-    const signature =
-     JSON.stringify({
-      content:data.content,
-      profile:data.profile
-     });
+     const signature=
+      JSON.stringify({
+       content:data.content,
+       profile:data.profile
+      });
 
-    if(
-     lastCloudSignature &&
-     signature!==lastCloudSignature
-    ){
+     if(
+      lastCloudSignature &&
+      signature!==lastCloudSignature
+     ){
 
-     appData =
-      data.content &&
-      typeof data.content==='object'
-       ? data.content
-       : {clients:[]};
+      appData=
+       data.content &&
+       typeof data.content==='object'
+        ? data.content
+        : {clients:[]};
 
-     userProfile =
-      Object.assign(
-       userProfile,
-       data.profile || {}
+      if(
+       !Array.isArray(
+        appData.clients
+       )
+      ){
+       appData.clients=[];
+      }
+
+      userProfile=
+       Object.assign(
+        userProfile,
+        data.profile||{}
+       );
+
+      setThemeColor(
+       userProfile.themeColor
       );
 
-     setThemeColor(
-      userProfile.themeColor
-     );
+      updateHeader();
 
-     updateHeader();
-     updateNavigationProfile();
-     updateLocationDisplay();
-     renderDashboard();
+      updateNavigationProfile();
+
+      updateLocationDisplay();
+
+      renderDashboard();
+
+     }
+
+     lastCloudSignature=
+      signature;
+
+    }catch(error){
+
+     console.error(
+      'Cloud polling:',
+      error
+     );
 
     }
 
-    lastCloudSignature=signature;
-
-   }catch(error){
-
-    console.error(
-     'Cloud polling:',
-     error
-    );
-
-   }
-
-  },
-  5000
- );
+   },
+   5000
+  );
 
 }
 
 
 /* =========================================================
-   LANGUAGE / UI
+   LANGUAGE
 ========================================================= */
 
 function applyLanguage(){
 
- const isFa =
+ const isFa=
   lang()==='fa';
 
- const root =
+ const root=
   document.getElementById(
    'html-root'
   );
 
- root.lang =
-  isFa ? 'fa' : 'en';
+ root.lang=
+  isFa?'fa':'en';
 
- root.dir =
-  isFa ? 'rtl' : 'ltr';
-
- document
-  .getElementById('dashboard-title')
-  .innerText=t('myAccounts');
+ root.dir=
+  isFa?'rtl':'ltr';
 
  document
-  .getElementById('nav-home-text')
-  .innerText=t('home');
+  .getElementById(
+   'dashboard-title'
+  )
+  .innerText=
+  t('myAccounts');
 
  document
-  .getElementById('nav-transactions-text')
-  .innerText=t('transactions');
+  .getElementById(
+   'nav-home-text'
+  )
+  .innerText=
+  t('home');
 
  document
-  .getElementById('nav-profile-text')
-  .innerText=t('profile');
+  .getElementById(
+   'nav-transactions-text'
+  )
+  .innerText=
+  t('transactions');
 
  document
-  .getElementById('logout-btn')
-  .innerText=t('logout');
+  .getElementById(
+   'nav-profile-text'
+  )
+  .innerText=
+  t('profile');
+
+ document
+  .getElementById(
+   'logout-btn'
+  )
+  .innerText=
+  t('logout');
 
  updateLocationDisplay();
 
@@ -3317,12 +3863,18 @@ function updateNavigation(){
  document
   .querySelectorAll('.nav-item')
   .forEach(e=>{
-   e.classList.remove('active');
+   e.classList.remove(
+    'active'
+   );
   });
 
  document
-  .getElementById('home-nav')
-  .classList.add('active');
+  .getElementById(
+   'home-nav'
+  )
+  .classList.add(
+   'active'
+  );
 
 }
 
@@ -3353,22 +3905,44 @@ async function initializeLoggedInPage(){
 
  renderDashboard();
 
+ /*
+   نرخ‌ها هر ۱۵ ثانیه دوباره گرفته می‌شوند.
+ */
+
+ if(ratesTimer){
+
+  clearInterval(
+   ratesTimer
+  );
+
+ }
+
+ ratesTimer=
+  setInterval(
+   updateRates,
+   15000
+  );
+
 }
 
 
 async function initialize(){
 
+ /*
+   نرخ‌ها حتی قبل از Login هم خوانده می‌شوند.
+ */
+
  await updateRates();
 
  const {
   data
- } =
- await supabaseClient.auth
-  .getSession();
+ }=
+  await supabaseClient.auth
+   .getSession();
 
  if(data.session?.user){
 
-  currentUser =
+  currentUser=
    data.session.user;
 
   await loadDataFromSupabase();
@@ -3384,6 +3958,10 @@ async function initialize(){
 }
 
 
+/* =========================================================
+   AUTH STATE
+========================================================= */
+
 supabaseClient.auth.onAuthStateChange(
  async function(event,session){
 
@@ -3392,7 +3970,7 @@ supabaseClient.auth.onAuthStateChange(
    !currentUser
   ){
 
-   currentUser =
+   currentUser=
     session.user;
 
    await loadDataFromSupabase();
@@ -3417,7 +3995,7 @@ supabaseClient.auth.onAuthStateChange(
 
 
 /* =========================================================
-   KEYBOARD OTP
+   OTP INPUT
 ========================================================= */
 
 document
@@ -3426,17 +4004,17 @@ document
   'input',
   function(){
 
-   this.value =
+   this.value=
     this.value
      .replace(/\D/g,'')
      .slice(0,6);
 
   }
- );
+);
 
 
 /* =========================================================
-   LOGIN ENTER KEY
+   LOGIN ENTER
 ========================================================= */
 
 document
@@ -3446,7 +4024,9 @@ document
   function(e){
 
    if(e.key==='Enter'){
+
     handleSignIn();
+
    }
 
   }
@@ -3454,7 +4034,7 @@ document
 
 
 /* =========================================================
-   DELETE MODAL BACKDROP
+   DELETE MODAL
 ========================================================= */
 
 document
@@ -3464,7 +4044,9 @@ document
   function(e){
 
    if(e.target===this){
+
     closeDeleteModal();
+
    }
 
   }
@@ -3506,6 +4088,7 @@ if('serviceWorker' in navigator){
  );
 
 }
+
 </script>
 
 </body>
