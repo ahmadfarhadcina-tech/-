@@ -1,2 +1,2 @@
 # -
-صرافی برای همه
+Dayli accounting
