@@ -4,130 +4,3509 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1.0,maximum-scale=1.0,user-scalable=no">
 <title>Daily Accounting</title>
+
 <link rel="manifest" href="manifest.json">
 <meta name="theme-color" content="#7c3aed">
+
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="sarafi-api.js"></script>
+
 <style>
-:root{--primary:#7c3aed;--primary-dark:#6d28d9;--bg:#0f172a;--card:#1e293b;--text:#f8fafc;--muted:#94a3b8;--border:#334155;--green:#10b981;--red:#ef4444;--blue:#3b82f6;--radius:16px;}
-*{box-sizing:border-box;margin:0;padding:0;font-family:Tahoma,sans-serif;-webkit-tap-highlight-color:transparent;}
-html,body{width:100%;min-height:100%;}
-body{background:var(--bg);color:var(--text);min-height:100vh;}
-.app{width:100%;min-height:100vh;background:var(--card);display:flex;flex-direction:column;}
-header{background:linear-gradient(135deg,#1e293b,#0f172a);padding:10px 16px;border-bottom:1px solid var(--border);display:flex;justify-content:space-between;align-items:center;gap:8px;z-index:20;}
-header h1{font-size:15px;color:var(--primary);}
-.header-controls{display:flex;align-items:center;gap:8px;}
-.profile-badge{display:none;align-items:center;gap:8px;background:#0f172a;border:1px solid var(--border);padding:4px 10px;border-radius:30px;cursor:pointer;}
-.avatar{width:30px;height:30px;border-radius:50%;object-fit:cover;background:var(--primary);display:flex;align-items:center;justify-content:center;color:#fff;font-weight:bold;}
-.rates{background:#0f172a;padding:8px 16px;font-size:11px;color:#38bdf8;border-bottom:1px solid var(--border);display:flex;justify-content:space-around;gap:15px;overflow:auto;white-space:nowrap;}
-.location-status{background:#111827;color:var(--muted);font-size:10px;padding:6px 14px;text-align:center;border-bottom:1px solid var(--border);}
-main{position:relative;flex:1;overflow:hidden;}
-.page{position:absolute;inset:0;padding:20px;background:var(--card);overflow-y:auto;opacity:0;pointer-events:none;transform:translateY(15px);transition:.3s;}
-.page.active{opacity:1;pointer-events:auto;transform:none;z-index:5;}
-.box{max-width:450px;margin:20px auto;width:100%;}
-h2{font-size:18px;color:var(--primary);margin-bottom:20px;}
-.group{margin-bottom:18px;}
-.group label{display:block;font-size:13px;color:var(--muted);margin-bottom:8px;}
-input{width:100%;padding:14px 16px;background:#0f172a;border:1px solid var(--border);border-radius:var(--radius);color:var(--text);font-size:14px;outline:none;}
-input:focus{border-color:var(--primary);box-shadow:0 0 0 3px #7c3aed40;}
-button{cursor:pointer;border:0;padding:14px 20px;border-radius:var(--radius);font-size:15px;font-weight:600;width:100%;}
-.primary{background:var(--primary);color:white;box-shadow:0 4px 15px #7c3aed66;}
-.secondary{background:transparent;color:var(--muted);margin-top:12px;}
-[dir=rtl] input{text-align:right;}
-#toast{position:fixed;left:50%;bottom:20px;transform:translateX(-50%);background:#111827;color:#fff;padding:12px 18px;border-radius:12px;display:none;z-index:3000;font-size:13px;max-width:90%;text-align:center;}
+:root{
+ --primary:#7c3aed;
+ --primary-dark:#6d28d9;
+ --bg:#0f172a;
+ --card:#1e293b;
+ --card2:#172033;
+ --text:#f8fafc;
+ --muted:#94a3b8;
+ --border:#334155;
+ --green:#10b981;
+ --red:#ef4444;
+ --blue:#3b82f6;
+ --gold:#f59e0b;
+ --radius:16px;
+}
+
+*{
+ box-sizing:border-box;
+ margin:0;
+ padding:0;
+ font-family:Tahoma,sans-serif;
+ -webkit-tap-highlight-color:transparent;
+}
+
+html,body{
+ width:100%;
+ min-height:100%;
+ background:var(--bg);
+ color:var(--text);
+}
+
+body{
+ min-height:100vh;
+ overflow-x:hidden;
+}
+
+button,input{
+ font:inherit;
+}
+
+button{
+ cursor:pointer;
+}
+
+.app{
+ width:100%;
+ min-height:100vh;
+ background:var(--card);
+ display:flex;
+ flex-direction:column;
+}
+
+header{
+ background:linear-gradient(135deg,#1e293b,#0f172a);
+ padding:10px 14px;
+ border-bottom:1px solid var(--border);
+ display:flex;
+ justify-content:space-between;
+ align-items:center;
+ gap:8px;
+ z-index:20;
+ position:sticky;
+ top:0;
+}
+
+header h1{
+ font-size:15px;
+ color:var(--primary);
+ font-weight:700;
+}
+
+.header-controls{
+ display:flex;
+ align-items:center;
+ gap:7px;
+}
+
+.profile-badge{
+ display:none;
+ align-items:center;
+ gap:7px;
+ background:#0f172a;
+ border:1px solid var(--border);
+ padding:4px 8px;
+ border-radius:30px;
+ cursor:pointer;
+ transition:.2s;
+}
+
+.profile-badge:active{
+ transform:scale(.94);
+}
+
+.avatar{
+ width:31px;
+ height:31px;
+ border-radius:50%;
+ object-fit:cover;
+ background:var(--primary);
+ display:flex;
+ align-items:center;
+ justify-content:center;
+ color:#fff;
+ font-weight:bold;
+ overflow:hidden;
+ border:1px solid #ffffff20;
+}
+
+.avatar img{
+ width:100%;
+ height:100%;
+ object-fit:cover;
+}
+
+#header-name{
+ max-width:90px;
+ overflow:hidden;
+ text-overflow:ellipsis;
+ white-space:nowrap;
+ font-size:11px;
+}
+
+#logout-btn{
+ width:auto;
+ padding:7px 9px;
+ font-size:10px;
+ background:var(--red);
+ color:#fff;
+ border:0;
+ border-radius:10px;
+ transition:.2s;
+}
+
+#logout-btn:active{
+ transform:scale(.92);
+}
+
+.rates{
+ background:#0b1220;
+ padding:8px 14px;
+ font-size:11px;
+ color:#38bdf8;
+ border-bottom:1px solid var(--border);
+ display:flex;
+ align-items:center;
+ gap:18px;
+ overflow-x:auto;
+ white-space:nowrap;
+ scrollbar-width:none;
+ min-height:35px;
+}
+
+.rates::-webkit-scrollbar{
+ display:none;
+}
+
+.rate-item{
+ display:flex;
+ align-items:center;
+ gap:5px;
+ flex-shrink:0;
+}
+
+.rate-code{
+ color:#fff;
+ font-weight:bold;
+}
+
+.rate-value{
+ color:#38bdf8;
+}
+
+.rate-updated{
+ color:#64748b;
+ font-size:9px;
+}
+
+.location-status{
+ background:#111827;
+ color:var(--muted);
+ font-size:10px;
+ padding:6px 14px;
+ text-align:center;
+ border-bottom:1px solid var(--border);
+ min-height:26px;
+}
+
+main{
+ position:relative;
+ flex:1;
+ min-height:calc(100vh - 150px);
+ padding-bottom:72px;
+}
+
+.page{
+ width:100%;
+ min-height:100%;
+ padding:18px 15px 30px;
+ background:var(--card);
+ overflow-y:auto;
+}
+
+.page.active{
+ animation:pageIn .28s ease;
+}
+
+@keyframes pageIn{
+ from{
+  opacity:0;
+  transform:translateY(10px);
+ }
+ to{
+  opacity:1;
+  transform:none;
+ }
+}
+
+.box{
+ max-width:450px;
+ margin:20px auto;
+ width:100%;
+}
+
+h2{
+ font-size:18px;
+ color:var(--primary);
+ margin-bottom:20px;
+}
+
+.section-title{
+ font-size:15px;
+ font-weight:bold;
+ color:#fff;
+ margin-bottom:12px;
+}
+
+.group{
+ margin-bottom:18px;
+}
+
+.group label{
+ display:block;
+ font-size:13px;
+ color:var(--muted);
+ margin-bottom:8px;
+}
+
+input{
+ width:100%;
+ padding:14px 16px;
+ background:#0f172a;
+ border:1px solid var(--border);
+ border-radius:var(--radius);
+ color:var(--text);
+ font-size:14px;
+ outline:none;
+ transition:.2s;
+}
+
+input:focus{
+ border-color:var(--primary);
+ box-shadow:0 0 0 3px #7c3aed40;
+}
+
+button{
+ border:0;
+ padding:14px 20px;
+ border-radius:var(--radius);
+ font-size:14px;
+ font-weight:600;
+ width:100%;
+ transition:transform .15s ease,filter .15s ease,box-shadow .15s ease;
+}
+
+button:active{
+ transform:scale(.96);
+}
+
+.primary{
+ background:var(--primary);
+ color:white;
+ box-shadow:0 4px 15px #7c3aed66;
+}
+
+.primary:hover{
+ filter:brightness(1.08);
+}
+
+.secondary{
+ background:transparent;
+ color:var(--muted);
+ margin-top:12px;
+}
+
+.empty{
+ text-align:center;
+ padding:55px 20px;
+ color:var(--muted);
+}
+
+.empty-icon{
+ font-size:42px;
+ margin-bottom:12px;
+}
+
+.empty-title{
+ color:#fff;
+ font-weight:bold;
+ margin-bottom:7px;
+}
+
+.dashboard-top{
+ display:flex;
+ justify-content:space-between;
+ align-items:center;
+ gap:10px;
+ margin-bottom:15px;
+}
+
+.dashboard-top h2{
+ margin:0;
+}
+
+.add-btn{
+ width:46px;
+ height:46px;
+ padding:0;
+ border-radius:50%;
+ background:var(--primary);
+ color:#fff;
+ font-size:25px;
+ box-shadow:0 6px 20px #7c3aed55;
+}
+
+.accounts{
+ display:flex;
+ flex-direction:column;
+ gap:14px;
+}
+
+.client-card{
+ background:linear-gradient(145deg,#263449,#182333);
+ border:1px solid var(--border);
+ border-radius:18px;
+ overflow:hidden;
+ box-shadow:0 8px 25px #00000020;
+ animation:cardIn .3s ease;
+}
+
+@keyframes cardIn{
+ from{
+  opacity:0;
+  transform:translateY(12px) scale(.98);
+ }
+ to{
+  opacity:1;
+  transform:none;
+ }
+}
+
+.client-head{
+ display:flex;
+ align-items:center;
+ justify-content:space-between;
+ padding:14px;
+ border-bottom:1px solid #ffffff0d;
+}
+
+.client-info{
+ min-width:0;
+}
+
+.client-name{
+ font-size:15px;
+ font-weight:bold;
+ color:#fff;
+ overflow:hidden;
+ text-overflow:ellipsis;
+ white-space:nowrap;
+}
+
+.transaction-count{
+ font-size:10px;
+ color:var(--muted);
+ margin-top:4px;
+}
+
+.client-balance{
+ padding:12px 14px;
+ display:grid;
+ grid-template-columns:repeat(3,1fr);
+ gap:8px;
+}
+
+.balance-box{
+ background:#0f172a66;
+ border-radius:12px;
+ padding:10px 6px;
+ text-align:center;
+}
+
+.balance-label{
+ color:var(--muted);
+ font-size:9px;
+ margin-bottom:5px;
+}
+
+.balance-value{
+ font-size:11px;
+ font-weight:bold;
+ direction:ltr;
+}
+
+.balance-value.balance{
+ color:#38bdf8;
+}
+
+.balance-value.credit{
+ color:var(--green);
+}
+
+.balance-value.debit{
+ color:var(--red);
+}
+
+.transactions{
+ border-top:1px solid #ffffff0d;
+}
+
+.tx-row{
+ padding:12px 14px;
+ border-bottom:1px solid #ffffff0b;
+ display:flex;
+ flex-direction:column;
+ gap:8px;
+}
+
+.tx-row:last-child{
+ border-bottom:0;
+}
+
+.tx-main{
+ display:flex;
+ align-items:center;
+ justify-content:space-between;
+ gap:10px;
+}
+
+.tx-direction{
+ display:flex;
+ align-items:center;
+ gap:7px;
+ min-width:0;
+}
+
+.tx-icon{
+ width:29px;
+ height:29px;
+ border-radius:9px;
+ display:flex;
+ align-items:center;
+ justify-content:center;
+ font-size:13px;
+ flex-shrink:0;
+}
+
+.tx-icon.credit{
+ background:#10b98120;
+ color:var(--green);
+}
+
+.tx-icon.debit{
+ background:#ef444420;
+ color:var(--red);
+}
+
+.tx-type{
+ font-size:11px;
+ color:#fff;
+}
+
+.tx-amount{
+ font-size:12px;
+ font-weight:bold;
+ direction:ltr;
+ white-space:nowrap;
+}
+
+.tx-amount.credit{
+ color:var(--green);
+}
+
+.tx-amount.debit{
+ color:var(--red);
+}
+
+.tx-dates{
+ display:flex;
+ flex-wrap:wrap;
+ gap:5px;
+ color:var(--muted);
+ font-size:9px;
+ line-height:1.7;
+}
+
+.date-chip{
+ background:#0f172a;
+ border:1px solid #ffffff0a;
+ border-radius:7px;
+ padding:2px 6px;
+}
+
+.tx-actions{
+ display:flex;
+ gap:7px;
+}
+
+.tx-action{
+ width:auto;
+ padding:6px 9px;
+ border-radius:8px;
+ font-size:9px;
+ margin:0;
+}
+
+.edit-btn{
+ background:#3b82f620;
+ color:#60a5fa;
+}
+
+.delete-btn{
+ background:#ef444420;
+ color:#f87171;
+}
+
+.card-menu{
+ position:relative;
+}
+
+.menu-btn{
+ width:35px;
+ height:35px;
+ padding:0;
+ border-radius:50%;
+ background:#0f172a;
+ color:#94a3b8;
+ font-size:19px;
+}
+
+.menu-popup{
+ position:absolute;
+ right:0;
+ top:41px;
+ min-width:135px;
+ background:#111827;
+ border:1px solid var(--border);
+ border-radius:12px;
+ padding:5px;
+ z-index:30;
+ box-shadow:0 15px 35px #0008;
+ display:none;
+ animation:menuIn .18s ease;
+}
+
+[dir=rtl] .menu-popup{
+ right:auto;
+ left:0;
+}
+
+.menu-popup.show{
+ display:block;
+}
+
+.menu-item{
+ width:100%;
+ padding:10px;
+ border-radius:8px;
+ background:transparent;
+ color:#fff;
+ text-align:left;
+ font-size:11px;
+}
+
+[dir=rtl] .menu-item{
+ text-align:right;
+}
+
+.menu-item:hover{
+ background:#ffffff0a;
+}
+
+.menu-item.danger{
+ color:#f87171;
+}
+
+.fab{
+ position:fixed;
+ right:18px;
+ bottom:76px;
+ width:55px;
+ height:55px;
+ padding:0;
+ border-radius:50%;
+ background:var(--primary);
+ color:#fff;
+ font-size:30px;
+ z-index:50;
+ box-shadow:0 7px 25px #0008;
+ display:flex;
+ align-items:center;
+ justify-content:center;
+}
+
+[dir=rtl] .fab{
+ right:auto;
+ left:18px;
+}
+
+.bottom-nav{
+ position:fixed;
+ left:0;
+ right:0;
+ bottom:0;
+ height:62px;
+ background:#0f172af2;
+ backdrop-filter:blur(12px);
+ border-top:1px solid var(--border);
+ display:flex;
+ justify-content:space-around;
+ align-items:center;
+ z-index:40;
+}
+
+.nav-item{
+ width:33.333%;
+ height:100%;
+ background:transparent;
+ color:#64748b;
+ border-radius:0;
+ padding:7px 4px;
+ display:flex;
+ flex-direction:column;
+ align-items:center;
+ justify-content:center;
+ gap:3px;
+ font-size:9px;
+}
+
+.nav-item span:first-child{
+ font-size:20px;
+ line-height:20px;
+}
+
+.nav-item.active{
+ color:var(--primary);
+}
+
+.nav-profile-avatar{
+ width:23px;
+ height:23px;
+ border-radius:50%;
+ object-fit:cover;
+ display:flex;
+ align-items:center;
+ justify-content:center;
+ background:#334155;
+ color:#fff;
+ font-size:11px;
+ overflow:hidden;
+ border:1px solid #ffffff20;
+}
+
+.nav-profile-avatar img{
+ width:100%;
+ height:100%;
+ object-fit:cover;
+}
+
+.modal-backdrop{
+ position:fixed;
+ inset:0;
+ background:#00000090;
+ backdrop-filter:blur(4px);
+ display:none;
+ align-items:flex-end;
+ justify-content:center;
+ z-index:1000;
+ padding:12px;
+}
+
+.modal-backdrop.active{
+ display:flex;
+}
+
+.modal{
+ width:100%;
+ max-width:450px;
+ background:#1e293b;
+ border:1px solid var(--border);
+ border-radius:22px 22px 14px 14px;
+ padding:20px;
+ box-shadow:0 -15px 45px #0008;
+ animation:modalIn .25s ease;
+}
+
+@keyframes modalIn{
+ from{
+  opacity:0;
+  transform:translateY(40px) scale(.96);
+ }
+ to{
+  opacity:1;
+  transform:none;
+ }
+}
+
+.modal h3{
+ font-size:16px;
+ color:var(--primary);
+ margin-bottom:9px;
+}
+
+.modal p{
+ color:var(--muted);
+ font-size:11px;
+ line-height:1.8;
+ margin-bottom:15px;
+}
+
+.modal-actions{
+ display:flex;
+ gap:8px;
+ margin-top:15px;
+}
+
+.modal-actions button{
+ margin:0;
+}
+
+.cancel-btn{
+ background:#334155;
+ color:#cbd5e1;
+}
+
+.confirm-btn{
+ background:var(--red);
+ color:#fff;
+}
+
+#toast{
+ position:fixed;
+ left:50%;
+ bottom:78px;
+ transform:translateX(-50%) translateY(20px);
+ background:#111827;
+ color:#fff;
+ padding:12px 18px;
+ border-radius:12px;
+ display:none;
+ opacity:0;
+ z-index:3000;
+ font-size:13px;
+ max-width:90%;
+ text-align:center;
+ border:1px solid var(--border);
+ box-shadow:0 8px 25px #0008;
+ transition:.25s;
+}
+
+#toast.show{
+ display:block;
+ opacity:1;
+ transform:translateX(-50%) translateY(0);
+}
+
+.loading{
+ display:flex;
+ justify-content:center;
+ align-items:center;
+ padding:35px;
+ color:var(--muted);
+ font-size:12px;
+}
+
+.spinner{
+ width:20px;
+ height:20px;
+ border:2px solid #ffffff20;
+ border-top-color:var(--primary);
+ border-radius:50%;
+ animation:spin .7s linear infinite;
+ margin-right:8px;
+}
+
+[dir=rtl] .spinner{
+ margin-right:0;
+ margin-left:8px;
+}
+
+@keyframes spin{
+ to{transform:rotate(360deg);}
+}
+
+.click-animation{
+ animation:clickPulse .22s ease;
+}
+
+@keyframes clickPulse{
+ 50%{
+  transform:scale(.96);
+ }
+}
+
+@media(max-width:380px){
+ .client-balance{
+  grid-template-columns:1fr;
+ }
+ .header-controls{
+  gap:4px;
+ }
+ #header-name{
+  display:none;
+ }
+}
 </style>
 </head>
+
 <body>
-<script src="sarafi-api.js"></script>
+
 <div class="app">
+
 <header>
-<h1 id="header-title">Daily Accounting</h1>
-<div class="header-controls">
-<div id="profile-badge" class="profile-badge" onclick="window.location.href='profile.html'">
-<div id="header-avatar"><div class="avatar">U</div></div>
-<span id="header-name">User</span>
-</div>
-<button id="logout-btn" onclick="logoutUser()" style="display:none;width:auto;padding:6px 9px;font-size:10px;background:#ef4444;color:#fff">Logout</button>
-</div>
+ <h1 id="header-title">Daily Accounting</h1>
+
+ <div class="header-controls">
+
+  <div id="profile-badge"
+       class="profile-badge"
+       onclick="goProfile()">
+
+   <div id="header-avatar">
+    <div class="avatar">U</div>
+   </div>
+
+   <span id="header-name">User</span>
+  </div>
+
+  <button
+   id="logout-btn"
+   onclick="logoutUser()"
+   style="display:none;width:auto;padding:6px 9px;font-size:10px;background:#ef4444;color:#fff">
+   Logout
+  </button>
+
+ </div>
 </header>
-<div class="rates" id="rates"><span>🔄 Loading rates...</span></div>
-<div class="location-status" id="location-status">📍 Location: Detecting...</div>
+
+<div class="rates" id="rates">
+ <span>🔄 Loading rates...</span>
+</div>
+
+<div class="location-status" id="location-status">
+ 📍 Location: Detecting...
+</div>
+
 <main>
-<section id="login-page" class="page active">
-<div class="box">
-<div style="text-align:center;margin:40px 0 30px">
-<h2 id="login-title">Sign In or Register</h2>
-<p id="login-description" style="font-size:12px;color:var(--muted)">Log in to access your cloud accounts.</p>
-</div>
-<div class="group">
-<label id="email-label">Email Address</label>
-<input type="email" id="auth-email" placeholder="example@gmail.com">
-</div>
-<div class="group">
-<label id="password-label">Password</label>
-<input type="password" id="auth-password" placeholder="At least 6 characters">
-</div>
-<button id="signin-btn" class="primary" onclick="handleSignIn()">Sign In</button>
-<button id="signup-btn" onclick="handleSignUp()" style="background:transparent;border:1px solid var(--primary);color:var(--primary);margin-top:12px">Create New Account</button>
-<div id="otp-section" style="display:none;margin-top:20px">
-<div style="text-align:center;margin:25px 0 20px">
-<h3 id="otp-title" style="font-size:17px;color:var(--primary);margin-bottom:8px">Verify Your Email</h3>
-<p id="otp-description" style="font-size:12px;color:var(--muted);line-height:1.8">Enter the 6-digit code sent to your email.</p>
-<p id="otp-email-display" style="font-size:12px;color:#38bdf8;margin-top:8px"></p>
-</div>
-<div class="group">
-<label id="otp-label">Verification Code</label>
-<input type="text" id="otp-code" inputmode="numeric" autocomplete="one-time-code" maxlength="6" placeholder="Enter 6-digit code">
-</div>
-<button id="verify-otp-btn" class="primary" onclick="verifySignupCode()">Verify Code</button>
-<button id="resend-otp-btn" class="secondary" onclick="resendSignupCode()">Resend Code</button>
-<button id="back-signup-btn" class="secondary" onclick="backToSignup()">Back</button>
-</div>
-</div>
+
+<section id="login-page" class="page">
+
+ <div class="box">
+
+  <div style="text-align:center;margin:40px 0 30px">
+
+   <h2 id="login-title">
+    Sign In or Register
+   </h2>
+
+   <p id="login-description"
+      style="font-size:12px;color:var(--muted)">
+    Log in to access your cloud accounts.
+   </p>
+
+  </div>
+
+  <div class="group" id="email-group">
+   <label id="email-label">Email Address</label>
+   <input
+    type="email"
+    id="auth-email"
+    placeholder="example@gmail.com"
+    autocomplete="email">
+  </div>
+
+  <div class="group" id="password-group">
+   <label id="password-label">Password</label>
+   <input
+    type="password"
+    id="auth-password"
+    placeholder="At least 6 characters"
+    autocomplete="current-password">
+  </div>
+
+  <button
+   id="signin-btn"
+   class="primary"
+   onclick="handleSignIn()">
+   Sign In
+  </button>
+
+  <button
+   id="signup-btn"
+   onclick="handleSignUp()"
+   style="background:transparent;border:1px solid var(--primary);color:var(--primary);margin-top:12px">
+   Create New Account
+  </button>
+
+  <div id="otp-section"
+       style="display:none;margin-top:20px">
+
+   <div style="text-align:center;margin:25px 0 20px">
+
+    <h3
+     id="otp-title"
+     style="font-size:17px;color:var(--primary);margin-bottom:8px">
+     Verify Your Email
+    </h3>
+
+    <p
+     id="otp-description"
+     style="font-size:12px;color:var(--muted);line-height:1.8">
+     Enter the 6-digit code sent to your email.
+    </p>
+
+    <p
+     id="otp-email-display"
+     style="font-size:12px;color:#38bdf8;margin-top:8px">
+    </p>
+
+   </div>
+
+   <div class="group">
+    <label id="otp-label">
+     Verification Code
+    </label>
+
+    <input
+     type="text"
+     id="otp-code"
+     inputmode="numeric"
+     autocomplete="one-time-code"
+     maxlength="6"
+     placeholder="Enter 6-digit code">
+   </div>
+
+   <button
+    id="verify-otp-btn"
+    class="primary"
+    onclick="verifySignupCode()">
+    Verify Code
+   </button>
+
+   <button
+    id="resend-otp-btn"
+    class="secondary"
+    onclick="resendSignupCode()">
+    Resend Code
+   </button>
+
+   <button
+    id="back-signup-btn"
+    class="secondary"
+    onclick="backToSignup()">
+    Back
+   </button>
+
+  </div>
+
+ </div>
+
 </section>
+
+
+<section id="dashboard-page"
+         class="page"
+         style="display:none">
+
+ <div class="dashboard-top">
+
+  <h2 id="dashboard-title">
+   My Accounts
+  </h2>
+
+  <button
+   class="add-btn"
+   onclick="goTransactions()"
+   aria-label="Add transaction">
+   +
+  </button>
+
+ </div>
+
+ <div id="accounts-list" class="accounts">
+  <div class="loading">
+   <span class="spinner"></span>
+   Loading...
+  </div>
+ </div>
+
+</section>
+
 </main>
+
+<button
+ id="fab"
+ class="fab"
+ onclick="goTransactions()"
+ style="display:none">
+ +
+</button>
+
+
+<nav id="bottom-nav"
+     class="bottom-nav"
+     style="display:none">
+
+ <button
+  id="home-nav"
+  class="nav-item active"
+  onclick="goHome()">
+  <span>⌂</span>
+  <span id="nav-home-text">Home</span>
+ </button>
+
+ <button
+  id="transactions-nav"
+  class="nav-item"
+  onclick="goTransactions()">
+  <span>⇄</span>
+  <span id="nav-transactions-text">Transactions</span>
+ </button>
+
+ <button
+  id="profile-nav"
+  class="nav-item"
+  onclick="goProfile()">
+
+  <div id="nav-profile-avatar"
+       class="nav-profile-avatar">
+   U
+  </div>
+
+  <span id="nav-profile-text">Profile</span>
+
+ </button>
+
+</nav>
+
 </div>
+
+
+<div id="delete-modal"
+     class="modal-backdrop">
+
+ <div class="modal">
+
+  <h3 id="delete-modal-title">
+   Confirm Deletion
+  </h3>
+
+  <p id="delete-modal-text">
+   Are you sure you want to delete this account?
+  </p>
+
+  <div class="modal-actions">
+
+   <button
+    class="cancel-btn"
+    onclick="closeDeleteModal()">
+    Cancel
+   </button>
+
+   <button
+    class="confirm-btn"
+    onclick="confirmDeleteClient()">
+    Yes, Delete
+   </button>
+
+  </div>
+
+ </div>
+</div>
+
+
 <div id="toast"></div>
+
+
 <script>
-const SUPABASE_URL = 'https://hvsymjkbmpmvjycwenbd.supabase.co';
-const SUPABASE_KEY = 'sb_publishable_9pkhkb88LNXJw457Sx8dpA_0E231JwH';
-const supabaseClient = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
-let currentUser = null, pendingSignup = null;
-function toast(msg){ const e=document.getElementById('toast'); e.innerText=msg; e.style.display='block'; clearTimeout(window.__toast); window.__toast=setTimeout(()=>{e.style.display='none';},3500); }
+/* =========================================================
+   SUPABASE
+========================================================= */
+
+const SUPABASE_URL =
+'https://hvsymjkbmpmvjycwenbd.supabase.co';
+
+const SUPABASE_KEY =
+'sb_publishable_9pkhkb88LNXJw457Sx8dpA_0E231JwH';
+
+const supabaseClient =
+supabase.createClient(
+ SUPABASE_URL,
+ SUPABASE_KEY
+);
+
+
+/* =========================================================
+   GLOBAL DATA
+========================================================= */
+
+let currentUser = null;
+
+let pendingSignup = null;
+
+let appData = {
+ clients:[]
+};
+
+let userProfile = {
+ name:'',
+ phone:'',
+ location:'Jawzjan',
+ avatar:'',
+ themeColor:'#7c3aed',
+ language:'en'
+};
+
+let rates = {
+ AFN:1
+};
+
+let deleteClientId = null;
+
+let realtimeChannel = null;
+
+let refreshTimer = null;
+
+let lastCloudSignature = '';
+
+
+/* =========================================================
+   TRANSLATIONS
+========================================================= */
+
+const translations = {
+
+ en:{
+  home:'Home',
+  transactions:'Transactions',
+  profile:'Profile',
+  logout:'Logout',
+  loading:'Loading...',
+  myAccounts:'My Accounts',
+  noAccounts:'No accounts yet',
+  noAccountsText:'Create a transaction to start your accounting.',
+  credit:'Credit',
+  debit:'Debit',
+  transaction:'Transaction',
+  transactionsCount:'transactions',
+  edit:'Edit',
+  delete:'Delete',
+  confirmDelete:'Confirm Deletion',
+  deleteAccount:'Are you sure you want to delete this account?',
+  cancel:'Cancel',
+  yesDelete:'Yes, Delete',
+  location:'Location',
+  detecting:'Detecting...',
+  online:'Online',
+  signIn:'Sign In',
+  register:'Create New Account'
+ },
+
+ fa:{
+  home:'خانه',
+  transactions:'معاملات',
+  profile:'پروفایل',
+  logout:'خروج',
+  loading:'در حال بارگذاری...',
+  myAccounts:'حساب‌های من',
+  noAccounts:'هنوز حسابی وجود ندارد',
+  noAccountsText:'برای شروع، یک معامله ثبت کنید.',
+  credit:'طلب',
+  debit:'بدهی',
+  transaction:'معامله',
+  transactionsCount:'معامله',
+  edit:'ویرایش',
+  delete:'حذف',
+  confirmDelete:'تأیید حذف',
+  deleteAccount:'آیا از حذف این حساب مطمئن هستید؟',
+  cancel:'لغو',
+  yesDelete:'بله، حذف شود',
+  location:'موقعیت',
+  detecting:'در حال تشخیص...',
+  online:'آنلاین',
+  signIn:'ورود',
+  register:'ایجاد حساب جدید'
+ }
+
+};
+
+function lang(){
+ return userProfile.language === 'fa'
+  ? 'fa'
+  : 'en';
+}
+
+function t(key){
+ return translations[lang()][key] || key;
+}
+
+
+/* =========================================================
+   TOAST
+========================================================= */
+
+function toast(msg){
+
+ const e =
+ document.getElementById('toast');
+
+ e.innerText = msg;
+
+ e.classList.add('show');
+
+ clearTimeout(window.__toast);
+
+ window.__toast =
+ setTimeout(()=>{
+  e.classList.remove('show');
+ },3500);
+}
+
+
+/* =========================================================
+   CLICK ANIMATION
+========================================================= */
+
+document.addEventListener(
+ 'click',
+ function(e){
+
+  const target =
+  e.target.closest(
+   'button,.profile-badge,.client-card,.menu-item'
+  );
+
+  if(!target) return;
+
+  target.classList.remove('click-animation');
+
+  void target.offsetWidth;
+
+  target.classList.add('click-animation');
+
+ },
+ true
+);
+
+
+/* =========================================================
+   HELPERS
+========================================================= */
+
+function escapeHtml(value){
+
+ return String(value ?? '')
+  .replace(/[&<>"']/g,function(m){
+
+   return {
+    '&':'&amp;',
+    '<':'&lt;',
+    '>':'&gt;',
+    '"':'&quot;',
+    "'":'&#039;'
+   }[m];
+
+  });
+
+}
+
+
+function safeNumber(value){
+
+ const n =
+ Number(
+  String(value ?? '')
+   .replace(/,/g,'')
+   .trim()
+ );
+
+ return Number.isFinite(n)
+  ? n
+  : 0;
+}
+
+
+function formatMoney(value){
+
+ return safeNumber(value)
+  .toLocaleString('en-US',{
+   maximumFractionDigits:2
+  });
+
+}
+
+
+function currencySymbol(code){
+
+ const map = {
+  AFN:'؋',
+  USD:'$',
+  EUR:'€',
+  TRY:'₺',
+  IRR:'﷼',
+  CNY:'¥',
+  PKR:'₨',
+  INR:'₹',
+  SAR:'﷼',
+  AED:'د.إ',
+  GBP:'£',
+  JPY:'¥',
+  RUB:'₽'
+ };
+
+ return map[code] || code;
+}
+
+
+/* =========================================================
+   THEME
+========================================================= */
+
+function setThemeColor(color){
+
+ if(!color) return;
+
+ document.documentElement
+  .style
+  .setProperty('--primary',color);
+
+ userProfile.themeColor = color;
+}
+
+
+/* =========================================================
+   AUTH
+========================================================= */
+
 async function handleSignIn(){
- const email = document.getElementById('auth-email').value.trim();
- const password = document.getElementById('auth-password').value;
- const {data,error} = await supabaseClient.auth.signInWithPassword({email,password});
- if(error) return alert(error.message);
- currentUser = data.user;
- window.location.href = 'transactions.html';
+
+ const email =
+ document
+  .getElementById('auth-email')
+  .value
+  .trim();
+
+ const password =
+ document
+  .getElementById('auth-password')
+  .value;
+
+ if(!email || !password){
+
+  toast(
+   lang()==='fa'
+    ? 'ایمیل و رمز عبور را وارد کنید.'
+    : 'Enter email and password.'
+  );
+
+  return;
+ }
+
+ const {
+  data,
+  error
+ } =
+ await supabaseClient.auth
+  .signInWithPassword({
+   email,
+   password
+  });
+
+ if(error){
+
+  toast(error.message);
+
+  return;
+ }
+
+ currentUser =
+ data.user;
+
+ await loadDataFromSupabase();
+
+ await initializeLoggedInPage();
+
 }
+
+
 async function handleSignUp(){
- const email = document.getElementById('auth-email').value.trim();
- const password = document.getElementById('auth-password').value;
- if(!email || password.length<6) return toast('Enter email & password');
- const {data,error} = await supabaseClient.functions.invoke('smooth-responder',{body:{email,password}});
- if(error) return toast(error.message);
- pendingSignup = {email, password};
- document.getElementById('email-label').parentElement.style.display='none';
- document.getElementById('password-label').parentElement.style.display='none';
- document.getElementById('signin-btn').style.display='none';
- document.getElementById('signup-btn').style.display='none';
- document.getElementById('otp-section').style.display='block';
+
+ const email =
+ document
+  .getElementById('auth-email')
+  .value
+  .trim();
+
+ const password =
+ document
+  .getElementById('auth-password')
+  .value;
+
+ if(!email || password.length < 6){
+
+  toast(
+   lang()==='fa'
+    ? 'ایمیل و رمز عبور حداقل ۶ حرفی وارد کنید.'
+    : 'Enter email and a password of at least 6 characters.'
+  );
+
+  return;
+ }
+
+ const {
+  data,
+  error
+ } =
+ await supabaseClient.functions
+  .invoke(
+   'smooth-responder',
+   {
+    body:{
+     email,
+     password
+    }
+   }
+  );
+
+ if(error){
+
+  toast(error.message);
+
+  return;
+ }
+
+ pendingSignup = {
+  email,
+  password,
+  userId:data?.user_id || ''
+ };
+
+ document
+  .getElementById('email-group')
+  .style.display='none';
+
+ document
+  .getElementById('password-group')
+  .style.display='none';
+
+ document
+  .getElementById('signin-btn')
+  .style.display='none';
+
+ document
+  .getElementById('signup-btn')
+  .style.display='none';
+
+ document
+  .getElementById('otp-section')
+  .style.display='block';
+
+ document
+  .getElementById('otp-email-display')
+  .innerText=email;
+
+ document
+  .getElementById('otp-code')
+  .value='';
+
+ document
+  .getElementById('otp-code')
+  .focus();
+
+ toast(
+  lang()==='fa'
+   ? 'کد تأیید ارسال شد.'
+   : 'Verification code sent.'
+ );
+
 }
+
+
 async function verifySignupCode(){
- const code = document.getElementById('otp-code').value.trim();
- const res = await fetch(`${SUPABASE_URL}/functions/v1/dynamic-processor`,{method:'POST',headers:{'Content-Type':'application/json','apikey':SUPABASE_KEY,'Authorization':`Bearer ${SUPABASE_KEY}`},body:JSON.stringify({email:pendingSignup.email,code})});
- const data = await res.json();
- if(!data?.success) return toast('Invalid code');
- const {data:loginData} = await supabaseClient.auth.signInWithPassword({email:pendingSignup.email,password:pendingSignup.password});
- currentUser = loginData.user;
- window.location.href = 'transactions.html';
+
+ if(!pendingSignup){
+
+  toast('Signup session expired.');
+
+  return;
+ }
+
+ const code =
+ document
+  .getElementById('otp-code')
+  .value
+  .trim();
+
+ if(!/^\d{6}$/.test(code)){
+
+  toast(
+   lang()==='fa'
+    ? 'کد باید ۶ رقمی باشد.'
+    : 'Code must contain 6 digits.'
+  );
+
+  return;
+ }
+
+ try{
+
+  const res =
+  await fetch(
+   `${SUPABASE_URL}/functions/v1/dynamic-processor`,
+   {
+    method:'POST',
+
+    headers:{
+     'Content-Type':'application/json',
+     'apikey':SUPABASE_KEY,
+     'Authorization':`Bearer ${SUPABASE_KEY}`
+    },
+
+    body:JSON.stringify({
+     email:pendingSignup.email,
+     code
+    })
+   }
+  );
+
+  const data =
+  await res.json();
+
+  if(!data?.success){
+
+   toast(
+    lang()==='fa'
+     ? 'کد نادرست است.'
+     : 'Invalid code.'
+   );
+
+   return;
+  }
+
+  const {
+   data:loginData,
+   error
+  } =
+  await supabaseClient.auth
+   .signInWithPassword({
+    email:pendingSignup.email,
+    password:pendingSignup.password
+   });
+
+  if(error){
+
+   toast(error.message);
+
+   return;
+  }
+
+  currentUser =
+  loginData.user;
+
+  pendingSignup=null;
+
+  await loadDataFromSupabase();
+
+  await initializeLoggedInPage();
+
+  toast(
+   lang()==='fa'
+    ? 'حساب با موفقیت ایجاد شد.'
+    : 'Account created successfully.'
+  );
+
+ }catch(error){
+
+  console.error(error);
+
+  toast(
+   lang()==='fa'
+    ? 'خطا در تأیید کد.'
+    : 'Verification error.'
+  );
+
+ }
+
 }
-function backToSignup(){ pendingSignup=null; location.reload(); }
-window.addEventListener('DOMContentLoaded', async()=>{
- const {data} = await supabaseClient.auth.getSession();
- if(data.session?.user) window.location.href = 'transactions.html';
-});
+
+
+async function resendSignupCode(){
+
+ if(!pendingSignup) return;
+
+ const {
+  data,
+  error
+ } =
+ await supabaseClient.functions
+  .invoke(
+   'smooth-responder',
+   {
+    body:{
+     email:pendingSignup.email,
+     password:pendingSignup.password
+    }
+   }
+  );
+
+ if(error){
+
+  toast(error.message);
+
+  return;
+ }
+
+ pendingSignup.userId =
+ data?.user_id ||
+ pendingSignup.userId;
+
+ toast(
+  lang()==='fa'
+   ? 'کد دوباره ارسال شد.'
+   : 'Code sent again.'
+ );
+
+}
+
+
+function backToSignup(){
+
+ pendingSignup=null;
+
+ document
+  .getElementById('email-group')
+  .style.display='block';
+
+ document
+  .getElementById('password-group')
+  .style.display='block';
+
+ document
+  .getElementById('signin-btn')
+  .style.display='block';
+
+ document
+  .getElementById('signup-btn')
+  .style.display='block';
+
+ document
+  .getElementById('otp-section')
+  .style.display='none';
+
+ document
+  .getElementById('otp-code')
+  .value='';
+
+}
+
+
+/* =========================================================
+   LOGOUT
+========================================================= */
+
+async function logoutUser(){
+
+ try{
+
+  await supabaseClient.auth.signOut();
+
+ }catch(e){
+
+  console.error(e);
+
+ }
+
+ currentUser=null;
+
+ appData={
+  clients:[]
+ };
+
+ if(realtimeChannel){
+
+  await supabaseClient
+   .removeChannel(realtimeChannel);
+
+  realtimeChannel=null;
+ }
+
+ if(refreshTimer){
+
+  clearInterval(refreshTimer);
+
+  refreshTimer=null;
+ }
+
+ showLogin();
+
+}
+
+
+/* =========================================================
+   SUPABASE LOAD
+========================================================= */
+
+async function loadDataFromSupabase(){
+
+ if(!currentUser) return;
+
+ try{
+
+  const {
+   data,
+   error
+  } =
+  await supabaseClient
+   .from('exchange_users')
+   .select('*')
+   .eq('user_id',currentUser.id)
+   .maybeSingle();
+
+  if(error){
+
+   console.error(error);
+
+   return;
+  }
+
+  if(data){
+
+   appData =
+    data.content &&
+    typeof data.content === 'object'
+     ? data.content
+     : {clients:[]};
+
+   if(!Array.isArray(appData.clients)){
+    appData.clients=[];
+   }
+
+   userProfile =
+   Object.assign(
+    {
+     name:
+      currentUser.email
+       ? currentUser.email.split('@')[0]
+       : 'User',
+
+     phone:'',
+     location:'Jawzjan',
+     avatar:'',
+     themeColor:'#7c3aed',
+     language:'en'
+    },
+
+    data.profile || {}
+   );
+
+  }else{
+
+   appData={
+    clients:[]
+   };
+
+   userProfile={
+    name:
+     currentUser.email
+      ? currentUser.email.split('@')[0]
+      : 'User',
+
+    phone:'',
+    location:'Jawzjan',
+    avatar:'',
+    themeColor:'#7c3aed',
+    language:'en'
+   };
+
+   await saveDataToSupabase();
+
+  }
+
+  setThemeColor(userProfile.themeColor);
+
+  updateHeader();
+
+  updateNavigationProfile();
+
+  updateLocationDisplay();
+
+  renderDashboard();
+
+ }catch(error){
+
+  console.error(
+   'loadDataFromSupabase:',
+   error
+  );
+
+ }
+
+}
+
+
+/* =========================================================
+   SUPABASE SAVE
+========================================================= */
+
+async function saveDataToSupabase(){
+
+ if(!currentUser) return false;
+
+ try{
+
+  const payload={
+   user_id:currentUser.id,
+   email:currentUser.email,
+   content:appData,
+   profile:userProfile
+  };
+
+  const {
+   error
+  } =
+  await supabaseClient
+   .from('exchange_users')
+   .upsert(
+    payload,
+    {
+     onConflict:'user_id'
+    }
+   );
+
+  if(error){
+
+   console.error(error);
+
+   return false;
+  }
+
+  return true;
+
+ }catch(error){
+
+  console.error(error);
+
+  return false;
+ }
+
+}
+
+
+/* =========================================================
+   HEADER
+========================================================= */
+
+function updateHeader(){
+
+ const badge =
+ document.getElementById('profile-badge');
+
+ const logout =
+ document.getElementById('logout-btn');
+
+ if(!currentUser){
+
+  badge.style.display='none';
+
+  logout.style.display='none';
+
+  return;
+ }
+
+ badge.style.display='flex';
+
+ logout.style.display='block';
+
+ logout.innerText=t('logout');
+
+ const name =
+ userProfile.name ||
+ (
+  currentUser.email
+   ? currentUser.email.split('@')[0]
+   : 'User'
+ );
+
+ document
+  .getElementById('header-name')
+  .innerText=name;
+
+ const avatarBox =
+ document.getElementById('header-avatar');
+
+ if(userProfile.avatar){
+
+  avatarBox.innerHTML=
+   `<div class="avatar">
+      <img src="${escapeHtml(userProfile.avatar)}"
+           alt="Profile">
+    </div>`;
+
+ }else{
+
+  avatarBox.innerHTML=
+   `<div class="avatar">
+      ${escapeHtml(
+       name.charAt(0).toUpperCase()
+      )}
+    </div>`;
+
+ }
+}
+
+
+/* =========================================================
+   PROFILE NAV IMAGE
+========================================================= */
+
+function updateNavigationProfile(){
+
+ const nav =
+ document.getElementById(
+  'nav-profile-avatar'
+ );
+
+ const name =
+ userProfile.name ||
+ (
+  currentUser?.email
+   ? currentUser.email.split('@')[0]
+   : 'U'
+ );
+
+ if(userProfile.avatar){
+
+  nav.innerHTML=
+   `<img src="${escapeHtml(userProfile.avatar)}"
+         alt="Profile">`;
+
+ }else{
+
+  nav.innerText =
+   name.charAt(0).toUpperCase();
+
+ }
+}
+
+
+/* =========================================================
+   PAGE NAVIGATION
+========================================================= */
+
+function showPage(){
+
+ document
+  .getElementById('login-page')
+  .style.display='none';
+
+ document
+  .getElementById('dashboard-page')
+  .style.display='block';
+
+ document
+  .getElementById('bottom-nav')
+  .style.display='flex';
+
+ document
+  .getElementById('fab')
+  .style.display='flex';
+
+}
+
+
+function showLogin(){
+
+ document
+  .getElementById('login-page')
+  .style.display='block';
+
+ document
+  .getElementById('dashboard-page')
+  .style.display='none';
+
+ document
+  .getElementById('bottom-nav')
+  .style.display='none';
+
+ document
+  .getElementById('fab')
+  .style.display='none';
+
+ document
+  .getElementById('profile-badge')
+  .style.display='none';
+
+ document
+  .getElementById('logout-btn')
+  .style.display='none';
+
+}
+
+
+function goHome(){
+
+ if(!currentUser) return;
+
+ showPage();
+
+ document
+  .getElementById('home-nav')
+  .classList.add('active');
+
+ document
+  .getElementById('transactions-nav')
+  .classList.remove('active');
+
+ document
+  .getElementById('profile-nav')
+  .classList.remove('active');
+
+ renderDashboard();
+
+}
+
+
+function goTransactions(){
+
+ if(!currentUser){
+
+  return;
+
+ }
+
+ window.location.href='transactions.html';
+
+}
+
+
+function goProfile(){
+
+ if(!currentUser){
+
+  return;
+
+ }
+
+ window.location.href='profile.html';
+
+}
+
+
+/* =========================================================
+   DASHBOARD
+========================================================= */
+
+function renderDashboard(){
+
+ const container =
+ document.getElementById('accounts-list');
+
+ if(!container) return;
+
+ if(!Array.isArray(appData.clients)){
+  appData.clients=[];
+ }
+
+ if(appData.clients.length===0){
+
+  container.innerHTML=`
+   <div class="empty">
+    <div class="empty-icon">📒</div>
+    <div class="empty-title">
+     ${escapeHtml(t('noAccounts'))}
+    </div>
+    <div style="font-size:11px;line-height:1.8">
+     ${escapeHtml(t('noAccountsText'))}
+    </div>
+   </div>
+  `;
+
+  return;
+ }
+
+ container.innerHTML =
+ appData.clients
+  .map(renderClientCard)
+  .join('');
+
+}
+
+
+function renderClientCard(client){
+
+ const transactions =
+ Array.isArray(client.transactions)
+  ? client.transactions
+  : [];
+
+ let credit=0;
+ let debit=0;
+
+ transactions.forEach(tx=>{
+
+  const amount =
+   safeNumber(
+    tx.amountInBase ??
+    tx.amount ??
+    tx.rawAmount
+   );
+
+  if(
+   tx.type === 'credit' ||
+   tx.type === 'Credit'
+  ){
+
+   credit += amount;
+
+  }else{
+
+   debit += amount;
+
+  }
+
+ });
+
+ const balance =
+ credit-debit;
+
+ const balanceClass =
+ balance>=0
+  ? 'credit'
+  : 'debit';
+
+ const transactionRows =
+ transactions
+  .map(
+   (tx,index)=>
+    renderTransaction(
+     tx,
+     index,
+     client.id
+    )
+  )
+  .join('');
+
+ return `
+ <article class="client-card">
+
+  <div class="client-head">
+
+   <div class="client-info">
+
+    <div class="client-name">
+     ${escapeHtml(client.name)}
+    </div>
+
+    <div class="transaction-count">
+     ${transactions.length}
+     ${escapeHtml(t('transactionsCount'))}
+    </div>
+
+   </div>
+
+   <div class="card-menu">
+
+    <button
+     class="menu-btn"
+     onclick="toggleClientMenu('${escapeHtml(client.id)}')">
+     ⋮
+    </button>
+
+    <div
+     id="menu-${escapeHtml(client.id)}"
+     class="menu-popup">
+
+     <button
+      class="menu-item danger"
+      onclick="openDeleteClient('${escapeHtml(client.id)}')">
+      🗑️ ${escapeHtml(t('delete'))}
+     </button>
+
+    </div>
+
+   </div>
+
+  </div>
+
+
+  <div class="client-balance">
+
+   <div class="balance-box">
+
+    <div class="balance-label">
+     ${escapeHtml(t('credit'))}
+    </div>
+
+    <div class="balance-value credit">
+     ${formatMoney(credit)} AFN
+    </div>
+
+   </div>
+
+   <div class="balance-box">
+
+    <div class="balance-label">
+     ${escapeHtml(t('debit'))}
+    </div>
+
+    <div class="balance-value debit">
+     ${formatMoney(debit)} AFN
+    </div>
+
+   </div>
+
+   <div class="balance-box">
+
+    <div class="balance-label">
+     Balance
+    </div>
+
+    <div class="balance-value ${balanceClass}">
+     ${formatMoney(balance)} AFN
+    </div>
+
+   </div>
+
+  </div>
+
+
+  ${
+   transactions.length
+    ? `
+     <div class="transactions">
+      ${transactionRows}
+     </div>
+    `
+    : ''
+  }
+
+ </article>
+ `;
+
+}
+
+
+/* =========================================================
+   TRANSACTION DISPLAY
+========================================================= */
+
+function renderTransaction(tx,index,clientId){
+
+ const type =
+  tx.type === 'credit' ||
+  tx.type === 'Credit'
+   ? 'credit'
+   : 'debit';
+
+ const typeText =
+  type==='credit'
+   ? t('credit')
+   : t('debit');
+
+ const amount =
+  safeNumber(
+   tx.rawAmount ??
+   tx.amount
+  );
+
+ const currency =
+  tx.currency || 'AFN';
+
+ const sign =
+  type==='credit'
+   ? '+'
+   : '-';
+
+ const dates =
+ getTransactionDates(tx);
+
+ return `
+ <div class="tx-row">
+
+  <div class="tx-main">
+
+   <div class="tx-direction">
+
+    <div class="tx-icon ${type}">
+     ${type==='credit' ? '↑' : '↓'}
+    </div>
+
+    <div class="tx-type">
+     ${escapeHtml(typeText)}
+    </div>
+
+   </div>
+
+   <div class="tx-amount ${type}">
+    ${sign}
+    ${formatMoney(amount)}
+    ${escapeHtml(currencySymbol(currency))}
+    ${escapeHtml(currency)}
+   </div>
+
+  </div>
+
+
+  <div class="tx-dates">
+
+   <span class="date-chip">
+    ☀️ ${escapeHtml(dates.solar)}
+   </span>
+
+   <span class="date-chip">
+    📅 ${escapeHtml(dates.gregorian)}
+   </span>
+
+   <span class="date-chip">
+    🌙 ${escapeHtml(dates.hijri)}
+   </span>
+
+  </div>
+
+
+  <div class="tx-actions">
+
+   <button
+    class="tx-action edit-btn"
+    onclick="editTransaction('${escapeHtml(clientId)}',${index})">
+    ✏️ ${escapeHtml(t('edit'))}
+   </button>
+
+   <button
+    class="tx-action delete-btn"
+    onclick="deleteTransaction('${escapeHtml(clientId)}',${index})">
+    🗑️ ${escapeHtml(t('delete'))}
+   </button>
+
+  </div>
+
+ </div>
+ `;
+
+}
+
+
+function getTransactionDates(tx){
+
+ const raw =
+  tx.rawDate ||
+  tx.date ||
+  tx.transactionDate ||
+  tx.created_at ||
+  new Date().toISOString();
+
+ let date;
+
+ try{
+
+  date=new Date(raw);
+
+  if(Number.isNaN(date.getTime())){
+   date=new Date();
+  }
+
+ }catch(e){
+
+  date=new Date();
+
+ }
+
+ return formatDates(date);
+
+}
+
+
+/* =========================================================
+   DATE SYSTEM
+   اول شمسی، بعد میلادی، بعد قمری
+========================================================= */
+
+function formatDates(date){
+
+ const gregorian =
+ new Intl.DateTimeFormat(
+  'en-GB',
+  {
+   year:'numeric',
+   month:'2-digit',
+   day:'2-digit'
+  }
+ ).format(date);
+
+
+ let solar='-';
+
+ let hijri='-';
+
+ try{
+
+  solar =
+  new Intl.DateTimeFormat(
+   'fa-AF-u-ca-persian',
+   {
+    year:'numeric',
+    month:'2-digit',
+    day:'2-digit'
+   }
+  ).format(date);
+
+ }catch(e){
+
+  try{
+
+   solar =
+   new Intl.DateTimeFormat(
+    'fa-u-ca-persian',
+    {
+     year:'numeric',
+     month:'2-digit',
+     day:'2-digit'
+    }
+   ).format(date);
+
+  }catch(e2){}
+
+ }
+
+
+ try{
+
+  hijri =
+  new Intl.DateTimeFormat(
+   'ar-SA-u-ca-islamic',
+   {
+    year:'numeric',
+    month:'2-digit',
+    day:'2-digit'
+   }
+  ).format(date);
+
+ }catch(e){
+
+  try{
+
+   hijri =
+   new Intl.DateTimeFormat(
+    'en-u-ca-islamic',
+    {
+     year:'numeric',
+     month:'2-digit',
+     day:'2-digit'
+    }
+   ).format(date);
+
+  }catch(e2){}
+
+ }
+
+ return {
+  solar,
+  gregorian,
+  hijri
+ };
+
+}
+
+
+/* =========================================================
+   CLIENT MENU
+========================================================= */
+
+function toggleClientMenu(id){
+
+ document
+  .querySelectorAll('.menu-popup')
+  .forEach(menu=>{
+
+   if(menu.id !== `menu-${id}`){
+    menu.classList.remove('show');
+   }
+
+  });
+
+ const menu =
+ document.getElementById(
+  `menu-${id}`
+ );
+
+ if(menu){
+
+  menu.classList.toggle('show');
+
+ }
+
+}
+
+
+document.addEventListener(
+ 'click',
+ function(e){
+
+  if(
+   !e.target.closest('.card-menu')
+  ){
+
+   document
+    .querySelectorAll('.menu-popup')
+    .forEach(menu=>{
+     menu.classList.remove('show');
+    });
+
+  }
+
+ }
+);
+
+
+/* =========================================================
+   DELETE CLIENT
+========================================================= */
+
+function openDeleteClient(id){
+
+ deleteClientId=id;
+
+ document
+  .getElementById('delete-modal')
+  .classList.add('active');
+
+ document
+  .getElementById('delete-modal-title')
+  .innerText=t('confirmDelete');
+
+ document
+  .getElementById('delete-modal-text')
+  .innerText=t('deleteAccount');
+
+}
+
+
+function closeDeleteModal(){
+
+ deleteClientId=null;
+
+ document
+  .getElementById('delete-modal')
+  .classList.remove('active');
+
+}
+
+
+async function confirmDeleteClient(){
+
+ if(!deleteClientId) return;
+
+ appData.clients =
+ appData.clients.filter(
+  client=>String(client.id)!==
+   String(deleteClientId)
+ );
+
+ closeDeleteModal();
+
+ renderDashboard();
+
+ const ok =
+ await saveDataToSupabase();
+
+ if(ok){
+
+  toast(
+   lang()==='fa'
+    ? 'حساب حذف شد.'
+    : 'Account deleted.'
+  );
+
+ }
+
+ broadcastUpdate();
+
+}
+
+
+/* =========================================================
+   DELETE TRANSACTION
+========================================================= */
+
+async function deleteTransaction(clientId,index){
+
+ const client =
+ appData.clients.find(
+  c=>String(c.id)===String(clientId)
+ );
+
+ if(!client) return;
+
+ const confirmed =
+ confirm(
+  lang()==='fa'
+   ? 'آیا این معامله حذف شود؟'
+   : 'Delete this transaction?'
+ );
+
+ if(!confirmed) return;
+
+ if(!Array.isArray(client.transactions)){
+  client.transactions=[];
+ }
+
+ client.transactions.splice(index,1);
+
+ renderDashboard();
+
+ await saveDataToSupabase();
+
+ broadcastUpdate();
+
+ toast(
+  lang()==='fa'
+   ? 'معامله حذف شد.'
+   : 'Transaction deleted.'
+ );
+
+}
+
+
+/* =========================================================
+   EDIT TRANSACTION
+========================================================= */
+
+function editTransaction(clientId,index){
+
+ const url =
+ `transactions.html?client=${encodeURIComponent(clientId)}&edit=${index}`;
+
+ window.location.href=url;
+
+}
+
+
+/* =========================================================
+   LOCATION
+========================================================= */
+
+function updateLocationDisplay(){
+
+ const e =
+ document.getElementById(
+  'location-status'
+ );
+
+ if(!e) return;
+
+ const location =
+ userProfile.location ||
+ 'Jawzjan';
+
+ e.innerText =
+ `📍 ${t('location')}: ${location}`;
+
+}
+
+
+function detectRealLocation(){
+
+ if(!navigator.geolocation){
+
+  document
+   .getElementById('location-status')
+   .innerText =
+   `📍 ${t('location')}: ${userProfile.location || t('detecting')}`;
+
+  return;
+ }
+
+ document
+  .getElementById('location-status')
+  .innerText =
+  `📍 ${t('location')}: ${t('detecting')}`;
+
+ navigator.geolocation.getCurrentPosition(
+
+  async position=>{
+
+   const lat =
+    position.coords.latitude;
+
+   const lon =
+    position.coords.longitude;
+
+   try{
+
+    const response =
+    await fetch(
+     `https://nominatim.openstreetmap.org/reverse?format=jsonv2&lat=${encodeURIComponent(lat)}&lon=${encodeURIComponent(lon)}&zoom=10&accept-language=en`,
+     {
+      headers:{
+       'Accept':'application/json'
+      }
+     }
+    );
+
+    const data =
+    await response.json();
+
+    const address =
+    data.address || {};
+
+    const city =
+     address.city ||
+     address.town ||
+     address.municipality ||
+     address.county ||
+     address.state ||
+     userProfile.location ||
+     'Unknown';
+
+    userProfile.location=city;
+
+    updateLocationDisplay();
+
+    await saveDataToSupabase();
+
+   }catch(error){
+
+    console.error(error);
+
+    updateLocationDisplay();
+
+   }
+
+  },
+
+  error=>{
+
+   console.log(
+    'Location:',
+    error.message
+   );
+
+   updateLocationDisplay();
+
+  },
+
+  {
+   enableHighAccuracy:false,
+   timeout:10000,
+   maximumAge:300000
+  }
+
+ );
+
+}
+
+
+/* =========================================================
+   LIVE SARAFI API
+========================================================= */
+
+function normalizeRateValue(value){
+
+ if(value === null || value === undefined){
+  return null;
+ }
+
+ if(typeof value === 'object'){
+
+  value =
+   value.rate ??
+   value.price ??
+   value.value ??
+   value.sell ??
+   value.buy ??
+   null;
+
+ }
+
+ const n =
+ Number(
+  String(value)
+   .replace(/,/g,'')
+   .replace(/[^\d.-]/g,'')
+ );
+
+ return Number.isFinite(n)
+  ? n
+  : null;
+
+}
+
+
+async function readSarafiRates(){
+
+ /*
+  sarafi-api.js می‌تواند یکی از این حالت‌ها را داشته باشد:
+
+  window.sarafiRates
+  window.exchangeRates
+  window.rates
+
+  یا:
+
+  getSarafiRates()
+  getExchangeRates()
+  getRates()
+
+  این صفحه همه این حالت‌ها را بررسی می‌کند.
+ */
+
+ try{
+
+  let result=null;
+
+  if(
+   typeof window.getSarafiRates ===
+   'function'
+  ){
+
+   result =
+    await window.getSarafiRates();
+
+  }else if(
+   typeof window.getExchangeRates ===
+   'function'
+  ){
+
+   result =
+    await window.getExchangeRates();
+
+  }else if(
+   typeof window.getRates ===
+   'function'
+  ){
+
+   result =
+    await window.getRates();
+
+  }else if(
+   window.sarafiRates
+  ){
+
+   result=window.sarafiRates;
+
+  }else if(
+   window.exchangeRates
+  ){
+
+   result=window.exchangeRates;
+
+  }else if(
+   window.rates
+  ){
+
+   result=window.rates;
+
+  }
+
+  if(!result){
+
+   return rates;
+
+  }
+
+  if(result.rates){
+   result=result.rates;
+  }
+
+  if(result.data?.rates){
+   result=result.data.rates;
+  }
+
+  if(typeof result !== 'object'){
+   return rates;
+  }
+
+  const newRates={
+   AFN:1
+  };
+
+  Object.keys(result).forEach(code=>{
+
+   const value =
+   normalizeRateValue(
+    result[code]
+   );
+
+   if(value !== null){
+
+    newRates[
+     String(code).toUpperCase()
+    ]=value;
+
+   }
+
+  });
+
+  /*
+   اگر API مقدار ارز را نسبت به AFN داده باشد
+   همان مقدار استفاده می‌شود.
+  */
+
+  if(
+   Object.keys(newRates).length>1
+  ){
+
+   rates=newRates;
+
+  }
+
+ }catch(error){
+
+  console.error(
+   'sarafi-api.js:',
+   error
+  );
+
+ }
+
+ return rates;
+
+}
+
+
+function getRate(code){
+
+ const value =
+ normalizeRateValue(
+  rates[code]
+ );
+
+ if(value === null) return null;
+
+ return value;
+}
+
+
+function renderRates(){
+
+ const container =
+ document.getElementById('rates');
+
+ if(!container) return;
+
+ const preferred=[
+  'USD',
+  'EUR',
+  'PKR',
+  'IRR',
+  'TRY',
+  'CNY',
+  'INR',
+  'AED',
+  'SAR'
+ ];
+
+ const available =
+ preferred.filter(
+  code=>getRate(code)!==null
+ );
+
+ if(!available.length){
+
+  container.innerHTML=
+   '<span>🔄 Loading rates...</span>';
+
+  return;
+ }
+
+ container.innerHTML =
+ available
+  .map(code=>{
+
+   const value =
+    getRate(code);
+
+   return `
+    <div class="rate-item">
+     <span class="rate-code">
+      ${escapeHtml(code)}
+     </span>
+     <span>→</span>
+     <span class="rate-value">
+      ${formatMoney(value)} AFN
+     </span>
+    </div>
+   `;
+
+  })
+  .join('');
+
+
+ const updated =
+ document.createElement('span');
+
+ updated.className='rate-updated';
+
+ updated.innerText =
+  '● LIVE';
+
+ container.appendChild(updated);
+
+}
+
+
+async function updateRates(){
+
+ await readSarafiRates();
+
+ renderRates();
+
+}
+
+
+/*
+ اگر sarafi-api.js خودش هنگام تغییر نرخ
+ event بفرستد، اینجا فوراً صفحه را آپدیت می‌کنیم.
+*/
+
+window.addEventListener(
+ 'sarafiRatesUpdated',
+ function(event){
+
+  if(event.detail){
+
+   rates =
+    event.detail.rates ||
+    event.detail ||
+    rates;
+
+  }
+
+  renderRates();
+
+ }
+);
+
+
+/*
+ برای اطمینان، API را مرتب بررسی می‌کنیم.
+ این باعث می‌شود هر تغییر جدید API
+ بدون refresh صفحه نمایش داده شود.
+*/
+
+setInterval(
+ updateRates,
+ 15000
+);
+
+
+/* =========================================================
+   REALTIME SUPABASE
+========================================================= */
+
+function startRealtime(){
+
+ if(!currentUser) return;
+
+ if(realtimeChannel){
+
+  supabaseClient
+   .removeChannel(realtimeChannel);
+
+ }
+
+ realtimeChannel =
+ supabaseClient
+  .channel(
+   `daily-accounting-${currentUser.id}`
+  )
+  .on(
+   'postgres_changes',
+   {
+    event:'*',
+    schema:'public',
+    table:'exchange_users',
+    filter:`user_id=eq.${currentUser.id}`
+   },
+   async payload=>{
+
+    console.log(
+     'Cloud update:',
+     payload
+    );
+
+    await loadDataFromSupabase();
+
+   }
+  )
+  .subscribe();
+
+}
+
+
+/* =========================================================
+   CROSS PAGE LIVE UPDATE
+========================================================= */
+
+function getLocalSignature(){
+
+ try{
+
+  return JSON.stringify({
+   content:appData,
+   profile:userProfile
+  });
+
+ }catch(e){
+
+  return '';
+
+ }
+
+}
+
+
+function broadcastUpdate(){
+
+ try{
+
+  localStorage.setItem(
+   'dailyAccountingUpdate',
+   String(Date.now())
+  );
+
+ }catch(e){}
+
+}
+
+
+window.addEventListener(
+ 'storage',
+ async function(e){
+
+  if(
+   e.key==='dailyAccountingUpdate' &&
+   currentUser
+  ){
+
+   await loadDataFromSupabase();
+
+  }
+
+ }
+);
+
+
+/*
+ اگر transactions.html داده را در Supabase
+ ذخیره کند، این polling باعث می‌شود
+ Home حداکثر چند ثانیه بعد آن را نشان دهد.
+*/
+
+function startCloudPolling(){
+
+ if(refreshTimer){
+  clearInterval(refreshTimer);
+ }
+
+ refreshTimer =
+ setInterval(
+  async()=>{
+
+   if(!currentUser) return;
+
+   try{
+
+    const {
+     data,
+     error
+    } =
+    await supabaseClient
+     .from('exchange_users')
+     .select('content,profile')
+     .eq('user_id',currentUser.id)
+     .maybeSingle();
+
+    if(error || !data) return;
+
+    const signature =
+     JSON.stringify({
+      content:data.content,
+      profile:data.profile
+     });
+
+    if(
+     lastCloudSignature &&
+     signature!==lastCloudSignature
+    ){
+
+     appData =
+      data.content &&
+      typeof data.content==='object'
+       ? data.content
+       : {clients:[]};
+
+     userProfile =
+      Object.assign(
+       userProfile,
+       data.profile || {}
+      );
+
+     setThemeColor(
+      userProfile.themeColor
+     );
+
+     updateHeader();
+     updateNavigationProfile();
+     updateLocationDisplay();
+     renderDashboard();
+
+    }
+
+    lastCloudSignature=signature;
+
+   }catch(error){
+
+    console.error(
+     'Cloud polling:',
+     error
+    );
+
+   }
+
+  },
+  5000
+ );
+
+}
+
+
+/* =========================================================
+   LANGUAGE / UI
+========================================================= */
+
+function applyLanguage(){
+
+ const isFa =
+  lang()==='fa';
+
+ const root =
+  document.getElementById(
+   'html-root'
+  );
+
+ root.lang =
+  isFa ? 'fa' : 'en';
+
+ root.dir =
+  isFa ? 'rtl' : 'ltr';
+
+ document
+  .getElementById('dashboard-title')
+  .innerText=t('myAccounts');
+
+ document
+  .getElementById('nav-home-text')
+  .innerText=t('home');
+
+ document
+  .getElementById('nav-transactions-text')
+  .innerText=t('transactions');
+
+ document
+  .getElementById('nav-profile-text')
+  .innerText=t('profile');
+
+ document
+  .getElementById('logout-btn')
+  .innerText=t('logout');
+
+ updateLocationDisplay();
+
+ updateHeader();
+
+ updateNavigationProfile();
+
+ renderDashboard();
+
+}
+
+
+function updateNavigation(){
+
+ document
+  .querySelectorAll('.nav-item')
+  .forEach(e=>{
+   e.classList.remove('active');
+  });
+
+ document
+  .getElementById('home-nav')
+  .classList.add('active');
+
+}
+
+
+/* =========================================================
+   INITIALIZE
+========================================================= */
+
+async function initializeLoggedInPage(){
+
+ showPage();
+
+ applyLanguage();
+
+ updateNavigation();
+
+ updateHeader();
+
+ updateNavigationProfile();
+
+ await updateRates();
+
+ detectRealLocation();
+
+ startRealtime();
+
+ startCloudPolling();
+
+ renderDashboard();
+
+}
+
+
+async function initialize(){
+
+ await updateRates();
+
+ const {
+  data
+ } =
+ await supabaseClient.auth
+  .getSession();
+
+ if(data.session?.user){
+
+  currentUser =
+   data.session.user;
+
+  await loadDataFromSupabase();
+
+  await initializeLoggedInPage();
+
+ }else{
+
+  showLogin();
+
+ }
+
+}
+
+
+supabaseClient.auth.onAuthStateChange(
+ async function(event,session){
+
+  if(
+   session?.user &&
+   !currentUser
+  ){
+
+   currentUser =
+    session.user;
+
+   await loadDataFromSupabase();
+
+   await initializeLoggedInPage();
+
+  }
+
+  if(
+   !session &&
+   currentUser
+  ){
+
+   currentUser=null;
+
+   showLogin();
+
+  }
+
+ }
+);
+
+
+/* =========================================================
+   KEYBOARD OTP
+========================================================= */
+
+document
+ .getElementById('otp-code')
+ .addEventListener(
+  'input',
+  function(){
+
+   this.value =
+    this.value
+     .replace(/\D/g,'')
+     .slice(0,6);
+
+  }
+ );
+
+
+/* =========================================================
+   LOGIN ENTER KEY
+========================================================= */
+
+document
+ .getElementById('auth-password')
+ .addEventListener(
+  'keydown',
+  function(e){
+
+   if(e.key==='Enter'){
+    handleSignIn();
+   }
+
+  }
+);
+
+
+/* =========================================================
+   DELETE MODAL BACKDROP
+========================================================= */
+
+document
+ .getElementById('delete-modal')
+ .addEventListener(
+  'click',
+  function(e){
+
+   if(e.target===this){
+    closeDeleteModal();
+   }
+
+  }
+);
+
+
+/* =========================================================
+   START
+========================================================= */
+
+window.addEventListener(
+ 'DOMContentLoaded',
+ initialize
+);
+
+
+/* =========================================================
+   SERVICE WORKER
+========================================================= */
+
+if('serviceWorker' in navigator){
+
+ window.addEventListener(
+  'load',
+  function(){
+
+   navigator.serviceWorker
+    .register('./sw.js')
+    .catch(
+     error=>{
+      console.log(
+       'Service Worker:',
+       error
+      );
+     }
+    );
+
+  }
+ );
+
+}
 </script>
+
 </body>
 </html>
