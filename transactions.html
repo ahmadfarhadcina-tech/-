@@ -1,57 +1,57 @@
 <!DOCTYPE html>
-<html lang="fa" dir="rtl" id="html-root">
-
+<html lang="fa" dir="rtl">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width,initial-scale=1.0,maximum-scale=1.0,user-scalable=no">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
 
-<title>Daily Accounting - Transactions</title>
+<title>معاملات | Daily Accounting</title>
 
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="sarafi-api.js"></script>
 
 <style>
 :root{
-    --primary:#7c3aed;
-    --primary-dark:#6d28d9;
-    --bg:#0b1120;
-    --card:#111827;
-    --card2:#172033;
-    --text:#f8fafc;
-    --muted:#94a3b8;
-    --border:#293548;
-    --green:#10b981;
-    --red:#ef4444;
-    --blue:#3b82f6;
-    --orange:#f59e0b;
-    --radius:18px;
+    --green:#087a55;
+    --green-dark:#04583f;
+    --green-light:#e8f7f1;
+    --gold:#d6a32a;
+    --red:#d64545;
+    --blue:#3677d9;
+    --bg:#f4f7f6;
+    --card:#ffffff;
+    --text:#17211d;
+    --muted:#718078;
+    --border:#e4ebe8;
+    --shadow:0 7px 24px rgba(0,0,0,.07);
 }
 
 *{
     box-sizing:border-box;
-    margin:0;
-    padding:0;
-    font-family:Tahoma,Arial,sans-serif;
     -webkit-tap-highlight-color:transparent;
 }
 
 html,body{
-    width:100%;
+    margin:0;
+    padding:0;
     min-height:100%;
+    background:var(--bg);
+    color:var(--text);
+    font-family:
+        Tahoma,
+        Arial,
+        "Noto Sans Arabic",
+        sans-serif;
 }
 
 body{
-    background:
-        radial-gradient(circle at top right,#25145f 0%,transparent 35%),
-        radial-gradient(circle at bottom left,#082f49 0%,transparent 35%),
-        var(--bg);
-    color:var(--text);
-    min-height:100vh;
+    padding-bottom:84px;
 }
 
 button,
 input,
-select{
-    font-family:inherit;
+select,
+textarea{
+    font:inherit;
 }
 
 button{
@@ -59,741 +59,789 @@ button{
     cursor:pointer;
 }
 
-button:active{
-    transform:scale(.94);
+button:active,
+.nav-item:active,
+.client-card:active,
+.transaction-row:active,
+.fab:active{
+    transform:scale(.96);
 }
 
-.app{
-    width:100%;
-    max-width:1100px;
-    min-height:100vh;
-    margin:auto;
-    background:rgba(17,24,39,.94);
-    display:flex;
-    flex-direction:column;
-}
+/* HEADER */
 
-/* ================= HEADER ================= */
-
-header{
+.top-header{
     position:sticky;
     top:0;
-    z-index:100;
-    padding:13px 16px;
-    background:rgba(15,23,42,.94);
-    backdrop-filter:blur(18px);
+    z-index:30;
+    background:rgba(255,255,255,.96);
+    backdrop-filter:blur(14px);
     border-bottom:1px solid var(--border);
+    padding:12px 14px;
+}
+
+.header-inner{
+    max-width:760px;
+    margin:auto;
     display:flex;
+    align-items:center;
     justify-content:space-between;
+    gap:10px;
+}
+
+.brand{
+    display:flex;
     align-items:center;
     gap:10px;
 }
 
-.header-title{
-    display:flex;
-    align-items:center;
-    gap:9px;
-}
-
-.header-icon{
-    width:38px;
-    height:38px;
+.brand-icon{
+    width:42px;
+    height:42px;
     border-radius:13px;
+    background:linear-gradient(135deg,var(--green),#10a875);
+    color:white;
     display:flex;
     align-items:center;
     justify-content:center;
-    background:linear-gradient(135deg,var(--primary),#4f46e5);
-    box-shadow:0 8px 25px #7c3aed45;
-    font-size:19px;
+    font-size:21px;
+    box-shadow:0 5px 14px rgba(8,122,85,.22);
 }
 
-header h1{
-    font-size:16px;
-    color:#fff;
+.brand-text h1{
+    margin:0;
+    font-size:17px;
 }
 
-header small{
-    display:block;
+.brand-text p{
+    margin:2px 0 0;
     color:var(--muted);
-    font-size:9px;
-    margin-top:3px;
+    font-size:11px;
 }
 
 .header-actions{
     display:flex;
-    gap:6px;
+    align-items:center;
+    gap:7px;
 }
 
-/* ================= BUTTONS ================= */
-
-.btn{
-    padding:9px 12px;
-    border-radius:11px;
-    color:#fff;
-    font-size:11px;
-    transition:.2s;
+.icon-btn{
+    width:38px;
+    height:38px;
+    border-radius:12px;
+    background:#f0f5f3;
+    color:var(--green);
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    font-size:17px;
+    transition:.18s;
 }
 
-.btn-primary{
-    background:linear-gradient(135deg,var(--primary),var(--primary-dark));
-    box-shadow:0 5px 18px #7c3aed35;
+.icon-btn:hover{
+    background:var(--green-light);
 }
 
-.btn-blue{
-    background:var(--blue);
+/* MAIN */
+
+.container{
+    width:100%;
+    max-width:760px;
+    margin:auto;
+    padding:14px;
 }
 
-.btn-red{
-    background:var(--red);
-}
-
-.btn-green{
-    background:var(--green);
-}
-
-.btn-dark{
-    background:#1e293b;
-    border:1px solid var(--border);
-}
-
-.btn:active{
-    transform:scale(.93);
-}
-
-/* ================= PAGE ================= */
-
-.page{
-    padding:16px;
-    flex:1;
-    padding-bottom:100px;
-}
-
-.top-summary{
-    background:
-        linear-gradient(135deg,#1e1b4b,#111827);
-    border:1px solid #4937a3;
-    border-radius:22px;
-    padding:18px;
-    margin-bottom:16px;
-    box-shadow:0 12px 35px #0003;
-}
-
-.summary-title{
-    color:#c4b5fd;
-    font-size:12px;
-    margin-bottom:7px;
-}
-
-.summary-value{
-    font-size:25px;
-    font-weight:bold;
-}
-
-.summary-sub{
-    color:var(--muted);
-    font-size:10px;
-    margin-top:7px;
-}
-
-/* ================= CLIENT CARD ================= */
-
-.client-card{
-    background:linear-gradient(145deg,#151f31,#0f172a);
-    border:1px solid var(--border);
-    border-radius:20px;
-    margin-bottom:15px;
-    overflow:hidden;
-    box-shadow:0 8px 30px #0002;
-    animation:cardIn .35s ease both;
-}
-
-@keyframes cardIn{
-    from{
-        opacity:0;
-        transform:translateY(12px) scale(.98);
-    }
-    to{
-        opacity:1;
-        transform:none;
-    }
-}
-
-.client-head{
-    padding:15px;
+.page-title{
     display:flex;
     justify-content:space-between;
     align-items:center;
+    margin:4px 0 12px;
+}
+
+.page-title h2{
+    margin:0;
+    font-size:20px;
+}
+
+.page-title span{
+    font-size:11px;
+    color:var(--muted);
+}
+
+/* RATE BAR */
+
+.rate-status{
+    background:white;
+    border:1px solid var(--border);
+    border-radius:15px;
+    padding:10px 12px;
+    margin-bottom:12px;
+    box-shadow:0 4px 14px rgba(0,0,0,.035);
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
     gap:10px;
-    border-bottom:1px solid var(--border);
+}
+
+.rate-status-left{
+    display:flex;
+    align-items:center;
+    gap:8px;
+    min-width:0;
+}
+
+.rate-dot{
+    width:9px;
+    height:9px;
+    border-radius:50%;
+    background:#aaa;
+    flex:none;
+}
+
+.rate-dot.online{
+    background:#17a673;
+    box-shadow:0 0 0 4px rgba(23,166,115,.12);
+}
+
+.rate-dot.error{
+    background:var(--red);
+}
+
+.rate-status-text{
+    font-size:12px;
+    white-space:nowrap;
+    overflow:hidden;
+    text-overflow:ellipsis;
+}
+
+.refresh-rate{
+    background:var(--green-light);
+    color:var(--green);
+    padding:7px 10px;
+    border-radius:9px;
+    font-size:11px;
+    flex:none;
+}
+
+/* CLIENT */
+
+.client-card{
+    background:var(--card);
+    border:1px solid var(--border);
+    border-radius:17px;
+    padding:11px;
+    margin-bottom:9px;
+    box-shadow:var(--shadow);
+    transition:.18s;
+    animation:fadeUp .25s ease both;
+}
+
+.client-top{
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+    gap:10px;
 }
 
 .client-info{
     display:flex;
     align-items:center;
-    gap:11px;
+    gap:10px;
+    min-width:0;
 }
 
 .client-avatar{
-    width:43px;
-    height:43px;
-    border-radius:14px;
-    background:linear-gradient(135deg,var(--primary),#4f46e5);
+    width:40px;
+    height:40px;
+    border-radius:12px;
+    background:linear-gradient(135deg,#087a55,#20ae7e);
+    color:white;
     display:flex;
     align-items:center;
     justify-content:center;
     font-weight:bold;
-    font-size:17px;
-    box-shadow:0 5px 18px #7c3aed30;
+    flex:none;
 }
 
 .client-name{
-    font-size:15px;
     font-weight:bold;
+    font-size:14px;
+    white-space:nowrap;
+    overflow:hidden;
+    text-overflow:ellipsis;
 }
 
-.client-count{
-    font-size:9px;
+.client-summary{
     color:var(--muted);
-    margin-top:4px;
+    font-size:10px;
+    margin-top:3px;
 }
 
 .client-actions{
     display:flex;
     gap:5px;
+    flex:none;
 }
 
-.icon-btn{
-    width:34px;
-    height:34px;
-    border-radius:10px;
-    display:flex;
-    justify-content:center;
-    align-items:center;
-    color:#fff;
-    background:#1e293b;
-    border:1px solid var(--border);
-    transition:.2s;
-}
-
-.icon-btn:active{
-    transform:scale(.88) rotate(-5deg);
-}
-
-/* ================= BALANCE ================= */
-
-.balance-box{
-    margin:12px;
-    padding:13px;
-    border-radius:15px;
-    background:#0b1220;
-    border:1px solid var(--border);
-}
-
-.balance-title{
-    color:var(--muted);
-    font-size:10px;
-    margin-bottom:7px;
-}
-
-.balance-value{
-    font-size:16px;
-    font-weight:bold;
-}
-
-.balance-green{
-    color:var(--green);
-}
-
-.balance-red{
-    color:var(--red);
-}
-
-.balance-neutral{
-    color:#38bdf8;
-}
-
-.balance-note{
-    font-size:9px;
-    color:var(--muted);
-    margin-top:5px;
-}
-
-/* ================= TRANSACTIONS ================= */
-
-.transactions{
-    padding:0 12px 12px;
-}
-
-.transaction{
-    background:#172033;
-    border:1px solid var(--border);
-    border-radius:15px;
-    padding:13px;
-    margin-top:9px;
-    animation:transactionIn .3s ease both;
-}
-
-@keyframes transactionIn{
-    from{
-        opacity:0;
-        transform:translateX(15px);
-    }
-    to{
-        opacity:1;
-        transform:none;
-    }
-}
-
-.transaction-top{
-    display:flex;
-    justify-content:space-between;
-    align-items:center;
-    gap:8px;
-}
-
-.transaction-currency{
-    display:flex;
-    align-items:center;
-    gap:7px;
-    font-size:13px;
-    font-weight:bold;
-}
-
-.currency-icon{
-    width:30px;
-    height:30px;
+.small-btn{
+    width:31px;
+    height:31px;
     border-radius:9px;
-    background:#243047;
+    background:#f1f5f3;
+    color:var(--green);
+    transition:.16s;
+}
+
+.small-btn.delete{
+    color:var(--red);
+    background:#fff0f0;
+}
+
+.client-balance{
+    margin-top:9px;
+    border-radius:11px;
+    padding:8px 10px;
     display:flex;
     align-items:center;
-    justify-content:center;
-}
-
-.transaction-type{
-    font-size:9px;
-    padding:5px 8px;
-    border-radius:8px;
-}
-
-.type-in{
-    color:#6ee7b7;
-    background:#064e3b;
-}
-
-.type-out{
-    color:#fca5a5;
-    background:#450a0a;
-}
-
-.transaction-grid{
-    display:grid;
-    grid-template-columns:1fr 1fr;
-    gap:8px;
-    margin-top:12px;
-}
-
-.transaction-item{
-    background:#111827;
-    border-radius:10px;
-    padding:8px;
-}
-
-.transaction-item small{
-    display:block;
-    color:var(--muted);
-    font-size:8px;
-    margin-bottom:4px;
-}
-
-.transaction-item strong{
+    justify-content:space-between;
     font-size:11px;
 }
 
-.transaction-total{
-    margin-top:9px;
-    background:#0b1220;
-    padding:10px;
-    border-radius:10px;
+.client-balance.positive{
+    background:#eaf8f2;
+    color:#087a55;
+}
+
+.client-balance.negative{
+    background:#fff0f0;
+    color:#c33737;
+}
+
+.client-balance.zero{
+    background:#f1f4f3;
+    color:#68746f;
+}
+
+.balance-value{
+    font-weight:bold;
+    direction:ltr;
+}
+
+/* TRANSACTIONS */
+
+.transactions-list{
+    margin-top:8px;
+}
+
+.transaction-row{
+    background:#fafcfb;
+    border:1px solid #edf1ef;
+    border-radius:12px;
+    padding:9px;
+    margin-top:7px;
+    transition:.16s;
+}
+
+.transaction-main{
     display:flex;
     justify-content:space-between;
     align-items:center;
+    gap:8px;
 }
 
-.transaction-total span{
-    color:var(--muted);
-    font-size:9px;
+.transaction-left{
+    display:flex;
+    align-items:center;
+    gap:8px;
+    min-width:0;
 }
 
-.transaction-total strong{
-    color:#c4b5fd;
-    font-size:13px;
+.transaction-icon{
+    width:32px;
+    height:32px;
+    border-radius:9px;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    font-size:14px;
+    flex:none;
+}
+
+.transaction-icon.in{
+    background:#e7f8f0;
+    color:#07815a;
+}
+
+.transaction-icon.out{
+    background:#fff0f0;
+    color:#c63b3b;
+}
+
+.transaction-name{
+    font-size:12px;
+    font-weight:bold;
 }
 
 .transaction-date{
-    margin-top:9px;
+    font-size:9px;
+    color:var(--muted);
+    margin-top:2px;
+}
+
+.transaction-amount{
+    direction:ltr;
+    text-align:left;
+    font-size:12px;
+    font-weight:bold;
+    white-space:nowrap;
+}
+
+.transaction-amount.in{
+    color:#07815a;
+}
+
+.transaction-amount.out{
+    color:#c63b3b;
+}
+
+.transaction-bottom{
+    margin-top:6px;
+    padding-top:6px;
+    border-top:1px dashed #e2e9e6;
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+    gap:8px;
+}
+
+.transaction-meta{
     color:var(--muted);
     font-size:9px;
-    line-height:1.8;
 }
 
-.transaction-actions{
+.transaction-buttons{
     display:flex;
-    gap:6px;
-    margin-top:10px;
+    gap:4px;
 }
 
-.transaction-actions button{
-    flex:1;
-    padding:7px;
-    border-radius:9px;
-    color:#fff;
-    font-size:9px;
+.transaction-mini-btn{
+    width:26px;
+    height:26px;
+    border-radius:7px;
+    background:#eef3f1;
+    color:var(--green);
+    font-size:11px;
 }
 
-/* ================= EMPTY ================= */
+.transaction-mini-btn.delete{
+    color:var(--red);
+    background:#fff0f0;
+}
 
-.empty{
+.empty-transactions{
+    padding:12px;
     text-align:center;
-    padding:55px 20px;
+    color:#929d98;
+    font-size:10px;
+}
+
+/* EMPTY CLIENT */
+
+.empty-state{
+    background:white;
+    border:1px dashed #cbd8d3;
+    border-radius:18px;
+    padding:35px 18px;
+    text-align:center;
     color:var(--muted);
 }
 
 .empty-icon{
-    width:70px;
-    height:70px;
-    margin:0 auto 15px;
-    border-radius:22px;
-    background:#172033;
-    border:1px solid var(--border);
-    display:flex;
-    align-items:center;
-    justify-content:center;
-    font-size:30px;
+    font-size:38px;
+    margin-bottom:8px;
 }
 
-/* ================= FAB ================= */
+.empty-state h3{
+    margin:0 0 5px;
+    font-size:16px;
+    color:var(--text);
+}
+
+.empty-state p{
+    margin:0;
+    font-size:11px;
+}
+
+/* FAB */
 
 .fab{
     position:fixed;
-    right:24px;
-    bottom:25px;
-    width:61px;
-    height:61px;
-    border-radius:50%;
-    background:linear-gradient(135deg,var(--primary),#4f46e5);
-    color:#fff;
-    font-size:29px;
-    display:flex;
-    align-items:center;
-    justify-content:center;
-    box-shadow:0 12px 35px #0008;
-    z-index:90;
-    transition:.25s;
+    left:18px;
+    bottom:88px;
+    width:53px;
+    height:53px;
+    border-radius:17px;
+    background:linear-gradient(135deg,var(--green),#10a875);
+    color:white;
+    font-size:26px;
+    box-shadow:0 10px 25px rgba(8,122,85,.28);
+    z-index:40;
+    transition:.18s;
 }
 
-.fab:hover{
-    transform:scale(1.07) rotate(5deg);
-}
+/* MODAL */
 
-.fab:active{
-    transform:scale(.88) rotate(-10deg);
-}
-
-/* ================= MODAL ================= */
-
-.modal{
+.modal-overlay{
     position:fixed;
     inset:0;
-    background:#0009;
-    backdrop-filter:blur(8px);
+    z-index:100;
+    background:rgba(8,20,16,.52);
+    backdrop-filter:blur(6px);
     display:none;
-    align-items:center;
+    align-items:flex-end;
     justify-content:center;
-    padding:15px;
-    z-index:500;
+    padding:0;
 }
 
-.modal.show{
+.modal-overlay.show{
     display:flex;
-    animation:fadeIn .2s ease;
+    animation:fadeIn .18s ease;
 }
+
+.modal{
+    width:100%;
+    max-width:600px;
+    max-height:92vh;
+    overflow:auto;
+    background:white;
+    border-radius:24px 24px 0 0;
+    padding:17px;
+    animation:modalUp .22s ease;
+}
+
+.modal-header{
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+    gap:10px;
+    margin-bottom:14px;
+}
+
+.modal-header h3{
+    margin:0;
+    font-size:17px;
+}
+
+.close-btn{
+    width:34px;
+    height:34px;
+    border-radius:10px;
+    background:#f0f4f2;
+    color:#52605a;
+    font-size:18px;
+}
+
+.form-group{
+    margin-bottom:11px;
+}
+
+.form-group label{
+    display:block;
+    font-size:11px;
+    font-weight:bold;
+    margin-bottom:5px;
+}
+
+.input,
+.select,
+.textarea{
+    width:100%;
+    border:1px solid #dce5e1;
+    background:#fafcfb;
+    border-radius:11px;
+    padding:11px 12px;
+    outline:none;
+    transition:.18s;
+    color:var(--text);
+    font-size:12px;
+}
+
+.input:focus,
+.select:focus,
+.textarea:focus{
+    border-color:var(--green);
+    box-shadow:0 0 0 3px rgba(8,122,85,.08);
+    background:white;
+}
+
+.textarea{
+    min-height:70px;
+    resize:vertical;
+}
+
+.two-cols{
+    display:grid;
+    grid-template-columns:1fr 1fr;
+    gap:9px;
+}
+
+.direction-box{
+    display:grid;
+    grid-template-columns:1fr 1fr;
+    gap:7px;
+}
+
+.direction-option{
+    border:1px solid #dce5e1;
+    background:#fafcfb;
+    border-radius:11px;
+    padding:11px 7px;
+    text-align:center;
+    font-size:11px;
+    transition:.18s;
+}
+
+.direction-option.selected.in{
+    border-color:#19a878;
+    background:#e9f8f2;
+    color:#087a55;
+}
+
+.direction-option.selected.out{
+    border-color:#e06b6b;
+    background:#fff0f0;
+    color:#c23c3c;
+}
+
+.direction-option input{
+    display:none;
+}
+
+.rate-result{
+    background:linear-gradient(135deg,#f0faf6,#f7fbf9);
+    border:1px solid #d9eee5;
+    border-radius:13px;
+    padding:11px;
+    margin-top:8px;
+}
+
+.rate-result-top{
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+    gap:8px;
+}
+
+.rate-label{
+    font-size:10px;
+    color:var(--muted);
+}
+
+.rate-number{
+    direction:ltr;
+    font-weight:bold;
+    font-size:13px;
+    color:var(--green);
+}
+
+.afn-total{
+    margin-top:6px;
+    padding-top:6px;
+    border-top:1px dashed #cfe2da;
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+}
+
+.afn-total span{
+    font-size:10px;
+    color:var(--muted);
+}
+
+.afn-total strong{
+    direction:ltr;
+    font-size:16px;
+    color:var(--green-dark);
+}
+
+.modal-actions{
+    display:flex;
+    gap:8px;
+    margin-top:15px;
+}
+
+.primary-btn,
+.secondary-btn,
+.danger-btn{
+    flex:1;
+    border-radius:11px;
+    padding:11px;
+    font-size:12px;
+    transition:.18s;
+}
+
+.primary-btn{
+    background:var(--green);
+    color:white;
+}
+
+.secondary-btn{
+    background:#edf3f0;
+    color:#53615b;
+}
+
+.danger-btn{
+    background:#fff0f0;
+    color:#c33b3b;
+}
+
+.primary-btn:disabled{
+    opacity:.5;
+    cursor:not-allowed;
+}
+
+.loading{
+    text-align:center;
+    padding:25px;
+    color:var(--muted);
+    font-size:12px;
+}
+
+/* TOAST */
+
+.toast-container{
+    position:fixed;
+    top:74px;
+    left:12px;
+    right:12px;
+    z-index:200;
+    pointer-events:none;
+    display:flex;
+    flex-direction:column;
+    align-items:center;
+    gap:7px;
+}
+
+.toast{
+    max-width:500px;
+    width:100%;
+    background:#1e2925;
+    color:white;
+    border-radius:12px;
+    padding:11px 13px;
+    font-size:11px;
+    box-shadow:0 8px 25px rgba(0,0,0,.18);
+    animation:toastIn .22s ease;
+    text-align:center;
+}
+
+.toast.success{
+    background:#087a55;
+}
+
+.toast.error{
+    background:#c43e3e;
+}
+
+/* BOTTOM NAV */
+
+.bottom-nav{
+    position:fixed;
+    left:0;
+    right:0;
+    bottom:0;
+    z-index:50;
+    background:rgba(255,255,255,.97);
+    backdrop-filter:blur(15px);
+    border-top:1px solid var(--border);
+    padding:7px 10px calc(7px + env(safe-area-inset-bottom));
+}
+
+.nav-inner{
+    max-width:600px;
+    margin:auto;
+    display:grid;
+    grid-template-columns:repeat(3,1fr);
+    gap:6px;
+}
+
+.nav-item{
+    height:55px;
+    border-radius:14px;
+    display:flex;
+    flex-direction:column;
+    justify-content:center;
+    align-items:center;
+    gap:3px;
+    color:#7a8781;
+    text-decoration:none;
+    font-size:10px;
+    transition:.18s;
+}
+
+.nav-item .nav-icon{
+    font-size:19px;
+    line-height:20px;
+}
+
+.nav-item.active{
+    background:var(--green-light);
+    color:var(--green);
+    font-weight:bold;
+}
+
+/* ANIMATIONS */
 
 @keyframes fadeIn{
     from{opacity:0}
     to{opacity:1}
 }
 
-.modal-card{
-    width:100%;
-    max-width:520px;
-    max-height:90vh;
-    overflow-y:auto;
-    background:linear-gradient(145deg,#1b263a,#0f172a);
-    border:1px solid #394761;
-    border-radius:24px;
-    box-shadow:0 25px 80px #000b;
-    animation:modalIn .3s cubic-bezier(.2,.8,.2,1);
+@keyframes modalUp{
+    from{
+        transform:translateY(40px);
+        opacity:0;
+    }
+    to{
+        transform:translateY(0);
+        opacity:1;
+    }
 }
 
-@keyframes modalIn{
+@keyframes fadeUp{
     from{
         opacity:0;
-        transform:translateY(30px) scale(.92);
+        transform:translateY(8px);
     }
     to{
         opacity:1;
-        transform:none;
+        transform:translateY(0);
     }
-}
-
-.modal-head{
-    padding:17px;
-    display:flex;
-    justify-content:space-between;
-    align-items:center;
-    border-bottom:1px solid var(--border);
-    position:sticky;
-    top:0;
-    background:#151e30ee;
-    backdrop-filter:blur(12px);
-    z-index:2;
-}
-
-.modal-head h2{
-    font-size:15px;
-}
-
-.close{
-    width:34px;
-    height:34px;
-    border-radius:10px;
-    background:#1e293b;
-    color:#fff;
-    font-size:18px;
-}
-
-.modal-body{
-    padding:17px;
-}
-
-.form-group{
-    margin-bottom:14px;
-}
-
-.form-group label{
-    display:block;
-    color:var(--muted);
-    font-size:10px;
-    margin-bottom:7px;
-}
-
-input,
-select{
-    width:100%;
-    padding:13px 14px;
-    border-radius:13px;
-    border:1px solid var(--border);
-    outline:none;
-    background:#0b1220;
-    color:#fff;
-    font-size:12px;
-    transition:.2s;
-}
-
-input:focus,
-select:focus{
-    border-color:var(--primary);
-    box-shadow:0 0 0 3px #7c3aed25;
-}
-
-.form-row{
-    display:grid;
-    grid-template-columns:1fr 1fr;
-    gap:10px;
-}
-
-.direction{
-    display:grid;
-    grid-template-columns:1fr 1fr;
-    gap:8px;
-}
-
-.direction button{
-    padding:13px 8px;
-    border-radius:12px;
-    background:#0b1220;
-    color:var(--muted);
-    border:1px solid var(--border);
-    transition:.2s;
-}
-
-.direction button.active.in{
-    background:#064e3b;
-    border-color:var(--green);
-    color:#6ee7b7;
-}
-
-.direction button.active.out{
-    background:#450a0a;
-    border-color:var(--red);
-    color:#fca5a5;
-}
-
-.calculation{
-    background:linear-gradient(135deg,#1e1b4b,#111827);
-    border:1px solid #4937a3;
-    padding:14px;
-    border-radius:15px;
-    margin:15px 0;
-}
-
-.calc-row{
-    display:flex;
-    justify-content:space-between;
-    margin:6px 0;
-    font-size:11px;
-}
-
-.calc-row span{
-    color:var(--muted);
-}
-
-.calc-total{
-    margin-top:10px;
-    padding-top:10px;
-    border-top:1px solid #ffffff18;
-    font-size:16px;
-    font-weight:bold;
-    color:#c4b5fd;
-}
-
-.save-btn{
-    width:100%;
-    padding:14px;
-    border-radius:14px;
-    background:linear-gradient(135deg,var(--primary),var(--primary-dark));
-    color:#fff;
-    font-weight:bold;
-    font-size:13px;
-    box-shadow:0 7px 22px #7c3aed40;
-}
-
-.save-btn:disabled{
-    opacity:.5;
-}
-
-/* ================= CLIENT SELECT ================= */
-
-.client-list{
-    display:grid;
-    gap:9px;
-}
-
-.client-select{
-    width:100%;
-    padding:13px;
-    background:#111827;
-    border:1px solid var(--border);
-    color:#fff;
-    border-radius:13px;
-    text-align:right;
-    display:flex;
-    align-items:center;
-    gap:10px;
-    transition:.2s;
-}
-
-.client-select:hover{
-    border-color:var(--primary);
-    transform:translateY(-1px);
-}
-
-.client-select-avatar{
-    width:35px;
-    height:35px;
-    border-radius:10px;
-    background:var(--primary);
-    display:flex;
-    justify-content:center;
-    align-items:center;
-    flex-shrink:0;
-}
-
-.client-select-info strong{
-    display:block;
-    font-size:12px;
-}
-
-.client-select-info small{
-    color:var(--muted);
-    font-size:8px;
-}
-
-/* ================= TOAST ================= */
-
-#toast{
-    position:fixed;
-    left:50%;
-    bottom:25px;
-    transform:translateX(-50%) translateY(20px);
-    background:#111827;
-    border:1px solid var(--border);
-    color:#fff;
-    padding:12px 17px;
-    border-radius:13px;
-    display:none;
-    z-index:2000;
-    font-size:11px;
-    max-width:90%;
-    text-align:center;
-    box-shadow:0 12px 35px #0008;
-}
-
-#toast.show{
-    display:block;
-    animation:toastIn .3s ease forwards;
 }
 
 @keyframes toastIn{
     from{
         opacity:0;
-        transform:translateX(-50%) translateY(20px);
+        transform:translateY(-10px);
     }
     to{
         opacity:1;
-        transform:translateX(-50%) translateY(0);
+        transform:translateY(0);
     }
 }
 
-/* ================= RESPONSIVE ================= */
-
-@media(max-width:600px){
-
-    header{
-        padding:11px;
+@media(min-width:700px){
+    .modal-overlay{
+        align-items:center;
+        padding:20px;
     }
 
-    header h1{
-        font-size:13px;
-    }
-
-    .header-icon{
-        width:34px;
-        height:34px;
-        font-size:16px;
-    }
-
-    .page{
-        padding:12px;
-    }
-
-    .form-row{
-        grid-template-columns:1fr 1fr;
+    .modal{
+        border-radius:22px;
+        max-height:88vh;
     }
 
     .fab{
-        right:18px;
-        bottom:18px;
+        left:calc(50% - 350px);
     }
 }
 </style>
@@ -801,308 +849,101 @@ select:focus{
 
 <body>
 
-<div class="app">
+<header class="top-header">
+    <div class="header-inner">
 
-<header>
+        <div class="brand">
+            <div class="brand-icon">💱</div>
 
-    <div class="header-title">
-        <div class="header-icon">💱</div>
-
-        <div>
-            <h1>معاملات</h1>
-            <small>Daily Accounting</small>
+            <div class="brand-text">
+                <h1>Daily Accounting</h1>
+                <p>مدیریت معاملات و حساب مشتریان</p>
+            </div>
         </div>
-    </div>
 
-    <div class="header-actions">
+        <div class="header-actions">
+            <button class="icon-btn" onclick="refreshRates()" title="بروزرسانی نرخ">
+                ↻
+            </button>
 
-        <button class="btn btn-dark"
-                onclick="goHome()">
-            🏠
-        </button>
-
-        <button class="btn btn-dark"
-                onclick="window.location.href='profile.html'">
-            👤
-        </button>
-
-        <button class="btn btn-red"
-                onclick="logoutUser()">
-            خروج
-        </button>
+            <button class="icon-btn" onclick="logout()" title="خروج">
+                ⎋
+            </button>
+        </div>
 
     </div>
-
 </header>
 
+<main class="container">
 
-<main class="page">
-
-    <div class="top-summary">
-
-        <div class="summary-title">
-            مجموع کل معاملات
-        </div>
-
-        <div class="summary-value"
-             id="grand-total">
-            ۰ افغانی
-        </div>
-
-        <div class="summary-sub"
-             id="grand-count">
-            ۰ معامله ثبت شده
-        </div>
-
+    <div class="page-title">
+        <h2>معاملات</h2>
+        <span id="clientCount">0 مشتری</span>
     </div>
 
+    <div class="rate-status">
+        <div class="rate-status-left">
+            <span class="rate-dot" id="rateDot"></span>
+            <span class="rate-status-text" id="rateStatus">
+                در حال دریافت نرخ اسعار...
+            </span>
+        </div>
 
-    <div id="accounts-list"></div>
+        <button class="refresh-rate" onclick="refreshRates()">
+            بروزرسانی
+        </button>
+    </div>
+
+    <div id="accounts-list">
+        <div class="loading">
+            در حال بارگذاری حساب‌ها...
+        </div>
+    </div>
 
 </main>
 
+<button class="fab" onclick="openAddClientModal()">+</button>
 
-<button class="fab"
-        onclick="openClientSelector()">
-    +
-</button>
+<!-- ADD CLIENT MODAL -->
 
-</div>
+<div class="modal-overlay" id="clientModal">
 
+    <div class="modal">
 
-<!-- ================= TRANSACTION MODAL ================= -->
+        <div class="modal-header">
+            <h3>افزودن مشتری</h3>
 
-<div class="modal"
-     id="transaction-modal">
-
-    <div class="modal-card">
-
-        <div class="modal-head">
-
-            <h2 id="transaction-modal-title">
-                ثبت معامله جدید
-            </h2>
-
-            <button class="close"
-                    onclick="closeModal('transaction-modal')">
+            <button class="close-btn" onclick="closeModal('clientModal')">
                 ×
             </button>
-
         </div>
 
-        <div class="modal-body">
-
-            <div class="form-group">
-
-                <label>
-                    مشتری
-                </label>
-
-                <input id="selected-client-name"
-                       readonly>
-
-                <input type="hidden"
-                       id="selected-client-id">
-
-            </div>
-
-
-            <div class="form-group">
-
-                <label>
-                    نوع معامله
-                </label>
-
-                <div class="direction">
-
-                    <button id="direction-in"
-                            class="active in"
-                            onclick="setDirection('in')">
-                        ↓ مشتری به من می‌دهد
-                    </button>
-
-                    <button id="direction-out"
-                            onclick="setDirection('out')">
-                        ↑ من به مشتری می‌دهم
-                    </button>
-
-                </div>
-
-            </div>
-
-
-            <div class="form-row">
-
-                <div class="form-group">
-
-                    <label>
-                        اسعار
-                    </label>
-
-                    <select id="currency"
-                            onchange="calculateTransaction()">
-
-                        <option value="USD">
-                            🇺🇸 دالر آمریکا (USD)
-                        </option>
-
-                        <option value="EUR">
-                            🇪🇺 یورو (EUR)
-                        </option>
-
-                        <option value="AFN">
-                            🇦🇫 افغانی (AFN)
-                        </option>
-
-                        <option value="IRR">
-                            🇮🇷 ریال ایران (IRR)
-                        </option>
-
-                        <option value="TOMAN">
-                            🇮🇷 تومان
-                        </option>
-
-                        <option value="JPY">
-                            🇯🇵 ین جاپان (JPY)
-                        </option>
-
-                        <option value="TRY">
-                            🇹🇷 لیره ترکیه (TRY)
-                        </option>
-
-                        <option value="SAR">
-                            🇸🇦 ریال سعودی (SAR)
-                        </option>
-
-                        <option value="AED">
-                            🇦🇪 درهم امارات (AED)
-                        </option>
-
-                        <option value="GBP">
-                            🇬🇧 پوند انگلیس (GBP)
-                        </option>
-
-                        <option value="CAD">
-                            🇨🇦 دالر کانادا (CAD)
-                        </option>
-
-                        <option value="AUD">
-                            🇦🇺 دالر استرالیا (AUD)
-                        </option>
-
-                    </select>
-
-                </div>
-
-
-                <div class="form-group">
-
-                    <label>
-                        مقدار اسعار
-                    </label>
-
-                    <input id="amount"
-                           type="number"
-                           step="any"
-                           inputmode="decimal"
-                           placeholder="مثلاً 100"
-                           oninput="calculateTransaction()">
-
-                </div>
-
-            </div>
-
-
-            <div class="form-group">
-
-                <label>
-                    نرخ هر واحد به افغانی
-                </label>
-
-                <input id="rate"
-                       type="number"
-                       step="any"
-                       inputmode="decimal"
-                       placeholder="مثلاً 70"
-                       oninput="calculateTransaction()">
-
-            </div>
-
-
-            <div class="calculation">
-
-                <div class="calc-row">
-
-                    <span>
-                        مقدار:
-                    </span>
-
-                    <strong id="calc-amount">
-                        ۰
-                    </strong>
-
-                </div>
-
-
-                <div class="calc-row">
-
-                    <span>
-                        نرخ:
-                    </span>
-
-                    <strong id="calc-rate">
-                        ۰
-                    </strong>
-
-                </div>
-
-
-                <div class="calc-row calc-total">
-
-                    <span>
-                        مجموع به افغانی:
-                    </span>
-
-                    <strong id="calc-total">
-                        ۰ AFN
-                    </strong>
-
-                </div>
-
-            </div>
-
-
-            <div class="form-group">
-
-                <label>
-                    تاریخ معامله
-                </label>
-
-                <input id="transaction-date"
-                       type="date">
-
-            </div>
-
-
-            <div class="form-group">
-
-                <label>
-                    توضیحات (اختیاری)
-                </label>
-
-                <input id="transaction-note"
-                       type="text"
-                       placeholder="مثلاً خرید دالر">
-
-            </div>
-
-
-            <button class="save-btn"
-                    id="save-transaction-btn"
-                    onclick="saveTransaction()">
-
-                💾 ذخیره معامله
-
+        <div class="form-group">
+            <label>نام مشتری</label>
+
+            <input
+                id="clientNameInput"
+                class="input"
+                type="text"
+                placeholder="مثلاً احمد"
+                autocomplete="off"
+            >
+        </div>
+
+        <div class="modal-actions">
+
+            <button
+                class="secondary-btn"
+                onclick="closeModal('clientModal')"
+            >
+                لغو
+            </button>
+
+            <button
+                class="primary-btn"
+                onclick="saveClient()"
+            >
+                ذخیره مشتری
             </button>
 
         </div>
@@ -1111,87 +952,198 @@ select:focus{
 
 </div>
 
+<!-- TRANSACTION MODAL -->
 
-<!-- ================= CLIENT SELECTOR ================= -->
+<div class="modal-overlay" id="transactionModal">
 
-<div class="modal"
-     id="client-modal">
+    <div class="modal">
 
-    <div class="modal-card">
+        <div class="modal-header">
 
-        <div class="modal-head">
+            <h3 id="transactionModalTitle">
+                معامله جدید
+            </h3>
 
-            <h2>
-                انتخاب مشتری
-            </h2>
-
-            <button class="close"
-                    onclick="closeModal('client-modal')">
+            <button
+                class="close-btn"
+                onclick="closeModal('transactionModal')"
+            >
                 ×
             </button>
 
         </div>
 
-        <div class="modal-body">
+        <div class="form-group">
+            <label>مشتری</label>
 
-            <div id="client-list"
-                 class="client-list">
+            <select
+                id="transactionClient"
+                class="select"
+            ></select>
+        </div>
+
+        <div class="form-group">
+
+            <label>نوع معامله</label>
+
+            <div class="direction-box">
+
+                <label
+                    class="direction-option selected in"
+                    id="directionInBox"
+                >
+                    <input
+                        type="radio"
+                        name="direction"
+                        value="in"
+                        checked
+                        onchange="setDirection('in')"
+                    >
+
+                    ↓ مشتری به من می‌دهد
+                </label>
+
+                <label
+                    class="direction-option out"
+                    id="directionOutBox"
+                >
+                    <input
+                        type="radio"
+                        name="direction"
+                        value="out"
+                        onchange="setDirection('out')"
+                    >
+
+                    ↑ من به مشتری می‌دهم
+                </label>
+
             </div>
 
-            <button class="btn btn-primary"
-                    style="width:100%;margin-top:12px;padding:13px"
-                    onclick="openAddClientFromTransaction()">
-
-                ＋ افزودن مشتری جدید
-
-            </button>
-
         </div>
 
-    </div>
-
-</div>
-
-
-<!-- ================= ADD CLIENT MODAL ================= -->
-
-<div class="modal"
-     id="client-add-modal">
-
-    <div class="modal-card">
-
-        <div class="modal-head">
-
-            <h2>
-                افزودن مشتری
-            </h2>
-
-            <button class="close"
-                    onclick="closeModal('client-add-modal')">
-                ×
-            </button>
-
-        </div>
-
-        <div class="modal-body">
+        <div class="two-cols">
 
             <div class="form-group">
 
-                <label>
-                    نام مشتری
-                </label>
+                <label>پول / ارز</label>
 
-                <input id="new-client-name"
-                       type="text"
-                       placeholder="نام مشتری">
+                <select
+                    id="transactionCurrency"
+                    class="select"
+                    onchange="calculateTransaction()"
+                >
+
+                    <option value="AFN">🇦🇫 افغانی (AFN)</option>
+                    <option value="USD">🇺🇸 دلار (USD)</option>
+                    <option value="EUR">🇪🇺 یورو (EUR)</option>
+                    <option value="IRR">🇮🇷 ریال ایران (IRR)</option>
+                    <option value="TOMAN">🇮🇷 تومان (Toman)</option>
+                    <option value="JPY">🇯🇵 ین (JPY)</option>
+                    <option value="TRY">🇹🇷 لیر ترکیه (TRY)</option>
+                    <option value="SAR">🇸🇦 ریال سعودی (SAR)</option>
+                    <option value="AED">🇦🇪 درهم (AED)</option>
+                    <option value="GBP">🇬🇧 پوند (GBP)</option>
+                    <option value="CAD">🇨🇦 دلار کانادا (CAD)</option>
+                    <option value="AUD">🇦🇺 دلار استرالیا (AUD)</option>
+                    <option value="CHF">🇨🇭 فرانک سوئیس (CHF)</option>
+                    <option value="INR">🇮🇳 روپیه هند (INR)</option>
+                    <option value="PKR">🇵🇰 روپیه پاکستان (PKR)</option>
+                    <option value="CNY">🇨🇳 یوان چین (CNY)</option>
+                    <option value="RUB">🇷🇺 روبل روسیه (RUB)</option>
+
+                </select>
 
             </div>
 
-            <button class="save-btn"
-                    onclick="addClient()">
+            <div class="form-group">
 
-                👤 ایجاد مشتری
+                <label>مقدار</label>
 
+                <input
+                    id="transactionAmount"
+                    class="input"
+                    type="number"
+                    inputmode="decimal"
+                    step="any"
+                    min="0"
+                    placeholder="0.00"
+                    oninput="calculateTransaction()"
+                >
+
+            </div>
+
+        </div>
+
+        <div class="form-group">
+
+            <label>تاریخ معامله</label>
+
+            <input
+                id="transactionDate"
+                class="input"
+                type="date"
+            >
+
+        </div>
+
+        <div class="form-group">
+
+            <label>یادداشت</label>
+
+            <textarea
+                id="transactionNote"
+                class="textarea"
+                placeholder="توضیحات اختیاری..."
+            ></textarea>
+
+        </div>
+
+        <div class="rate-result">
+
+            <div class="rate-result-top">
+
+                <span class="rate-label">
+                    نرخ امروز به افغانی
+                </span>
+
+                <strong
+                    class="rate-number"
+                    id="rateDisplay"
+                >
+                    —
+                </strong>
+
+            </div>
+
+            <div class="afn-total">
+
+                <span>
+                    ارزش معامله به افغانی
+                </span>
+
+                <strong id="afnTotal">
+                    0 AFN
+                </strong>
+
+            </div>
+
+        </div>
+
+        <div class="modal-actions">
+
+            <button
+                class="secondary-btn"
+                onclick="closeModal('transactionModal')"
+            >
+                لغو
+            </button>
+
+            <button
+                class="primary-btn"
+                id="saveTransactionBtn"
+                onclick="saveTransaction()"
+            >
+                ذخیره معامله
             </button>
 
         </div>
@@ -1200,48 +1152,52 @@ select:focus{
 
 </div>
 
+<!-- CONFIRM MODAL -->
 
-<!-- ================= DELETE CONFIRM MODAL ================= -->
+<div class="modal-overlay" id="confirmModal">
 
-<div class="modal"
-     id="confirm-modal">
+    <div class="modal">
 
-    <div class="modal-card">
+        <div class="modal-header">
 
-        <div class="modal-head">
+            <h3 id="confirmTitle">
+                تأیید
+            </h3>
 
-            <h2>
-                تأیید عملیات
-            </h2>
-
-            <button class="close"
-                    onclick="closeModal('confirm-modal')">
+            <button
+                class="close-btn"
+                onclick="closeModal('confirmModal')"
+            >
                 ×
             </button>
 
         </div>
 
-        <div class="modal-body">
+        <p
+            id="confirmMessage"
+            style="
+                font-size:12px;
+                line-height:2;
+                color:#59655f;
+                margin:0;
+            "
+        ></p>
 
-            <p id="confirm-text"
-               style="font-size:12px;color:var(--muted);line-height:2;margin-bottom:18px">
-            </p>
+        <div class="modal-actions">
 
-            <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px">
+            <button
+                class="secondary-btn"
+                onclick="closeModal('confirmModal')"
+            >
+                لغو
+            </button>
 
-                <button class="btn btn-red"
-                        style="padding:13px"
-                        onclick="confirmDelete()">
-                    حذف
-                </button>
-
-                <button class="btn btn-dark"
-                        style="padding:13px"
-                        onclick="closeModal('confirm-modal')">
-                    لغو
-                </button>
-
-            </div>
+            <button
+                class="danger-btn"
+                id="confirmButton"
+            >
+                حذف
+            </button>
 
         </div>
 
@@ -1249,27 +1205,58 @@ select:focus{
 
 </div>
 
+<!-- BOTTOM NAV -->
 
-<div id="toast"></div>
+<nav class="bottom-nav">
 
+    <div class="nav-inner">
+
+        <a
+            class="nav-item"
+            href="index.html"
+        >
+            <span class="nav-icon">🏠</span>
+            <span>خانه</span>
+        </a>
+
+        <a
+            class="nav-item active"
+            href="transactions.html"
+        >
+            <span class="nav-icon">💱</span>
+            <span>معاملات</span>
+        </a>
+
+        <a
+            class="nav-item"
+            href="profile.html"
+        >
+            <span class="nav-icon">👤</span>
+            <span>پروفایل</span>
+        </a>
+
+    </div>
+
+</nav>
+
+<div class="toast-container" id="toastContainer"></div>
 
 <script>
-
 /* =========================================================
    SUPABASE
 ========================================================= */
 
 const SUPABASE_URL =
-'https://hvsymjkbmpmvjycwenbd.supabase.co';
+"https://hvsymjkbmpmvjycwenbd.supabase.co";
 
 const SUPABASE_KEY =
-'sb_publishable_9pkhkb88LNXJw457Sx8dpA_0E231JwH';
+"sb_publishable_9pkhkb88LNXJw457Sx8dpA_0E231JwH";
 
 const supabaseClient =
-supabase.createClient(
-    SUPABASE_URL,
-    SUPABASE_KEY
-);
+    window.supabase.createClient(
+        SUPABASE_URL,
+        SUPABASE_KEY
+    );
 
 
 /* =========================================================
@@ -1279,98 +1266,117 @@ supabase.createClient(
 let currentUser = null;
 
 let appData = {
-    clients:[]
+    clients: []
 };
 
-let currentDirection = 'in';
+let liveRates = null;
 
 let editingTransaction = null;
 
-let deleteTarget = null;
+let selectedDirection = "in";
+
+let confirmCallback = null;
 
 
 /* =========================================================
-   TOAST
+   CURRENCY INFORMATION
 ========================================================= */
 
-function toast(message){
+const currencyNames = {
 
-    const el =
-        document.getElementById('toast');
+    AFN:"افغانی",
 
-    el.innerText = message;
+    USD:"دلار",
 
-    el.classList.remove('show');
+    EUR:"یورو",
 
-    void el.offsetWidth;
+    IRR:"ریال ایران",
 
-    el.classList.add('show');
+    TOMAN:"تومان",
 
-    clearTimeout(window.toastTimer);
+    JPY:"ین",
 
-    window.toastTimer =
-        setTimeout(()=>{
-            el.classList.remove('show');
-        },3000);
-}
+    TRY:"لیر",
+
+    SAR:"ریال سعودی",
+
+    AED:"درهم",
+
+    GBP:"پوند",
+
+    CAD:"دلار کانادا",
+
+    AUD:"دلار استرالیا",
+
+    CHF:"فرانک سوئیس",
+
+    INR:"روپیه هند",
+
+    PKR:"روپیه پاکستان",
+
+    CNY:"یوان چین",
+
+    RUB:"روبل روسیه"
+
+};
 
 
 /* =========================================================
-   MODAL
+   PAGE START
 ========================================================= */
 
-function openModal(id){
+document.addEventListener("DOMContentLoaded", async () => {
 
-    const modal =
-        document.getElementById(id);
+    setToday();
 
-    if(!modal) return;
+    await checkAuth();
 
-    modal.classList.add('show');
-
-    document.body.style.overflow =
-        'hidden';
-}
-
-
-function closeModal(id){
-
-    const modal =
-        document.getElementById(id);
-
-    if(!modal) return;
-
-    modal.classList.remove('show');
-
-    if(
-        !document.querySelector('.modal.show')
-    ){
-        document.body.style.overflow =
-            '';
-    }
-}
-
-
-/* =========================================================
-   CLOSE MODAL BY BACKDROP
-========================================================= */
-
-document.addEventListener('click',(e)=>{
-
-    if(e.target.classList.contains('modal')){
-
-        e.target.classList.remove('show');
-
-        if(!document.querySelector('.modal.show')){
-            document.body.style.overflow='';
-        }
-    }
+    await refreshRates();
 
 });
 
 
 /* =========================================================
-   LOAD USER DATA
+   AUTH
+========================================================= */
+
+async function checkAuth(){
+
+    const {
+        data,
+        error
+    } = await supabaseClient.auth.getSession();
+
+    if(error){
+
+        console.error(error);
+
+        showToast(
+            "خطا در بررسی حساب",
+            "error"
+        );
+
+        return;
+
+    }
+
+    currentUser = data.session?.user || null;
+
+    if(!currentUser){
+
+        window.location.href = "index.html";
+
+        return;
+
+    }
+
+    await loadData();
+
+}
+
+
+/* =========================================================
+   LOAD DATA
 ========================================================= */
 
 async function loadData(){
@@ -1378,79 +1384,124 @@ async function loadData(){
     try{
 
         const {
-            data:{
-                session
-            }
-        } =
-        await supabaseClient
-        .auth
-        .getSession();
-
-
-        if(!session){
-
-            window.location.href =
-                'index.html';
-
-            return;
-        }
-
-
-        currentUser =
-            session.user;
-
-
-        const {
             data,
             error
-        } =
-        await supabaseClient
-        .from('exchange_users')
-        .select('*')
-        .eq('user_id',currentUser.id)
-        .maybeSingle();
-
+        } = await supabaseClient
+            .from("exchange_users")
+            .select("*")
+            .eq("user_id", currentUser.id)
+            .maybeSingle();
 
         if(error){
-
-            console.error(error);
-
-            toast(
-                'خطا در دریافت اطلاعات'
-            );
-
-            return;
+            throw error;
         }
 
+        if(data){
 
-        if(
-            data &&
-            data.content
-        ){
+            if(data.content){
 
-            appData =
-                data.content;
+                if(typeof data.content === "string"){
+
+                    try{
+                        appData = JSON.parse(data.content);
+                    }catch(e){
+                        appData = {clients:[]};
+                    }
+
+                }else{
+
+                    appData = data.content;
+
+                }
+
+            }
 
         }
 
+        if(!appData || typeof appData !== "object"){
+            appData = {};
+        }
 
-        if(!appData.clients){
-
+        if(!Array.isArray(appData.clients)){
             appData.clients = [];
-
         }
 
+        normalizeExistingData();
 
-        renderDashboard();
+        renderClients();
 
     }catch(error){
 
         console.error(error);
 
-        toast(
-            'خطا در بارگذاری اطلاعات'
+        showToast(
+            "خطا در بارگذاری اطلاعات",
+            "error"
         );
+
     }
+
+}
+
+
+/* =========================================================
+   NORMALIZE OLD DATA
+========================================================= */
+
+function normalizeExistingData(){
+
+    appData.clients.forEach(client => {
+
+        if(!client.id){
+            client.id = createId();
+        }
+
+        if(!Array.isArray(client.transactions)){
+            client.transactions = [];
+        }
+
+        client.transactions.forEach(tx => {
+
+            if(!tx.id){
+                tx.id = createId();
+            }
+
+            if(!tx.currency){
+                tx.currency = "AFN";
+            }
+
+            if(!tx.type){
+                tx.type = tx.direction || "in";
+            }
+
+            if(tx.amount === undefined){
+                tx.amount = tx.rawAmount || 0;
+            }
+
+            if(tx.rawAmount === undefined){
+                tx.rawAmount = tx.amount || 0;
+            }
+
+            if(!tx.rawDate){
+                tx.rawDate =
+                    tx.date ||
+                    new Date().toISOString().slice(0,10);
+            }
+
+            if(tx.totalAFN === undefined){
+
+                if(tx.amountInBase !== undefined){
+                    tx.totalAFN = Number(tx.amountInBase) || 0;
+                }else{
+                    tx.totalAFN = 0;
+                }
+
+            }
+
+        });
+
+    });
+
 }
 
 
@@ -1460,459 +1511,219 @@ async function loadData(){
 
 async function saveData(){
 
-    if(!currentUser){
-
-        return false;
-    }
-
-
     const {
         error
-    } =
-    await supabaseClient
-    .from('exchange_users')
-    .upsert(
-        {
-            user_id:
-                currentUser.id,
-
-            email:
-                currentUser.email,
-
-            content:
-                appData
-        },
-        {
-            onConflict:
-                'user_id'
-        }
-    );
-
+    } = await supabaseClient
+        .from("exchange_users")
+        .upsert(
+            {
+                user_id:currentUser.id,
+                email:currentUser.email,
+                content:appData
+            },
+            {
+                onConflict:"user_id"
+            }
+        );
 
     if(error){
-
-        console.error(error);
-
-        toast(
-            'ذخیره اطلاعات ناموفق بود'
-        );
-
-        return false;
+        throw error;
     }
 
-
-    return true;
 }
 
 
 /* =========================================================
-   FORMAT NUMBER
+   RENDER CLIENTS
 ========================================================= */
 
-function formatNumber(value){
+function renderClients(){
 
-    const number =
-        Number(value) || 0;
+    const container =
+        document.getElementById("accounts-list");
 
-    return new Intl.NumberFormat(
-        'fa-AF',
-        {
-            maximumFractionDigits:2
+    const count =
+        document.getElementById("clientCount");
+
+    count.textContent =
+        `${appData.clients.length} مشتری`;
+
+    if(!appData.clients.length){
+
+        container.innerHTML = `
+            <div class="empty-state">
+                <div class="empty-icon">👥</div>
+
+                <h3>هنوز مشتری ندارید</h3>
+
+                <p>
+                    از دکمه + برای اضافه کردن مشتری استفاده کنید.
+                </p>
+            </div>
+        `;
+
+        return;
+
+    }
+
+    container.innerHTML =
+        appData.clients.map(
+            client => renderClient(client)
+        ).join("");
+
+}
+
+
+function renderClient(client){
+
+    const transactions =
+        Array.isArray(client.transactions)
+            ? client.transactions
+            : [];
+
+    let balance = 0;
+
+    transactions.forEach(tx => {
+
+        const value =
+            Number(tx.totalAFN) || 0;
+
+        if(
+            tx.type === "in" ||
+            tx.direction === "in"
+        ){
+
+            balance += value;
+
+        }else{
+
+            balance -= value;
+
         }
-    ).format(number);
-}
 
+    });
 
-/* =========================================================
-   CURRENCY NAME
-========================================================= */
+    let balanceClass = "zero";
 
-function currencyName(currency){
+    let balanceText = "تسویه شده";
 
-    const names = {
+    if(balance > 0.000001){
 
-        USD:'دالر',
+        balanceClass = "positive";
 
-        EUR:'یورو',
+        balanceText = "مشتری به شما باقی دارد";
 
-        AFN:'افغانی',
+    }else if(balance < -0.000001){
 
-        IRR:'ریال ایران',
+        balanceClass = "negative";
 
-        TOMAN:'تومان',
+        balanceText = "شما به مشتری باقی دارید";
 
-        JPY:'ین',
+    }
 
-        TRY:'لیره',
-
-        SAR:'ریال سعودی',
-
-        AED:'درهم',
-
-        GBP:'پوند',
-
-        CAD:'دالر کانادا',
-
-        AUD:'دالر استرالیا'
-
-    };
-
-    return names[currency] || currency;
-}
-
-
-/* =========================================================
-   CURRENCY ICON
-========================================================= */
-
-function currencyIcon(currency){
-
-    const icons = {
-
-        USD:'🇺🇸',
-
-        EUR:'🇪🇺',
-
-        AFN:'🇦🇫',
-
-        IRR:'🇮🇷',
-
-        TOMAN:'🇮🇷',
-
-        JPY:'🇯🇵',
-
-        TRY:'🇹🇷',
-
-        SAR:'🇸🇦',
-
-        AED:'🇦🇪',
-
-        GBP:'🇬🇧',
-
-        CAD:'🇨🇦',
-
-        AUD:'🇦🇺'
-
-    };
-
-    return icons[currency] || '💱';
-}
-
-
-/* =========================================================
-   RENDER DASHBOARD
-========================================================= */
-
-function renderDashboard(){
-
-    const box =
-        document.getElementById(
-            'accounts-list'
+    const avatar =
+        escapeHtml(
+            String(client.name || "?")
+                .trim()
+                .charAt(0)
         );
 
-    box.innerHTML = '';
+    const transactionsHTML =
+        transactions
+            .slice()
+            .sort(
+                (a,b) =>
+                    String(b.rawDate || "")
+                    .localeCompare(
+                        String(a.rawDate || "")
+                    )
+            )
+            .map(
+                tx =>
+                    renderTransaction(
+                        client,
+                        tx
+                    )
+            )
+            .join("");
 
+    return `
+        <section class="client-card">
 
-    let grandTotal = 0;
+            <div class="client-top">
 
-    let grandCount = 0;
+                <div class="client-info">
 
+                    <div class="client-avatar">
+                        ${avatar}
+                    </div>
 
-    if(
-        !appData.clients ||
-        !appData.clients.length
-    ){
+                    <div style="min-width:0">
 
-        box.innerHTML = `
+                        <div class="client-name">
+                            ${escapeHtml(client.name)}
+                        </div>
 
-            <div class="empty">
+                        <div class="client-summary">
+                            ${transactions.length}
+                            معامله
+                        </div>
 
-                <div class="empty-icon">
-                    💱
+                    </div>
+
                 </div>
 
-                <div style="font-size:13px;color:#fff;margin-bottom:7px">
-                    هنوز مشتری ثبت نشده
-                </div>
+                <div class="client-actions">
 
-                <div style="font-size:10px">
-                    از دکمه + یک مشتری اضافه کنید.
+                    <button
+                        class="small-btn"
+                        onclick="openTransactionModal('${client.id}')"
+                        title="معامله جدید"
+                    >
+                        ＋
+                    </button>
+
+                    <button
+                        class="small-btn delete"
+                        onclick="askDeleteClient('${client.id}')"
+                        title="حذف مشتری"
+                    >
+                        🗑
+                    </button>
+
                 </div>
 
             </div>
 
-        `;
+            <div class="client-balance ${balanceClass}">
 
-        updateGrandTotal(
-            0,
-            0
-        );
+                <span>
+                    ${balanceText}
+                </span>
 
-        return;
-    }
+                <span class="balance-value">
+                    ${formatNumber(Math.abs(balance))}
+                    AFN
+                </span>
 
+            </div>
 
-    appData.clients.forEach(
-        (client,index)=>{
+            <div class="transactions-list">
 
-            const transactions =
-                Array.isArray(client.transactions)
-                ? client.transactions
-                : [];
-
-
-            let balance = 0;
-
-
-            transactions.forEach(
-                transaction=>{
-
-                    const total =
-                        Number(
-                            transaction.totalAFN ??
-                            transaction.amountInBase ??
-                            transaction.total ??
-                            0
-                        ) || 0;
-
-
-                    /*
-                       in:
-                       مشتری به ما می‌دهد
-                       پس مشتری بدهکار نیست؛
-                       موجودی به نفع ما است.
-
-                       out:
-                       ما به مشتری می‌دهیم
-                       پس ما به مشتری بدهکار می‌شویم.
-                    */
-
-                    if(
-                        transaction.type === 'in' ||
-                        transaction.direction === 'in' ||
-                        transaction.type === 'receive'
-                    ){
-
-                        balance += total;
-
-                    }else{
-
-                        balance -= total;
-
-                    }
-
-
-                    grandTotal += total;
-
-                    grandCount++;
-
+                ${
+                    transactionsHTML ||
+                    `
+                    <div class="empty-transactions">
+                        هنوز معامله‌ای ثبت نشده است.
+                    </div>
+                    `
                 }
-            );
 
+            </div>
 
-            const initial =
-                (client.name || 'م')
-                .trim()
-                .charAt(0)
-                .toUpperCase();
+        </section>
+    `;
 
-
-            let balanceHTML = '';
-
-
-            if(balance > 0){
-
-                balanceHTML = `
-
-                    <div class="balance-value balance-green">
-
-                        ${formatNumber(balance)}
-                        افغانی
-
-                    </div>
-
-                    <div class="balance-note">
-
-                        💚 مشتری به شما باقی دارد
-
-                    </div>
-
-                `;
-
-            }
-            else if(balance < 0){
-
-                balanceHTML = `
-
-                    <div class="balance-value balance-red">
-
-                        ${formatNumber(
-                            Math.abs(balance)
-                        )}
-                        افغانی
-
-                    </div>
-
-                    <div class="balance-note">
-
-                        🔴 شما به مشتری باقی دارید
-
-                    </div>
-
-                `;
-
-            }
-            else{
-
-                balanceHTML = `
-
-                    <div class="balance-value balance-neutral">
-
-                        تسویه شده
-
-                    </div>
-
-                    <div class="balance-note">
-
-                        ⚪ هیچ باقی نمانده
-
-                    </div>
-
-                `;
-            }
-
-
-            const transactionsHTML =
-                transactions.length
-
-                ?
-
-                transactions
-                .map(
-                    (transaction,tIndex)=>
-                        renderTransaction(
-                            transaction,
-                            client,
-                            tIndex
-                        )
-                )
-                .join('')
-
-                :
-
-                `
-
-                    <div style="
-                        text-align:center;
-                        color:var(--muted);
-                        font-size:10px;
-                        padding:18px 5px;
-                    ">
-
-                        هنوز معامله‌ای ثبت نشده
-
-                    </div>
-
-                `;
-
-
-            box.insertAdjacentHTML(
-                'beforeend',
-                `
-
-                <div class="client-card"
-                     style="animation-delay:${index*50}ms">
-
-                    <div class="client-head">
-
-                        <div class="client-info">
-
-                            <div class="client-avatar">
-
-                                ${escapeHTML(initial)}
-
-                            </div>
-
-                            <div>
-
-                                <div class="client-name">
-
-                                    ${escapeHTML(
-                                        client.name || 'بدون نام'
-                                    )}
-
-                                </div>
-
-                                <div class="client-count">
-
-                                    ${formatNumber(
-                                        transactions.length
-                                    )}
-                                    معامله
-
-                                </div>
-
-                            </div>
-
-                        </div>
-
-
-                        <div class="client-actions">
-
-                            <button class="icon-btn"
-                                    title="معامله جدید"
-                                    onclick="openTransactionForClient('${client.id}')">
-
-                                ＋
-
-                            </button>
-
-
-                            <button class="icon-btn"
-                                    title="حذف مشتری"
-                                    onclick="askDeleteClient('${client.id}')">
-
-                                🗑️
-
-                            </button>
-
-                        </div>
-
-                    </div>
-
-
-                    <div class="balance-box">
-
-                        <div class="balance-title">
-
-                            وضعیت حساب
-
-                        </div>
-
-                        ${balanceHTML}
-
-                    </div>
-
-
-                    <div class="transactions">
-
-                        ${transactionsHTML}
-
-                    </div>
-
-                </div>
-
-                `
-            );
-
-        }
-    );
-
-
-    updateGrandTotal(
-        grandTotal,
-        grandCount
-    );
 }
 
 
@@ -1920,313 +1731,266 @@ function renderDashboard(){
    RENDER TRANSACTION
 ========================================================= */
 
-function renderTransaction(
-    transaction,
-    client,
-    index
-){
+function renderTransaction(client, tx){
+
+    const isIn =
+        tx.type === "in" ||
+        tx.direction === "in";
+
+    const sign =
+        isIn ? "+" : "-";
+
+    const icon =
+        isIn ? "↓" : "↑";
+
+    const currency =
+        tx.currency || "AFN";
 
     const amount =
         Number(
-            transaction.rawAmount ??
-            transaction.amount ??
+            tx.rawAmount ??
+            tx.amount ??
             0
-        ) || 0;
-
-
-    const rate =
-        Number(
-            transaction.rate ??
-            transaction.exchangeRate ??
-            0
-        ) || 0;
-
-
-    const total =
-        Number(
-            transaction.totalAFN ??
-            transaction.amountInBase ??
-            transaction.total ??
-            amount * rate
-        ) || 0;
-
-
-    const currency =
-        transaction.currency ||
-        'USD';
-
-
-    const direction =
-        transaction.type === 'out' ||
-        transaction.direction === 'out'
-        ? 'out'
-        : 'in';
-
+        );
 
     const date =
-        transaction.rawDate ||
-        transaction.date ||
-        transaction.transactionDate ||
-        '';
+        tx.rawDate ||
+        tx.date ||
+        "";
 
+    const rate =
+        Number(tx.rateAtTransaction) || 0;
 
     const note =
-        transaction.note ||
-        transaction.description ||
-        '';
-
+        tx.note
+            ? escapeHtml(tx.note)
+            : "";
 
     return `
+        <div class="transaction-row">
 
-        <div class="transaction"
-             style="animation-delay:${index*40}ms">
+            <div class="transaction-main">
 
-            <div class="transaction-top">
+                <div class="transaction-left">
 
-                <div class="transaction-currency">
+                    <div class="transaction-icon ${isIn ? "in" : "out"}">
+                        ${icon}
+                    </div>
 
-                    <div class="currency-icon">
+                    <div>
 
-                        ${currencyIcon(currency)}
+                        <div class="transaction-name">
+                            ${isIn
+                                ? "مشتری به من داد"
+                                : "من به مشتری دادم"
+                            }
+                        </div>
+
+                        <div class="transaction-date">
+                            ${formatDate(date)}
+                        </div>
 
                     </div>
 
-                    <span>
-
-                        ${currencyName(currency)}
-
-                    </span>
-
                 </div>
 
+                <div class="transaction-amount ${isIn ? "in" : "out"}">
 
-                <div class="
-                    transaction-type
-                    ${direction === 'in'
-                        ? 'type-in'
-                        : 'type-out'}
-                ">
-
-                    ${direction === 'in'
-                        ? '↓ دریافت'
-                        : '↑ پرداخت'}
+                    ${sign}
+                    ${formatNumber(amount)}
+                    ${escapeHtml(currency)}
 
                 </div>
 
             </div>
 
+            <div class="transaction-bottom">
 
-            <div class="transaction-grid">
+                <div class="transaction-meta">
 
-                <div class="transaction-item">
-
-                    <small>
-                        مقدار اسعار
-                    </small>
-
-                    <strong>
-                        ${formatNumber(amount)}
-                        ${escapeHTML(currency)}
-                    </strong>
-
-                </div>
-
-
-                <div class="transaction-item">
-
-                    <small>
-                        نرخ هر واحد
-                    </small>
-
-                    <strong>
-                        ${formatNumber(rate)}
-                        AFN
-                    </strong>
-
-                </div>
-
-            </div>
-
-
-            <div class="transaction-total">
-
-                <span>
-                    مجموع معامله
-                </span>
-
-                <strong>
-
-                    ${formatNumber(total)}
+                    ${formatNumber(
+                        Number(tx.totalAFN) || 0
+                    )}
                     AFN
 
-                </strong>
+                    ${
+                        rate
+                        ? ` • نرخ ${formatNumber(rate)}`
+                        : ""
+                    }
 
-            </div>
-
-
-            ${
-                date
-                ?
-
-                `
-
-                <div class="transaction-date">
-
-                    📅 تاریخ:
-
-                    ${escapeHTML(
-                        formatDateDisplay(date)
-                    )}
+                    ${
+                        note
+                        ? ` • ${note}`
+                        : ""
+                    }
 
                 </div>
 
-                `
-                :
-                ''
-            }
+                <div class="transaction-buttons">
 
+                    <button
+                        class="transaction-mini-btn"
+                        onclick="editTransaction('${client.id}','${tx.id}')"
+                        title="ویرایش"
+                    >
+                        ✎
+                    </button>
 
-            ${
-                note
-                ?
-
-                `
-
-                <div class="transaction-date">
-
-                    📝 ${escapeHTML(note)}
+                    <button
+                        class="transaction-mini-btn delete"
+                        onclick="askDeleteTransaction('${client.id}','${tx.id}')"
+                        title="حذف"
+                    >
+                        ×
+                    </button>
 
                 </div>
-
-                `
-                :
-                ''
-            }
-
-
-            <div class="transaction-actions">
-
-                <button
-                    class="btn-blue"
-                    onclick="editTransaction('${client.id}',${index})">
-
-                    ✏️ ویرایش
-
-                </button>
-
-
-                <button
-                    class="btn-red"
-                    onclick="askDeleteTransaction('${client.id}',${index})">
-
-                    🗑️ حذف
-
-                </button>
 
             </div>
 
         </div>
-
     `;
+
 }
 
 
 /* =========================================================
-   UPDATE GRAND TOTAL
+   ADD CLIENT
 ========================================================= */
 
-function updateGrandTotal(
-    total,
-    count
-){
+function openAddClientModal(){
 
-    document.getElementById(
-        'grand-total'
-    ).innerText =
-        formatNumber(total) +
-        ' افغانی';
+    document.getElementById("clientNameInput").value = "";
 
+    openModal("clientModal");
 
-    document.getElementById(
-        'grand-count'
-    ).innerText =
-        formatNumber(count) +
-        ' معامله ثبت شده';
+    setTimeout(() => {
+
+        document
+            .getElementById("clientNameInput")
+            .focus();
+
+    },100);
+
 }
 
 
-/* =========================================================
-   OPEN CLIENT SELECTOR
-========================================================= */
+async function saveClient(){
 
-function openClientSelector(){
+    const input =
+        document.getElementById("clientNameInput");
 
-    if(
-        !appData.clients ||
-        !appData.clients.length
-    ){
+    const name =
+        input.value.trim();
 
-        openAddClientFromTransaction();
+    if(!name){
 
-        return;
-    }
-
-
-    const list =
-        document.getElementById(
-            'client-list'
+        showToast(
+            "نام مشتری را وارد کنید",
+            "error"
         );
 
+        input.focus();
 
-    list.innerHTML =
-        appData.clients
-        .map(client=>{
+        return;
 
-            const initial =
-                (client.name || 'م')
-                .charAt(0)
-                .toUpperCase();
+    }
 
+    appData.clients.push({
 
-            return `
+        id:createId(),
 
-                <button class="client-select"
-                        onclick="openTransactionForClient('${client.id}')">
+        name:name,
 
-                    <div class="client-select-avatar">
+        transactions:[]
 
-                        ${escapeHTML(initial)}
+    });
 
-                    </div>
+    try{
 
-                    <div class="client-select-info">
+        await saveData();
 
-                        <strong>
-                            ${escapeHTML(
-                                client.name || 'بدون نام'
-                            )}
-                        </strong>
+        closeModal("clientModal");
 
-                        <small>
-                            ${
-                                Array.isArray(client.transactions)
-                                ? client.transactions.length
-                                : 0
-                            }
-                            معامله
-                        </small>
+        renderClients();
 
-                    </div>
+        showToast(
+            "مشتری با موفقیت اضافه شد",
+            "success"
+        );
 
-                </button>
+    }catch(error){
 
-            `;
+        console.error(error);
 
-        })
-        .join('');
+        appData.clients.pop();
+
+        showToast(
+            "ذخیره مشتری انجام نشد",
+            "error"
+        );
+
+    }
+
+}
 
 
-    openModal('client-modal');
+/* =========================================================
+   DELETE CLIENT
+========================================================= */
+
+function askDeleteClient(clientId){
+
+    const client =
+        appData.clients.find(
+            c => c.id === clientId
+        );
+
+    if(!client) return;
+
+    openConfirm(
+        "حذف مشتری",
+        `آیا مطمئن هستید که «${escapeHtml(client.name)}» و تمام معاملات او حذف شود؟`,
+        async () => {
+
+            const old =
+                appData.clients;
+
+            appData.clients =
+                old.filter(
+                    c => c.id !== clientId
+                );
+
+            try{
+
+                await saveData();
+
+                renderClients();
+
+                showToast(
+                    "مشتری حذف شد",
+                    "success"
+                );
+
+            }catch(error){
+
+                console.error(error);
+
+                appData.clients = old;
+
+                renderClients();
+
+                showToast(
+                    "حذف انجام نشد",
+                    "error"
+                );
+
+            }
+
+        }
+    );
+
 }
 
 
@@ -2234,178 +1998,165 @@ function openClientSelector(){
    OPEN TRANSACTION
 ========================================================= */
 
-function openTransactionForClient(
-    clientId
-){
-
-    const client =
-        appData.clients.find(
-            c => String(c.id) === String(clientId)
-        );
-
-
-    if(!client){
-
-        toast('مشتری پیدا نشد');
-
-        return;
-    }
-
-
-    closeModal('client-modal');
-
+async function openTransactionModal(clientId){
 
     editingTransaction = null;
 
+    document.getElementById(
+        "transactionModalTitle"
+    ).textContent = "معامله جدید";
+
+    fillClientSelect(clientId);
 
     document.getElementById(
-        'transaction-modal-title'
-    ).innerText =
-        'ثبت معامله جدید';
-
+        "transactionAmount"
+    ).value = "";
 
     document.getElementById(
-        'selected-client-id'
-    ).value =
-        client.id;
-
+        "transactionCurrency"
+    ).value = "AFN";
 
     document.getElementById(
-        'selected-client-name'
-    ).value =
-        client.name;
+        "transactionNote"
+    ).value = "";
 
+    setToday();
 
-    document.getElementById(
-        'amount'
-    ).value =
-        '';
+    setDirection("in");
 
+    openModal("transactionModal");
 
-    document.getElementById(
-        'rate'
-    ).value =
-        '';
-
-
-    document.getElementById(
-        'transaction-note'
-    ).value =
-        '';
-
-
-    document.getElementById(
-        'currency'
-    ).value =
-        'USD';
-
-
-    document.getElementById(
-        'transaction-date'
-    ).value =
-        getToday();
-
-
-    setDirection('in');
-
+    await refreshRates();
 
     calculateTransaction();
 
-
-    openModal(
-        'transaction-modal'
-    );
 }
 
 
 /* =========================================================
-   SET DIRECTION
+   CLIENT SELECT
+========================================================= */
+
+function fillClientSelect(selectedId){
+
+    const select =
+        document.getElementById(
+            "transactionClient"
+        );
+
+    select.innerHTML =
+        appData.clients.map(
+            client => `
+                <option
+                    value="${escapeAttribute(client.id)}"
+                    ${client.id === selectedId ? "selected" : ""}
+                >
+                    ${escapeHtml(client.name)}
+                </option>
+            `
+        ).join("");
+
+}
+
+
+/* =========================================================
+   DIRECTION
 ========================================================= */
 
 function setDirection(direction){
 
-    currentDirection =
-        direction;
+    selectedDirection = direction;
 
-
-    const inBtn =
+    const inBox =
         document.getElementById(
-            'direction-in'
+            "directionInBox"
         );
 
-    const outBtn =
+    const outBox =
         document.getElementById(
-            'direction-out'
+            "directionOutBox"
         );
 
-
-    inBtn.classList.remove(
-        'active'
+    inBox.classList.toggle(
+        "selected",
+        direction === "in"
     );
 
-    outBtn.classList.remove(
-        'active'
+    outBox.classList.toggle(
+        "selected",
+        direction === "out"
     );
 
-
-    if(direction === 'in'){
-
-        inBtn.classList.add(
-            'active'
-        );
-
-    }else{
-
-        outBtn.classList.add(
-            'active'
-        );
-    }
 }
 
 
 /* =========================================================
-   CALCULATE
+   EDIT TRANSACTION
 ========================================================= */
 
-function calculateTransaction(){
+async function editTransaction(clientId, transactionId){
 
-    const amount =
-        Number(
-            document.getElementById(
-                'amount'
-            ).value
-        ) || 0;
+    const client =
+        appData.clients.find(
+            c => c.id === clientId
+        );
 
+    if(!client) return;
 
-    const rate =
-        Number(
-            document.getElementById(
-                'rate'
-            ).value
-        ) || 0;
+    const tx =
+        client.transactions.find(
+            t => t.id === transactionId
+        );
 
+    if(!tx) return;
 
-    const total =
-        amount * rate;
-
-
-    document.getElementById(
-        'calc-amount'
-    ).innerText =
-        formatNumber(amount);
-
+    editingTransaction = {
+        clientId,
+        transactionId
+    };
 
     document.getElementById(
-        'calc-rate'
-    ).innerText =
-        formatNumber(rate);
+        "transactionModalTitle"
+    ).textContent = "ویرایش معامله";
 
+    fillClientSelect(clientId);
 
     document.getElementById(
-        'calc-total'
-    ).innerText =
-        formatNumber(total) +
-        ' AFN';
+        "transactionCurrency"
+    ).value =
+        tx.currency || "AFN";
+
+    document.getElementById(
+        "transactionAmount"
+    ).value =
+        tx.rawAmount ??
+        tx.amount ??
+        "";
+
+    document.getElementById(
+        "transactionDate"
+    ).value =
+        tx.rawDate ||
+        tx.date ||
+        "";
+
+    document.getElementById(
+        "transactionNote"
+    ).value =
+        tx.note || "";
+
+    setDirection(
+        tx.type ||
+        tx.direction ||
+        "in"
+    );
+
+    openModal("transactionModal");
+
+    await refreshRates();
+
+    calculateTransaction();
+
 }
 
 
@@ -2417,360 +2168,215 @@ async function saveTransaction(){
 
     const clientId =
         document.getElementById(
-            'selected-client-id'
+            "transactionClient"
         ).value;
-
-
-    const client =
-        appData.clients.find(
-            c => String(c.id) === String(clientId)
-        );
-
-
-    if(!client){
-
-        toast('مشتری انتخاب نشده');
-
-        return;
-    }
-
 
     const currency =
         document.getElementById(
-            'currency'
+            "transactionCurrency"
         ).value;
-
 
     const amount =
         Number(
             document.getElementById(
-                'amount'
+                "transactionAmount"
             ).value
         );
-
-
-    const rate =
-        Number(
-            document.getElementById(
-                'rate'
-            ).value
-        );
-
 
     const date =
         document.getElementById(
-            'transaction-date'
+            "transactionDate"
         ).value;
-
 
     const note =
         document.getElementById(
-            'transaction-note'
+            "transactionNote"
         ).value.trim();
 
+    if(!clientId){
+
+        showToast(
+            "مشتری را انتخاب کنید",
+            "error"
+        );
+
+        return;
+
+    }
 
     if(!amount || amount <= 0){
 
-        toast(
-            'مقدار اسعار را وارد کنید'
+        showToast(
+            "مقدار معامله را وارد کنید",
+            "error"
         );
 
         return;
+
     }
-
-
-    if(!rate || rate <= 0){
-
-        toast(
-            'نرخ معامله را وارد کنید'
-        );
-
-        return;
-    }
-
 
     if(!date){
 
-        toast(
-            'تاریخ معامله را وارد کنید'
+        showToast(
+            "تاریخ معامله را وارد کنید",
+            "error"
         );
 
         return;
+
     }
 
+    const rate =
+        getRateForCurrency(currency);
+
+    if(rate === null){
+
+        showToast(
+            "نرخ این ارز از API دریافت نشد",
+            "error"
+        );
+
+        return;
+
+    }
 
     const totalAFN =
-        amount * rate;
+        calculateAFN(
+            amount,
+            rate,
+            currency
+        );
 
+    if(!Number.isFinite(totalAFN)){
 
-    const transaction = {
+        showToast(
+            "محاسبه نرخ انجام نشد",
+            "error"
+        );
+
+        return;
+
+    }
+
+    const tx = {
 
         id:
             editingTransaction
-            ? editingTransaction.id
-            : String(Date.now()),
+                ? editingTransaction.transactionId
+                : createId(),
 
-        type:
-            currentDirection,
+        type:selectedDirection,
 
-        direction:
-            currentDirection,
+        direction:selectedDirection,
 
-        currency:
-            currency,
+        currency:currency,
 
-        rawAmount:
-            amount,
+        rawAmount:amount,
 
-        amount:
-            amount,
+        amount:amount,
 
-        rate:
-            rate,
+        rateAtTransaction:rate,
 
-        exchangeRate:
-            rate,
+        totalAFN:totalAFN,
 
-        totalAFN:
-            totalAFN,
+        amountInBase:totalAFN,
 
-        amountInBase:
-            totalAFN,
+        rawDate:date,
 
-        rawDate:
-            date,
+        date:date,
 
-        date:
-            date,
+        note:note,
 
-        transactionDate:
-            date,
+        rateSource:"sarafi-api.js",
 
-        note:
-            note,
-
-        createdAt:
-            editingTransaction
-            ? editingTransaction.createdAt
-            : new Date().toISOString(),
-
-        updatedAt:
+        rateSavedAt:
             new Date().toISOString()
 
     };
 
+    const wasEditing =
+        !!editingTransaction;
 
-    if(!Array.isArray(client.transactions)){
+    try{
 
-        client.transactions = [];
+        if(wasEditing){
 
-    }
+            const client =
+                appData.clients.find(
+                    c =>
+                        c.id ===
+                        editingTransaction.clientId
+                );
 
+            if(!client){
+                throw new Error(
+                    "Client not found"
+                );
+            }
 
-    if(editingTransaction){
+            const index =
+                client.transactions.findIndex(
+                    t =>
+                        t.id ===
+                        editingTransaction.transactionId
+                );
 
-        client.transactions[
-            editingTransaction.index
-        ] = transaction;
+            if(index === -1){
+                throw new Error(
+                    "Transaction not found"
+                );
+            }
 
-    }else{
+            client.transactions[index] = tx;
 
-        client.transactions.unshift(
-            transaction
-        );
-    }
+        }else{
 
+            const client =
+                appData.clients.find(
+                    c =>
+                        c.id === clientId
+                );
 
-    const saved =
+            if(!client){
+                throw new Error(
+                    "Client not found"
+                );
+            }
+
+            if(!Array.isArray(client.transactions)){
+                client.transactions = [];
+            }
+
+            client.transactions.push(tx);
+
+        }
+
         await saveData();
 
+        editingTransaction = null;
 
-    if(!saved){
+        closeModal("transactionModal");
 
-        return;
+        renderClients();
+
+        showToast(
+            wasEditing
+                ? "معامله ویرایش شد"
+                : "معامله با موفقیت ثبت شد",
+            "success"
+        );
+
+    }catch(error){
+
+        console.error(error);
+
+        showToast(
+            "ذخیره معامله انجام نشد",
+            "error"
+        );
+
     }
 
-
-    closeModal(
-        'transaction-modal'
-    );
-
-
-    editingTransaction =
-        null;
-
-
-    renderDashboard();
-
-
-    toast(
-        editingTransaction
-        ? 'معامله ویرایش شد'
-        : 'معامله با موفقیت ذخیره شد'
-    );
-}
-
-
-/* =========================================================
-   EDIT TRANSACTION
-========================================================= */
-
-function editTransaction(
-    clientId,
-    transactionIndex
-){
-
-    const client =
-        appData.clients.find(
-            c => String(c.id) === String(clientId)
-        );
-
-
-    if(!client ||
-       !client.transactions ||
-       !client.transactions[transactionIndex]
-    ){
-
-        toast(
-            'معامله پیدا نشد'
-        );
-
-        return;
-    }
-
-
-    const transaction =
-        client.transactions[
-            transactionIndex
-        ];
-
-
-    editingTransaction = {
-
-        index:
-            transactionIndex,
-
-        id:
-            transaction.id ||
-            String(Date.now()),
-
-        createdAt:
-            transaction.createdAt
-
-    };
-
-
-    document.getElementById(
-        'transaction-modal-title'
-    ).innerText =
-        'ویرایش معامله';
-
-
-    document.getElementById(
-        'selected-client-id'
-    ).value =
-        client.id;
-
-
-    document.getElementById(
-        'selected-client-name'
-    ).value =
-        client.name;
-
-
-    document.getElementById(
-        'currency'
-    ).value =
-        transaction.currency ||
-        'USD';
-
-
-    document.getElementById(
-        'amount'
-    ).value =
-        transaction.rawAmount ??
-        transaction.amount ??
-        '';
-
-
-    document.getElementById(
-        'rate'
-    ).value =
-        transaction.rate ??
-        transaction.exchangeRate ??
-        '';
-
-
-    document.getElementById(
-        'transaction-date'
-    ).value =
-        transaction.rawDate ||
-        transaction.date ||
-        transaction.transactionDate ||
-        '';
-
-
-    document.getElementById(
-        'transaction-note'
-    ).value =
-        transaction.note ||
-        transaction.description ||
-        '';
-
-
-    setDirection(
-        transaction.type === 'out' ||
-        transaction.direction === 'out'
-        ? 'out'
-        : 'in'
-    );
-
-
-    calculateTransaction();
-
-
-    openModal(
-        'transaction-modal'
-    );
-}
-
-
-/* =========================================================
-   DELETE CLIENT
-========================================================= */
-
-function askDeleteClient(
-    clientId
-){
-
-    const client =
-        appData.clients.find(
-            c => String(c.id) === String(clientId)
-        );
-
-
-    if(!client) return;
-
-
-    deleteTarget = {
-
-        type:'client',
-
-        clientId:
-            clientId
-
-    };
-
-
-    document.getElementById(
-        'confirm-text'
-    ).innerText =
-        `آیا مطمئن هستید که مشتری «${client.name}» و تمام معاملات او حذف شود؟`;
-
-
-    openModal(
-        'confirm-modal'
-    );
 }
 
 
@@ -2780,252 +2386,739 @@ function askDeleteClient(
 
 function askDeleteTransaction(
     clientId,
-    transactionIndex
+    transactionId
 ){
 
-    const client =
-        appData.clients.find(
-            c => String(c.id) === String(clientId)
-        );
+    openConfirm(
+        "حذف معامله",
+        "آیا مطمئن هستید که این معامله حذف شود؟",
+        async () => {
 
+            const client =
+                appData.clients.find(
+                    c => c.id === clientId
+                );
 
-    if(!client) return;
+            if(!client) return;
 
+            const old =
+                [...client.transactions];
 
-    deleteTarget = {
+            client.transactions =
+                client.transactions.filter(
+                    tx =>
+                        tx.id !== transactionId
+                );
 
-        type:'transaction',
+            try{
 
-        clientId:
-            clientId,
+                await saveData();
 
-        transactionIndex:
-            transactionIndex
+                renderClients();
 
-    };
+                showToast(
+                    "معامله حذف شد",
+                    "success"
+                );
 
+            }catch(error){
 
-    document.getElementById(
-        'confirm-text'
-    ).innerText =
-        'آیا مطمئن هستید که این معامله حذف شود؟';
+                console.error(error);
 
+                client.transactions = old;
 
-    openModal(
-        'confirm-modal'
+                renderClients();
+
+                showToast(
+                    "حذف معامله انجام نشد",
+                    "error"
+                );
+
+            }
+
+        }
     );
+
 }
 
 
 /* =========================================================
-   CONFIRM DELETE
+   RATE API
 ========================================================= */
 
-async function confirmDelete(){
+async function refreshRates(){
 
-    if(!deleteTarget){
-
-        closeModal(
-            'confirm-modal'
+    const dot =
+        document.getElementById(
+            "rateDot"
         );
 
-        return;
-    }
+    const status =
+        document.getElementById(
+            "rateStatus"
+        );
 
+    dot.classList.remove(
+        "online",
+        "error"
+    );
 
-    if(
-        deleteTarget.type ===
-        'client'
-    ){
+    status.textContent =
+        "در حال دریافت نرخ اسعار...";
 
-        appData.clients =
-            appData.clients.filter(
-                c =>
-                    String(c.id) !==
-                    String(
-                        deleteTarget.clientId
-                    )
-            );
+    try{
 
-    }
+        if(
+            typeof getSarafiRates !==
+            "function"
+        ){
 
-
-    if(
-        deleteTarget.type ===
-        'transaction'
-    ){
-
-        const client =
-            appData.clients.find(
-                c =>
-                    String(c.id) ===
-                    String(
-                        deleteTarget.clientId
-                    )
-            );
-
-
-        if(client){
-
-            client.transactions.splice(
-                deleteTarget.transactionIndex,
-                1
+            throw new Error(
+                "getSarafiRates() not found"
             );
 
         }
-    }
 
+        const rates =
+            await getSarafiRates();
 
-    const saved =
-        await saveData();
+        if(!rates){
 
+            throw new Error(
+                "API returned empty data"
+            );
 
-    if(!saved){
+        }
 
-        return;
-    }
+        liveRates = rates;
 
+        dot.classList.add("online");
 
-    deleteTarget =
-        null;
+        status.textContent =
+            "نرخ اسعار آنلاین است";
 
+        if(
+            document.getElementById(
+                "transactionModal"
+            ).classList.contains("show")
+        ){
 
-    closeModal(
-        'confirm-modal'
-    );
+            calculateTransaction();
 
+        }
 
-    renderDashboard();
+        return rates;
 
+    }catch(error){
 
-    toast(
-        'با موفقیت حذف شد'
-    );
-}
-
-
-/* =========================================================
-   ADD CLIENT FROM TRANSACTION
-========================================================= */
-
-function openAddClientFromTransaction(){
-
-    closeModal(
-        'client-modal'
-    );
-
-
-    document.getElementById(
-        'new-client-name'
-    ).value =
-        '';
-
-
-    openModal(
-        'client-add-modal'
-    );
-
-
-    setTimeout(()=>{
-
-        document.getElementById(
-            'new-client-name'
-        ).focus();
-
-    },200);
-}
-
-
-/* =========================================================
-   ADD CLIENT
-========================================================= */
-
-async function addClient(){
-
-    const name =
-        document.getElementById(
-            'new-client-name'
-        ).value.trim();
-
-
-    if(!name){
-
-        toast(
-            'نام مشتری را وارد کنید'
+        console.error(
+            "Rate loading error:",
+            error
         );
 
-        return;
+        dot.classList.add("error");
+
+        status.textContent =
+            "دریافت نرخ اسعار ناموفق بود";
+
+        liveRates = null;
+
+        return null;
+
     }
 
+}
 
-    const newClient = {
 
-        id:
-            String(
-                Date.now()
-            ),
+/* =========================================================
+   RATE EXTRACTION
+   ---------------------------------------------------------
+   این بخش عمداً انعطاف‌پذیر است تا API اگر نام ارزها
+   را به شکل USD / dollar / usdBuy / ... برگرداند،
+   بتواند مقدار را پیدا کند.
+========================================================= */
 
-        name:
-            name,
+function getRateForCurrency(currency){
 
-        transactions:
-            []
+    if(currency === "AFN"){
+        return 1;
+    }
+
+    if(!liveRates){
+        return null;
+    }
+
+    const aliases = {
+
+        USD:[
+            "USD",
+            "usd",
+            "dollar",
+            "dollars",
+            "دلار"
+        ],
+
+        EUR:[
+            "EUR",
+            "eur",
+            "euro",
+            "euros",
+            "یورو"
+        ],
+
+        IRR:[
+            "IRR",
+            "irr",
+            "rial",
+            "iranRial",
+            "ریال"
+        ],
+
+        TOMAN:[
+            "TOMAN",
+            "toman",
+            "IRAN_TOMAN",
+            "تومان"
+        ],
+
+        JPY:[
+            "JPY",
+            "jpy",
+            "yen",
+            "ین"
+        ],
+
+        TRY:[
+            "TRY",
+            "try",
+            "lira",
+            "turkishLira",
+            "لیر"
+        ],
+
+        SAR:[
+            "SAR",
+            "sar",
+            "saudiRiyal",
+            "ریال سعودی"
+        ],
+
+        AED:[
+            "AED",
+            "aed",
+            "dirham",
+            "درهم"
+        ],
+
+        GBP:[
+            "GBP",
+            "gbp",
+            "pound",
+            "پوند"
+        ],
+
+        CAD:[
+            "CAD",
+            "cad"
+        ],
+
+        AUD:[
+            "AUD",
+            "aud"
+        ],
+
+        CHF:[
+            "CHF",
+            "chf"
+        ],
+
+        INR:[
+            "INR",
+            "inr",
+            "rupee",
+            "روپیه"
+        ],
+
+        PKR:[
+            "PKR",
+            "pkr"
+        ],
+
+        CNY:[
+            "CNY",
+            "cny",
+            "yuan",
+            "یوان"
+        ],
+
+        RUB:[
+            "RUB",
+            "rub",
+            "ruble",
+            "روبل"
+        ]
 
     };
 
-
-    appData.clients.push(
-        newClient
-    );
-
-
-    const saved =
-        await saveData();
-
-
-    if(!saved){
-
-        return;
-    }
-
-
-    closeModal(
-        'client-add-modal'
-    );
-
-
-    renderDashboard();
-
-
-    toast(
-        'مشتری اضافه شد'
-    );
-
-
-    /*
-       بعد از ساخت مشتری،
-       مستقیماً پنجره ثبت معامله
-       برای همان مشتری باز می‌شود.
-    */
-
-    setTimeout(()=>{
-
-        openTransactionForClient(
-            newClient.id
+    const found =
+        findCurrencyValue(
+            liveRates,
+            aliases[currency] || [currency]
         );
 
-    },250);
+    if(found === null){
+        return null;
+    }
+
+    /*
+       اگر API عدد را مستقیماً به صورت AFN برای یک واحد ارز
+       برگرداند، همین مقدار استفاده می‌شود.
+
+       برای تومان/ریال، شکل واقعی API تعیین‌کننده است.
+    */
+
+    return Number(found);
+
 }
 
 
 /* =========================================================
-   HOME
+   RECURSIVE API VALUE FINDER
 ========================================================= */
 
-function goHome(){
+function findCurrencyValue(
+    object,
+    aliases
+){
 
-    window.location.href =
-        'index.html';
+    if(
+        object === null ||
+        object === undefined
+    ){
+
+        return null;
+
+    }
+
+    if(
+        typeof object !== "object"
+    ){
+
+        return null;
+
+    }
+
+    for(
+        const key of Object.keys(object)
+    ){
+
+        const value =
+            object[key];
+
+        const normalizedKey =
+            normalizeKey(key);
+
+        for(
+            const alias of aliases
+        ){
+
+            const normalizedAlias =
+                normalizeKey(alias);
+
+            if(
+                normalizedKey ===
+                normalizedAlias
+            ){
+
+                const number =
+                    extractNumber(value);
+
+                if(number !== null){
+                    return number;
+                }
+
+            }
+
+        }
+
+    }
+
+    for(
+        const key of Object.keys(object)
+    ){
+
+        const value =
+            object[key];
+
+        if(
+            value &&
+            typeof value === "object"
+        ){
+
+            const result =
+                findCurrencyValue(
+                    value,
+                    aliases
+                );
+
+            if(result !== null){
+                return result;
+            }
+
+        }
+
+    }
+
+    return null;
+
+}
+
+
+function extractNumber(value){
+
+    if(typeof value === "number"){
+
+        return Number.isFinite(value)
+            ? value
+            : null;
+
+    }
+
+    if(typeof value === "string"){
+
+        const cleaned =
+            value
+                .replace(/,/g,"")
+                .replace(/[^\d.-]/g,"");
+
+        if(!cleaned){
+            return null;
+        }
+
+        const n =
+            Number(cleaned);
+
+        return Number.isFinite(n)
+            ? n
+            : null;
+
+    }
+
+    if(
+        value &&
+        typeof value === "object"
+    ){
+
+        const possibleKeys = [
+            "rate",
+            "value",
+            "price",
+            "sell",
+            "buy",
+            "afn",
+            "AFN",
+            "rateAfn",
+            "afnRate"
+        ];
+
+        for(
+            const key of possibleKeys
+        ){
+
+            if(
+                value[key] !== undefined
+            ){
+
+                const n =
+                    extractNumber(
+                        value[key]
+                    );
+
+                if(n !== null){
+                    return n;
+                }
+
+            }
+
+        }
+
+    }
+
+    return null;
+
+}
+
+
+function normalizeKey(key){
+
+    return String(key)
+        .trim()
+        .toLowerCase()
+        .replace(/[\s_-]/g,"");
+
+}
+
+
+/* =========================================================
+   CALCULATE
+========================================================= */
+
+function calculateTransaction(){
+
+    const currency =
+        document.getElementById(
+            "transactionCurrency"
+        ).value;
+
+    const amount =
+        Number(
+            document.getElementById(
+                "transactionAmount"
+            ).value
+        ) || 0;
+
+    const rate =
+        getRateForCurrency(currency);
+
+    const rateDisplay =
+        document.getElementById(
+            "rateDisplay"
+        );
+
+    const totalDisplay =
+        document.getElementById(
+            "afnTotal"
+        );
+
+    const saveButton =
+        document.getElementById(
+            "saveTransactionBtn"
+        );
+
+    if(rate === null){
+
+        rateDisplay.textContent =
+            "دریافت نشد";
+
+        totalDisplay.textContent =
+            "—";
+
+        saveButton.disabled = true;
+
+        return;
+
+    }
+
+    saveButton.disabled = false;
+
+    rateDisplay.textContent =
+        `${formatNumber(rate)} AFN`;
+
+    const total =
+        calculateAFN(
+            amount,
+            rate,
+            currency
+        );
+
+    totalDisplay.textContent =
+        `${formatNumber(total)} AFN`;
+
+}
+
+
+function calculateAFN(
+    amount,
+    rate,
+    currency
+){
+
+    if(currency === "AFN"){
+        return amount;
+    }
+
+    return amount * rate;
+
+}
+
+
+/* =========================================================
+   MODALS
+========================================================= */
+
+function openModal(id){
+
+    const modal =
+        document.getElementById(id);
+
+    if(!modal) return;
+
+    modal.classList.add("show");
+
+    document.body.style.overflow =
+        "hidden";
+
+}
+
+
+function closeModal(id){
+
+    const modal =
+        document.getElementById(id);
+
+    if(!modal) return;
+
+    modal.classList.remove("show");
+
+    if(
+        !document.querySelector(
+            ".modal-overlay.show"
+        )
+    ){
+
+        document.body.style.overflow =
+            "";
+
+    }
+
+}
+
+
+/* =========================================================
+   CONFIRM
+========================================================= */
+
+function openConfirm(
+    title,
+    message,
+    callback
+){
+
+    document.getElementById(
+        "confirmTitle"
+    ).textContent = title;
+
+    document.getElementById(
+        "confirmMessage"
+    ).innerHTML = message;
+
+    confirmCallback = callback;
+
+    document.getElementById(
+        "confirmButton"
+    ).onclick = async () => {
+
+        closeModal("confirmModal");
+
+        if(confirmCallback){
+
+            const cb =
+                confirmCallback;
+
+            confirmCallback = null;
+
+            await cb();
+
+        }
+
+    };
+
+    openModal("confirmModal");
+
+}
+
+
+/* =========================================================
+   CLOSE MODAL WHEN CLICK OUTSIDE
+========================================================= */
+
+document
+    .querySelectorAll(".modal-overlay")
+    .forEach(overlay => {
+
+        overlay.addEventListener(
+            "click",
+            event => {
+
+                if(event.target === overlay){
+
+                    closeModal(
+                        overlay.id
+                    );
+
+                }
+
+            }
+        );
+
+    });
+
+
+/* =========================================================
+   DATE
+========================================================= */
+
+function setToday(){
+
+    const input =
+        document.getElementById(
+            "transactionDate"
+        );
+
+    if(!input.value){
+
+        const now =
+            new Date();
+
+        const year =
+            now.getFullYear();
+
+        const month =
+            String(
+                now.getMonth() + 1
+            ).padStart(2,"0");
+
+        const day =
+            String(
+                now.getDate()
+            ).padStart(2,"0");
+
+        input.value =
+            `${year}-${month}-${day}`;
+
+    }
+
+}
+
+
+function formatDate(dateString){
+
+    if(!dateString){
+        return "بدون تاریخ";
+    }
+
+    try{
+
+        const date =
+            new Date(
+                dateString + "T00:00:00"
+            );
+
+        return new Intl.DateTimeFormat(
+            "fa-AF",
+            {
+                year:"numeric",
+                month:"2-digit",
+                day:"2-digit"
+            }
+        ).format(date);
+
+    }catch(e){
+
+        return dateString;
+
+    }
+
 }
 
 
@@ -3033,114 +3126,142 @@ function goHome(){
    LOGOUT
 ========================================================= */
 
-async function logoutUser(){
+async function logout(){
 
-    await supabaseClient
-        .auth
-        .signOut();
+    try{
 
+        await supabaseClient.auth.signOut();
 
-    window.location.href =
-        'index.html';
+        window.location.href =
+            "index.html";
+
+    }catch(error){
+
+        console.error(error);
+
+        showToast(
+            "خروج انجام نشد",
+            "error"
+        );
+
+    }
+
 }
 
 
 /* =========================================================
-   TODAY
+   TOAST
 ========================================================= */
 
-function getToday(){
-
-    const d =
-        new Date();
-
-
-    const y =
-        d.getFullYear();
-
-
-    const m =
-        String(
-            d.getMonth()+1
-        ).padStart(2,'0');
-
-
-    const day =
-        String(
-            d.getDate()
-        ).padStart(2,'0');
-
-
-    return `${y}-${m}-${day}`;
-}
-
-
-/* =========================================================
-   DATE DISPLAY
-========================================================= */
-
-function formatDateDisplay(
-    dateValue
+function showToast(
+    message,
+    type = ""
 ){
 
-    if(!dateValue){
-
-        return '';
-    }
-
-
-    const d =
-        new Date(
-            dateValue +
-            'T00:00:00'
+    const container =
+        document.getElementById(
+            "toastContainer"
         );
 
+    const toast =
+        document.createElement("div");
 
-    if(isNaN(d.getTime())){
+    toast.className =
+        `toast ${type}`;
 
-        return dateValue;
-    }
+    toast.textContent =
+        message;
 
+    container.appendChild(toast);
 
-    return new Intl.DateTimeFormat(
-        'fa-AF',
-        {
-            year:'numeric',
-            month:'2-digit',
-            day:'2-digit'
-        }
-    ).format(d);
+    setTimeout(() => {
+
+        toast.style.opacity = "0";
+        toast.style.transform =
+            "translateY(-8px)";
+
+        setTimeout(
+            () => toast.remove(),
+            200
+        );
+
+    },2800);
+
 }
 
 
 /* =========================================================
-   ESCAPE HTML
+   HELPERS
 ========================================================= */
 
-function escapeHTML(value){
+function createId(){
 
-    return String(value ?? '')
-        .replace(
-            /&/g,
-            '&amp;'
-        )
-        .replace(
-            /</g,
-            '&lt;'
-        )
-        .replace(
-            />/g,
-            '&gt;'
-        )
-        .replace(
-            /"/g,
-            '&quot;'
-        )
-        .replace(
-            /'/g,
-            '&#039;'
-        );
+    return (
+        Date.now().toString(36) +
+        Math.random()
+            .toString(36)
+            .substring(2,10)
+    );
+
 }
+
+
+function formatNumber(number){
+
+    if(
+        number === null ||
+        number === undefined ||
+        !Number.isFinite(
+            Number(number)
+        )
+    ){
+
+        return "0";
+
+    }
+
+    return Number(number)
+        .toLocaleString(
+            "en-US",
+            {
+                maximumFractionDigits:8
+            }
+        );
+
+}
+
+
+function escapeHtml(value){
+
+    return String(value ?? "")
+        .replace(/&/g,"&amp;")
+        .replace(/</g,"&lt;")
+        .replace(/>/g,"&gt;")
+        .replace(/"/g,"&quot;")
+        .replace(/'/g,"&#039;");
+
+}
+
+
+function escapeAttribute(value){
+
+    return escapeHtml(value);
+
+}
+
+
+/* =========================================================
+   PERIODIC RATE UPDATE
+========================================================= */
+
+setInterval(
+    async () => {
+
+        await refreshRates();
+
+    },
+    60000
+);
 
 
 /* =========================================================
@@ -3148,61 +3269,22 @@ function escapeHTML(value){
 ========================================================= */
 
 document.addEventListener(
-    'keydown',
-    (e)=>{
+    "keydown",
+    event => {
 
-        if(e.key === 'Escape'){
+        if(event.key === "Escape"){
 
             document
                 .querySelectorAll(
-                    '.modal.show'
+                    ".modal-overlay.show"
                 )
-                .forEach(
-                    modal =>
-                        modal.classList.remove(
-                            'show'
-                        )
-                );
+                .forEach(modal => {
 
-            document.body.style.overflow =
-                '';
-        }
+                    closeModal(modal.id);
 
-    }
-);
-
-
-/* =========================================================
-   SUPABASE AUTH STATE
-========================================================= */
-
-supabaseClient
-.auth
-.onAuthStateChange(
-    (event,session)=>{
-
-        if(
-            event === 'SIGNED_OUT'
-        ){
-
-            window.location.href =
-                'index.html';
+                });
 
         }
-
-    }
-);
-
-
-/* =========================================================
-   START
-========================================================= */
-
-window.addEventListener(
-    'DOMContentLoaded',
-    ()=>{
-
-        loadData();
 
     }
 );
