@@ -1,4 +1,4 @@
-const CACHE_NAME = 'sarrafi-v3'; // نسخه رو عوض کردیم تا کش قبلی پاک بشه
+const CACHE_NAME = 'daily-accounting-v4';// نسخه رو عوض کردیم تا کش قبلی پاک بشه
 
 self.addEventListener('install', (event) => {
     self.skipWaiting();
