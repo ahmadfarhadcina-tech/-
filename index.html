@@ -1143,7 +1143,6 @@ button:active{
 
 <div id="toast"></div>
 
-
 <script>
 (function(){
 
@@ -1177,7 +1176,6 @@ button:active{
 
 })();
 </script>
-
 
 <script>
 
@@ -1333,6 +1331,14 @@ let authInitialized=false;
 let loggedInPageInitializing=false;
 
 
+/*
+=========================================================
+ جلوگیری از اجرای همزمان چند Refresh نرخ
+=========================================================
+*/
+let ratesRefreshPromise=null;
+
+
 const translations={
 
  en:{
@@ -1474,7 +1480,6 @@ const translations={
   yesDelete:'نعم، حذف',
   location:'الموقع',
   detecting:'جار التحديد...',
-  online:'متصل',
   signIn:'تسجيل الدخول',
   register:'إنشاء حساب جديد',
   createAccount:'إنشاء حساب جديد',
@@ -1609,7 +1614,7 @@ const translations={
   rateUnavailable:'Kur mevcut değil',
   accountDeleted:'Hesap silindi.',
   transactionDeleted:'İşlem silindi.',
-  accountCreated:'Hesap başarıyla oluşturuldu.',
+  accountCreated:'Account başarıyla oluşturuldu.',
   verificationSent:'Doğrulama kodu gönderildi.',
   codeSentAgain:'Kod tekrar gönderildi.',
   invalidCode:'Geçersiz kod.',
@@ -2965,10 +2970,6 @@ function convertTransactionToSelectedCurrency(tx){
 
  }
 
- /*
-  اگر API جدید sarafi-api.js در دسترس باشد،
-  ابتدا از تابع خودش استفاده می‌کنیم.
- */
  try{
 
   if(
@@ -3010,9 +3011,6 @@ function convertTransactionToSelectedCurrency(tx){
 
  }
 
- /*
-  fallback بر اساس نرخ AFN
- */
  const afnAmount=
   getAFNTransactionAmount(tx);
 
@@ -3077,12 +3075,6 @@ function getEquivalentToSelectedCurrency(tx){
 
 }
 
-
-/*
-=========================================================
- مقدار AFN را به ارز انتخاب‌شده تبدیل می‌کند
-=========================================================
-*/
 
 function convertAFNToSelectedCurrency(amount){
 
@@ -3389,11 +3381,6 @@ function renderTransaction(tx,index,clientId){
 
  }
 
- /*
-  نمایش AFN قدیمی را نگه می‌داریم تا اطلاعات
-  قبلی از بین نرود، اما فقط وقتی ارز انتخاب‌شده
-  AFN نیست و معامله نیز غیر AFN است.
- */
  let afnText='';
 
  if(
@@ -4111,11 +4098,6 @@ function getRate(code){
   return 1;
  }
 
- /*
-  نرخ‌ها AFN-base هستند:
-  1 USD = X AFN
-  1 JPY = Y AFN
- */
  return normalizeRateValue(
   rates[normalized]
  );
@@ -4143,6 +4125,8 @@ function getRateToSelectedCurrency(fromCode){
 
  /*
   اول از API جدید استفاده می‌کنیم.
+  این تابع در sarafi-api.js باید synchronous باشد
+  و از cache زنده استفاده کند.
  */
  try{
 
@@ -4157,14 +4141,38 @@ function getRateToSelectedCurrency(fromCode){
      selected
     );
 
+   /*
+    فقط مقدار عددی معتبر قبول می‌شود.
+    Promise یا object پذیرفته نمی‌شود.
+   */
    if(
-    liveRate!==null&&
-    liveRate!==undefined&&
-    Number.isFinite(Number(liveRate))&&
-    Number(liveRate)>0
+    typeof liveRate==='number'&&
+    Number.isFinite(liveRate)&&
+    liveRate>0
    ){
 
-    return Number(liveRate);
+    return liveRate;
+
+   }
+
+   if(
+    typeof liveRate==='string'&&
+    liveRate.trim()!==''
+   ){
+
+    const parsed=
+     Number(
+      liveRate
+     );
+
+    if(
+     Number.isFinite(parsed)&&
+     parsed>0
+    ){
+
+     return parsed;
+
+    }
 
    }
 
@@ -4179,6 +4187,9 @@ function getRateToSelectedCurrency(fromCode){
 
  }
 
+ /*
+  fallback بر اساس نرخ‌های AFN-base
+ */
  const fromRate=
   getRate(from);
 
@@ -4231,10 +4242,6 @@ function getPreferredRateCurrencies(){
  const selected=
   getSelectedCurrency().code;
 
- /*
-  ارز انتخاب‌شده همیشه در محاسبات پایه است،
-  اما خودش در لیست به‌عنوان 1 نمایش داده نمی‌شود.
- */
  const preferred=[
 
   'USD',
@@ -4290,10 +4297,6 @@ function getPreferredRateCurrencies(){
 
  ];
 
- /*
-  اگر ارز کشور در لیست بالا نبود، خودش را
-  به ابتدای لیست اضافه می‌کنیم.
- */
  if(
   selected&&
   !preferred.includes(selected)
@@ -4308,50 +4311,29 @@ function getPreferredRateCurrencies(){
 }
 
 
+/*
+=========================================================
+ FIX:
+ این تابع باید کاملاً synchronous باشد.
+ قبلاً getSarafiRatesForSelectedCurrency()
+ ممکن بود Promise برگرداند و Promise به‌عنوان object
+ پذیرفته می‌شد؛ در نتیجه Object.keys(Promise)
+ خالی بود و Rate unavailable نمایش داده می‌شد.
+=========================================================
+*/
+
 function getAvailableCurrenciesForSelectedBase(){
 
  const selected=
   getSelectedCurrency().code;
 
- /*
-  اگر نسخه جدید API قابلیت دریافت ارزها را داشته باشد،
-  از آن استفاده می‌کنیم.
- */
- try{
-
-  if(
-   window.CinaSarafi &&
-   typeof window.CinaSarafi.getSarafiRatesForSelectedCurrency==='function'
-  ){
-
-   const live=
-    window.CinaSarafi.getSarafiRatesForSelectedCurrency();
-
-   if(
-    live&&
-    typeof live==='object'
-   ){
-
-    return live;
-
-   }
-
-  }
-
- }catch(error){
-
-  console.warn(
-   'Selected rates list:',
-   error
-  );
-
- }
-
  const output={};
 
  getPreferredRateCurrencies().forEach(function(code){
 
-  if(code===selected){
+  if(
+   code===selected
+  ){
 
    return;
 
@@ -4362,10 +4344,12 @@ function getAvailableCurrenciesForSelectedBase(){
 
   if(
    rate!==null&&
-   rate>0
+   rate!==undefined&&
+   Number.isFinite(Number(rate))&&
+   Number(rate)>0
   ){
 
-   output[code]=rate;
+   output[code]=Number(rate);
 
   }
 
@@ -4405,10 +4389,11 @@ function renderRates(){
  }
 
  /*
-  ارز پایه انتخاب‌شده را در ابتدای ردیف نشان می‌دهیم.
+  ارز پایه کشور انتخاب‌شده
  */
  const baseItem=`
   <div class="rate-item">
+
    <span class="rate-flag">
     ${escapeHtml(getSelectedCountryFlag())}
    </span>
@@ -4420,6 +4405,7 @@ function renderRates(){
    <span style="color:#9ca3af">
     BASE
    </span>
+
   </div>
  `;
 
@@ -4435,7 +4421,9 @@ function renderRates(){
     value===null||
     value<=0
    ){
+
     return '';
+
    }
 
    return`
@@ -4471,6 +4459,116 @@ function renderRates(){
  updated.innerText='● LIVE';
 
  container.appendChild(updated);
+
+}
+
+
+/*
+=========================================================
+ Refresh امن و واحد برای نرخ‌های زنده
+=========================================================
+*/
+
+async function refreshLiveRates(){
+
+ if(ratesRefreshPromise){
+
+  return ratesRefreshPromise;
+
+ }
+
+ ratesRefreshPromise=
+  (async function(){
+
+   try{
+
+    if(
+     window.CinaSarafi &&
+     typeof window.CinaSarafi.refreshSarafiRates==='function'
+    ){
+
+     const result=
+      await window.CinaSarafi.refreshSarafiRates();
+
+     /*
+      اگر refresh مقدار نرخ‌ها را برگرداند،
+      همان را نیز در cache صفحه قرار می‌دهیم.
+     */
+     if(
+      result&&
+      typeof result==='object'&&
+      !Array.isArray(result)
+     ){
+
+      const extracted=
+       collectCurrencyRates(
+        result,
+        {}
+       );
+
+      if(
+       Object.keys(extracted).length>0
+      ){
+
+       extracted.AFN=1;
+       rates=extracted;
+       ratesLoaded=true;
+
+      }
+
+     }
+
+    }else{
+
+     await readSarafiRates();
+
+    }
+
+   }catch(error){
+
+    console.error(
+     'refreshLiveRates:',
+     error
+    );
+
+    /*
+     اگر Refresh شکست خورد،
+     نرخ‌های cache شده را از بین نمی‌بریم.
+     */
+    if(
+     !rates||
+     typeof rates!=='object'
+    ){
+
+     rates={
+      AFN:1
+     };
+
+    }
+
+    ratesError=true;
+
+   }
+
+   renderRates();
+
+   if(currentUser){
+    renderDashboard();
+   }
+
+   return rates;
+
+  })();
+
+ try{
+
+  return await ratesRefreshPromise;
+
+ }finally{
+
+  ratesRefreshPromise=null;
+
+ }
 
 }
 
@@ -4513,7 +4611,8 @@ window.addEventListener(
 
     if(
      incoming&&
-     typeof incoming==='object'
+     typeof incoming==='object'&&
+     !Array.isArray(incoming)
     ){
 
      const extracted=
@@ -4530,6 +4629,7 @@ window.addEventListener(
 
       rates=extracted;
       ratesLoaded=true;
+      ratesError=false;
 
      }
 
@@ -4549,13 +4649,12 @@ window.addEventListener(
    renderDashboard();
   }
 
- }
-);
+ });
 
 
 /*
 =========================================================
- تغییر کشور / ارز از translator.js
+ تغییر ارز
 =========================================================
 */
 
@@ -4597,23 +4696,17 @@ window.addEventListener(
 
   syncGlobalTranslator();
   updateHeader();
+
+  /*
+   ابتدا UI را با اطلاعات جدید به‌روز می‌کنیم،
+   سپس نرخ زنده را Refresh می‌کنیم.
+  */
   renderRates();
   renderDashboard();
 
   try{
 
-   if(
-    window.CinaSarafi &&
-    typeof window.CinaSarafi.refreshSarafiRates==='function'
-   ){
-
-    await window.CinaSarafi.refreshSarafiRates();
-
-   }else{
-
-    await updateRates();
-
-   }
+   await refreshLiveRates();
 
   }catch(error){
 
@@ -4631,9 +4724,16 @@ window.addEventListener(
 );
 
 
+/*
+=========================================================
+ FIX:
+ تغییر کشور هم باید نرخ زنده را Refresh کند.
+=========================================================
+*/
+
 window.addEventListener(
  'dailyAccountingCountryChanged',
- function(event){
+ async function(event){
 
   try{
 
@@ -4641,8 +4741,11 @@ window.addEventListener(
     event?.detail||{};
 
    if(detail.countryCode){
+
     userProfile.countryCode=
-     detail.countryCode;
+     String(detail.countryCode)
+      .toUpperCase();
+
    }
 
    if(detail.countryName){
@@ -4656,9 +4759,11 @@ window.addEventListener(
    }
 
    if(detail.currencyCode){
+
     userProfile.currencyCode=
      String(detail.currencyCode)
       .toUpperCase();
+
    }
 
    if(detail.currencyName){
@@ -4682,11 +4787,32 @@ window.addEventListener(
 
   syncGlobalTranslator();
   updateHeader();
+
+  /*
+   مهم:
+   دیگر فقط renderRates نمی‌کنیم.
+   اول نرخ زنده را تازه می‌کنیم.
+  */
   renderRates();
   renderDashboard();
 
- }
-);
+  try{
+
+   await refreshLiveRates();
+
+  }catch(error){
+
+   console.error(
+    'Country rates refresh:',
+    error
+   );
+
+  }
+
+  renderRates();
+  renderDashboard();
+
+ });
 
 
 window.addEventListener(
@@ -4844,8 +4970,7 @@ window.addEventListener(
 
   }
 
- }
-);
+ });
 
 
 function startCloudPolling(){
