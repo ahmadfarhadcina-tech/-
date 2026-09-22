@@ -11,8 +11,9 @@
 
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script src="sarafi-api.js"></script>
-   <style>
- :root{
+
+<style>
+:root{
  --primary:#7c3aed;
  --primary-dark:#6d28d9;
  --bg:#f7f7f9;
@@ -47,6 +48,61 @@ body{
  min-height:100vh;
  overflow-x:hidden;
 }
+
+/* =========================
+   AUTH STARTUP GATE
+   جلوگیری از نمایش لحظه‌ای Login
+========================= */
+
+#auth-gate{
+ position:fixed;
+ inset:0;
+ background:#f7f7f9;
+ display:flex;
+ align-items:center;
+ justify-content:center;
+ flex-direction:column;
+ z-index:99999;
+ transition:opacity .18s ease;
+}
+
+#auth-gate.hidden{
+ opacity:0;
+ pointer-events:none;
+ visibility:hidden;
+}
+
+.auth-gate-logo{
+ width:58px;
+ height:58px;
+ border-radius:17px;
+ background:var(--primary);
+ color:#fff;
+ display:flex;
+ align-items:center;
+ justify-content:center;
+ font-size:25px;
+ font-weight:bold;
+ box-shadow:0 8px 25px #7c3aed35;
+ margin-bottom:16px;
+}
+
+.auth-gate-spinner{
+ width:22px;
+ height:22px;
+ border:2px solid #e5e7eb;
+ border-top-color:var(--primary);
+ border-radius:50%;
+ animation:spin .7s linear infinite;
+}
+
+.auth-gate-text{
+ margin-top:10px;
+ color:#9ca3af;
+ font-size:10px;
+}
+
+/* ========================= */
 
 .app{
  width:100%;
@@ -169,8 +225,16 @@ header h1{
 .rate-item{
  display:flex;
  align-items:center;
- gap:4px;
+ gap:5px;
  flex-shrink:0;
+}
+
+.rate-flag{
+ font-size:14px;
+ line-height:1;
+ display:inline-flex;
+ align-items:center;
+ justify-content:center;
 }
 
 .rate-code{
@@ -343,7 +407,7 @@ button:active{
 }
 
 /* =========================
-   DASHBOARD TOP
+   DASHBOARD
 ========================= */
 
 .dashboard-top{
@@ -469,7 +533,7 @@ button:active{
 }
 
 /* =========================
-   TRANSACTIONS INSIDE CARD
+   TRANSACTIONS
 ========================= */
 
 .transactions{
@@ -675,6 +739,7 @@ button:active{
 
 /* =========================
    BOTTOM NAV
+   فقط Home + Transactions
 ========================= */
 
 .bottom-nav{
@@ -694,7 +759,7 @@ button:active{
 }
 
 .nav-item{
- width:33.333%;
+ width:50%;
  height:100%;
  background:transparent;
  color:#9ca3af;
@@ -715,27 +780,6 @@ button:active{
 
 .nav-item.active{
  color:var(--primary);
-}
-
-.nav-profile-avatar{
- width:22px;
- height:22px;
- border-radius:50%;
- object-fit:cover;
- display:flex;
- align-items:center;
- justify-content:center;
- background:#e5e7eb;
- color:#6b7280;
- font-size:10px;
- overflow:hidden;
- border:1px solid #dfe3e8;
-}
-
-.nav-profile-avatar img{
- width:100%;
- height:100%;
- object-fit:cover;
 }
 
 /* =========================
@@ -923,10 +967,22 @@ button:active{
  }
 
 }
- </style>
+</style>
 </head>
 
 <body>
+
+<!--
+  این صفحه تا زمانی که Supabase وضعیت Session را مشخص کند
+  روی Login/Signup را می‌پوشاند.
+  بنابراین Login برای یک لحظه هم فلش نمی‌زند.
+-->
+<div id="auth-gate">
+ <div class="auth-gate-logo">D</div>
+ <div class="auth-gate-spinner"></div>
+ <div class="auth-gate-text">Checking account...</div>
+</div>
+
 
 <div class="app">
 
@@ -938,6 +994,7 @@ button:active{
 
  <div class="header-controls">
 
+  <!-- پروفایل بالایی باقی مانده -->
   <div id="profile-badge"
        class="profile-badge"
        onclick="goProfile()">
@@ -1161,6 +1218,10 @@ button:active{
 </button>
 
 
+<!--
+  پروفایل از Bottom Navigation حذف شد.
+  فقط Home و Transactions باقی هستند.
+-->
 <nav id="bottom-nav"
      class="bottom-nav"
      style="display:none">
@@ -1188,23 +1249,6 @@ button:active{
 
   <span id="nav-transactions-text">
    Transactions
-  </span>
-
- </button>
-
-
- <button
-  id="profile-nav"
-  class="nav-item"
-  onclick="goProfile()">
-
-  <div id="nav-profile-avatar"
-       class="nav-profile-avatar">
-   U
-  </div>
-
-  <span id="nav-profile-text">
-   Profile
   </span>
 
  </button>
@@ -1308,6 +1352,14 @@ let refreshTimer=null;
 let ratesTimer=null;
 
 let lastCloudSignature='';
+
+/*
+  مهم:
+  جلوگیری از اجرای دوباره initializeLoggedInPage
+  در زمان شروع Auth.
+*/
+let authInitialized=false;
+let loggedInPageInitializing=false;
 
 
 /* =========================================================
@@ -1546,6 +1598,40 @@ function currencySymbol(code){
 
 
 /* =========================================================
+   CURRENCY FLAGS
+========================================================= */
+
+function currencyFlag(code){
+
+ const flags={
+  AFN:'🇦🇫',
+  USD:'🇺🇸',
+  EUR:'🇪🇺',
+  PKR:'🇵🇰',
+  IRR:'🇮🇷',
+  TRY:'🇹🇷',
+  CNY:'🇨🇳',
+  INR:'🇮🇳',
+  AED:'🇦🇪',
+  SAR:'🇸🇦',
+  GBP:'🇬🇧',
+  JPY:'🇯🇵',
+  RUB:'🇷🇺',
+  CAD:'🇨🇦',
+  AUD:'🇦🇺',
+  TOMAN:'🇮🇷'
+ };
+
+ return flags[
+  String(code||'')
+   .trim()
+   .toUpperCase()
+ ] || '🌐';
+
+}
+
+
+/* =========================================================
    THEME
 ========================================================= */
 
@@ -1757,7 +1843,7 @@ async function verifySignupCode(){
       code
      })
     }
-   );
+  );
 
   const data=await res.json();
 
@@ -1950,11 +2036,11 @@ async function loadDataFromSupabase(){
    data,
    error
   }=
-   await supabaseClient
-    .from('exchange_users')
-    .select('*')
-    .eq('user_id',currentUser.id)
-    .maybeSingle();
+  await supabaseClient
+   .from('exchange_users')
+   .select('*')
+   .eq('user_id',currentUser.id)
+   .maybeSingle();
 
   if(error){
 
@@ -2057,14 +2143,14 @@ async function saveDataToSupabase(){
   const {
    error
   }=
-   await supabaseClient
-    .from('exchange_users')
-    .upsert(
-     payload,
-     {
-      onConflict:'user_id'
-     }
-    );
+  await supabaseClient
+   .from('exchange_users')
+   .upsert(
+    payload,
+    {
+     onConflict:'user_id'
+    }
+   );
 
   if(error){
 
@@ -2157,37 +2243,17 @@ function updateHeader(){
 
 
 /* =========================================================
-   PROFILE NAV
+   PROFILE DATA
+   نگه داشته شده چون profile.html از آن استفاده می‌کند.
 ========================================================= */
 
 function updateNavigationProfile(){
 
- const nav=
-  document.getElementById(
-   'nav-profile-avatar'
-  );
-
- const name=
-  userProfile.name||
-  (
-   currentUser?.email
-    ? currentUser.email.split('@')[0]
-    : 'U'
-  );
-
- if(userProfile.avatar){
-
-  nav.innerHTML=
-   `<img
-     src="${escapeHtml(userProfile.avatar)}"
-     alt="Profile">`;
-
- }else{
-
-  nav.innerText=
-   name.charAt(0).toUpperCase();
-
- }
+ /*
+   Bottom Profile حذف شده،
+   اما این تابع را نگه داشتیم تا profile data
+   و سازگاری سایر صفحات خراب نشود.
+ */
 
 }
 
@@ -2258,10 +2324,6 @@ function goHome(){
 
  document
   .getElementById('transactions-nav')
-  .classList.remove('active');
-
- document
-  .getElementById('profile-nav')
   .classList.remove('active');
 
  renderDashboard();
@@ -2336,32 +2398,10 @@ function renderDashboard(){
 
 
 /* =========================================================
-   IMPORTANT:
-   NORMALIZE TRANSACTION DIRECTION
+   TRANSACTION DIRECTION
 ========================================================= */
 
 function getTransactionKind(tx){
-
- /*
-   پشتیبانی از تمام ساختارهایی که
-   ممکن است transactions.html ذخیره کرده باشد.
-
-   مثبت:
-   in
-   credit
-   Credit
-   receive
-   received
-
-   منفی:
-   out
-   debit
-   Debit
-   pay
-   paid
-   send
-   sent
- */
 
  const direction=
   String(
@@ -2404,11 +2444,6 @@ function getTransactionKind(tx){
 
  }
 
- /*
-   اگر direction مشخص نبود،
-   از signedAmount / amountInBase استفاده می‌کنیم.
- */
-
  const signedCandidates=[
   tx?.signedAmountInBase,
   tx?.signedAmount,
@@ -2440,12 +2475,6 @@ function getTransactionKind(tx){
   }
 
  }
-
- /*
-   آخرین fallback:
-   اگر amountInBase منفی باشد،
-   معامله منفی است.
- */
 
  const base=
   Number(
@@ -3058,12 +3087,6 @@ async function deleteTransaction(
 
  if(!client) return;
 
- /*
-   قبلاً confirm() استفاده شده بود.
-   این نسخه همان modal کارت را برای حذف
-   معامله نیز استفاده می‌کند.
- */
-
  const confirmed=
   window.confirm(
    lang()==='fa'
@@ -3230,17 +3253,6 @@ function detectRealLocation(){
    SARAFI API
 ========================================================= */
 
-/*
-   نکته:
-   sarafi-api.js فعلی تو این تابع را دارد:
-
-   getSarafiRates()
-
-   پس دیگر دنبال getRates یا exchangeRates
-   نمی‌گردیم و مستقیماً همین تابع را صدا می‌زنیم.
-*/
-
-
 function normalizeRateValue(value){
 
  if(
@@ -3276,11 +3288,6 @@ function normalizeRateValue(value){
 
 }
 
-
-/*
-   این تابع حتی اگر API ساختارهای مختلفی
-   داشته باشد، تلاش می‌کند ارزها را پیدا کند.
-*/
 
 function extractRatesObject(result){
 
@@ -3337,11 +3344,6 @@ function collectCurrencyRates(
      .trim()
      .toUpperCase();
 
-   /*
-     حالت:
-     USD: 67.5
-   */
-
    const direct=
     normalizeRateValue(value);
 
@@ -3353,14 +3355,6 @@ function collectCurrencyRates(
     output[code]=direct;
 
    }
-
-   /*
-     حالت:
-     USD: {
-       buy: 67,
-       sell: 68
-     }
-   */
 
    if(
     value &&
@@ -3378,10 +3372,6 @@ function collectCurrencyRates(
      output[code]=nestedRate;
 
     }
-
-    /*
-      اگر داخل آبجکت currency/code وجود داشت
-    */
 
     const nestedCode=
      String(
@@ -3434,11 +3424,6 @@ async function readSarafiRates(){
   const result=
    await window.getSarafiRates();
 
-  /*
-    اگر Worker فعلی Hello World بدهد،
-    JSON نیست و اینجا مشخص می‌شود.
-  */
-
   if(
    typeof result!=='object' ||
    result===null
@@ -3472,16 +3457,7 @@ async function readSarafiRates(){
     {}
    );
 
-  /*
-    AFN همیشه 1 است.
-  */
-
   extracted.AFN=1;
-
-  /*
-    فقط وقتی واقعاً نرخ پیدا شده باشد،
-    rates را جایگزین می‌کنیم.
-  */
 
   if(
    Object.keys(extracted).length>1
@@ -3532,7 +3508,7 @@ function getRate(code){
 
 
 /* =========================================================
-   RENDER RATES
+   RENDER RATES + FLAGS
 ========================================================= */
 
 function renderRates(){
@@ -3564,11 +3540,6 @@ function renderRates(){
    code=>getRate(code)!==null
   );
 
- /*
-   اگر API خراب باشد، Loading بی‌نهایت
-   نشان نمی‌دهیم.
- */
-
  if(!available.length){
 
   container.innerHTML=
@@ -3591,6 +3562,12 @@ function renderRates(){
 
     return `
      <div class="rate-item">
+
+      <span
+       class="rate-flag"
+       title="${escapeHtml(code)}">
+       ${currencyFlag(code)}
+      </span>
 
       <span class="rate-code">
        ${escapeHtml(code)}
@@ -3909,13 +3886,6 @@ function applyLanguage(){
 
  document
   .getElementById(
-   'nav-profile-text'
-  )
-  .innerText=
-  t('profile');
-
- document
-  .getElementById(
    'logout-btn'
   )
   .innerText=
@@ -3954,78 +3924,181 @@ function updateNavigation(){
 
 
 /* =========================================================
-   INITIALIZE
+   AUTH GATE
 ========================================================= */
 
-async function initializeLoggedInPage(){
+function hideAuthGate(){
 
- showPage();
+ const gate=
+  document.getElementById(
+   'auth-gate'
+  );
 
- applyLanguage();
+ if(!gate) return;
 
- updateNavigation();
-
- updateHeader();
-
- updateNavigationProfile();
-
- await updateRates();
-
- detectRealLocation();
-
- startRealtime();
-
- startCloudPolling();
-
- renderDashboard();
+ gate.classList.add('hidden');
 
  /*
-   نرخ‌ها هر ۱۵ ثانیه دوباره گرفته می‌شوند.
+   بعد از transition کاملاً از جریان خارج می‌شود.
  */
-
- if(ratesTimer){
-
-  clearInterval(
-   ratesTimer
-  );
-
- }
-
- ratesTimer=
-  setInterval(
-   updateRates,
-   15000
-  );
+ setTimeout(()=>{
+  gate.style.display='none';
+ },220);
 
 }
 
 
+function showAuthGate(){
+
+ const gate=
+  document.getElementById(
+   'auth-gate'
+  );
+
+ if(!gate) return;
+
+ gate.style.display='flex';
+
+ requestAnimationFrame(()=>{
+  gate.classList.remove('hidden');
+ });
+
+}
+
+
+/* =========================================================
+   INITIALIZE LOGGED IN PAGE
+========================================================= */
+
+async function initializeLoggedInPage(){
+
+ if(!currentUser) return;
+
+ if(loggedInPageInitializing) return;
+
+ loggedInPageInitializing=true;
+
+ try{
+
+  showPage();
+
+  applyLanguage();
+
+  updateNavigation();
+
+  updateHeader();
+
+  updateNavigationProfile();
+
+  /*
+    نرخ‌ها جدا از Auth هستند.
+    صفحه Login برای Session معتبر اصلاً باز نمی‌شود.
+  */
+  updateRates();
+
+  detectRealLocation();
+
+  startRealtime();
+
+  startCloudPolling();
+
+  renderDashboard();
+
+  if(ratesTimer){
+
+   clearInterval(ratesTimer);
+
+  }
+
+  ratesTimer=
+   setInterval(
+    updateRates,
+    15000
+   );
+
+ }finally{
+
+  loggedInPageInitializing=false;
+
+ }
+
+}
+
+
+/* =========================================================
+   INITIALIZE
+   نسخه جدید:
+   اول Session را مشخص می‌کنیم.
+   نرخ ارز باعث تأخیر Login/Auth نمی‌شود.
+========================================================= */
+
 async function initialize(){
 
+ showAuthGate();
+
  /*
-   نرخ‌ها حتی قبل از Login هم خوانده می‌شوند.
+   Auth را فوراً بررسی می‌کنیم.
+   دیگر await updateRates() قبل از getSession نداریم.
  */
+ try{
 
- await updateRates();
+  const {
+   data,
+   error
+  }=
+   await supabaseClient.auth
+    .getSession();
 
- const {
-  data
- }=
-  await supabaseClient.auth
-   .getSession();
+  if(error){
 
- if(data.session?.user){
+   console.error(
+    'Supabase session:',
+    error
+   );
 
-  currentUser=
-   data.session.user;
+   currentUser=null;
 
-  await loadDataFromSupabase();
+   showLogin();
 
-  await initializeLoggedInPage();
+  }else if(data.session?.user){
 
- }else{
+   currentUser=
+    data.session.user;
+
+   await loadDataFromSupabase();
+
+   await initializeLoggedInPage();
+
+  }else{
+
+   currentUser=null;
+
+   showLogin();
+
+  }
+
+ }catch(error){
+
+  console.error(
+   'Initialization:',
+   error
+  );
+
+  currentUser=null;
 
   showLogin();
+
+ }finally{
+
+  authInitialized=true;
+
+  hideAuthGate();
+
+  /*
+    نرخ‌ها در پس‌زمینه بارگذاری می‌شوند
+    و باعث فلش Login نمی‌شوند.
+  */
+  updateRates();
 
  }
 
@@ -4039,10 +4112,28 @@ async function initialize(){
 supabaseClient.auth.onAuthStateChange(
  async function(event,session){
 
-  if(
-   session?.user &&
-   !currentUser
-  ){
+  /*
+    هنگام boot اولیه، initialize() مسئول
+    راه‌اندازی صفحه است.
+  */
+  if(!authInitialized){
+   return;
+  }
+
+  if(session?.user){
+
+   /*
+     اگر Login دستی یا OTP انجام شده باشد،
+     currentUser قبلاً تنظیم شده است.
+   */
+   if(
+    currentUser?.id===
+    session.user.id
+   ){
+
+    return;
+
+   }
 
    currentUser=
     session.user;
@@ -4051,21 +4142,50 @@ supabaseClient.auth.onAuthStateChange(
 
    await initializeLoggedInPage();
 
+   return;
   }
 
-  if(
-   !session &&
-   currentUser
-  ){
+  /*
+    Logout
+   */
+  if(!session){
 
    currentUser=null;
+
+   if(realtimeChannel){
+
+    try{
+     await supabaseClient
+      .removeChannel(
+       realtimeChannel
+      );
+    }catch(e){}
+
+    realtimeChannel=null;
+
+   }
+
+   if(refreshTimer){
+
+    clearInterval(refreshTimer);
+
+    refreshTimer=null;
+
+   }
+
+   if(ratesTimer){
+
+    clearInterval(ratesTimer);
+
+    ratesTimer=null;
+
+   }
 
    showLogin();
 
   }
 
- }
-);
+ });
 
 
 /* =========================================================
