@@ -51,7 +51,6 @@ body{
 
 /* =========================
    AUTH STARTUP GATE
-   جلوگیری از نمایش لحظه‌ای Login
 ========================= */
 
 #auth-gate{
@@ -607,6 +606,23 @@ button:active{
  color:var(--red);
 }
 
+/* مبلغ اصلی معامله */
+.tx-original{
+ font-size:10px;
+ font-weight:bold;
+ direction:ltr;
+ white-space:nowrap;
+}
+
+/* ارزش تبدیل شده به افغانی */
+.tx-afn{
+ font-size:8px;
+ color:#9ca3af;
+ direction:ltr;
+ white-space:nowrap;
+ margin-top:-1px;
+}
+
 .tx-dates{
  display:flex;
  flex-wrap:wrap;
@@ -972,17 +988,11 @@ button:active{
 
 <body>
 
-<!--
-  این صفحه تا زمانی که Supabase وضعیت Session را مشخص کند
-  روی Login/Signup را می‌پوشاند.
-  بنابراین Login برای یک لحظه هم فلش نمی‌زند.
--->
 <div id="auth-gate">
  <div class="auth-gate-logo">D</div>
  <div class="auth-gate-spinner"></div>
  <div class="auth-gate-text">Checking account...</div>
 </div>
-
 
 <div class="app">
 
@@ -994,7 +1004,6 @@ button:active{
 
  <div class="header-controls">
 
-  <!-- پروفایل بالایی باقی مانده -->
   <div id="profile-badge"
        class="profile-badge"
        onclick="goProfile()">
@@ -1018,7 +1027,6 @@ button:active{
 
 </header>
 
-
 <div class="rates" id="rates">
 
  <span id="rates-status">
@@ -1027,11 +1035,9 @@ button:active{
 
 </div>
 
-
 <div class="location-status" id="location-status">
  📍 Location: Detecting...
 </div>
-
 
 <main>
 
@@ -1052,7 +1058,6 @@ button:active{
 
   </div>
 
-
   <div class="group" id="email-group">
 
    <label id="email-label">
@@ -1066,7 +1071,6 @@ button:active{
     autocomplete="email">
 
   </div>
-
 
   <div class="group" id="password-group">
 
@@ -1082,7 +1086,6 @@ button:active{
 
   </div>
 
-
   <button
    id="signin-btn"
    class="primary"
@@ -1090,14 +1093,12 @@ button:active{
    Sign In
   </button>
 
-
   <button
    id="signup-btn"
    onclick="handleSignUp()"
    style="background:transparent;border:1px solid var(--primary);color:var(--primary);margin-top:12px">
    Create New Account
   </button>
-
 
   <div id="otp-section"
        style="display:none;margin-top:20px">
@@ -1123,7 +1124,6 @@ button:active{
 
    </div>
 
-
    <div class="group">
 
     <label id="otp-label">
@@ -1140,7 +1140,6 @@ button:active{
 
    </div>
 
-
    <button
     id="verify-otp-btn"
     class="primary"
@@ -1148,14 +1147,12 @@ button:active{
     Verify Code
    </button>
 
-
    <button
     id="resend-otp-btn"
     class="secondary"
     onclick="resendSignupCode()">
     Resend Code
    </button>
-
 
    <button
     id="back-signup-btn"
@@ -1169,7 +1166,6 @@ button:active{
  </div>
 
 </section>
-
 
 <section id="dashboard-page"
          class="page"
@@ -1190,7 +1186,6 @@ button:active{
 
  </div>
 
-
  <div id="accounts-list"
       class="accounts">
 
@@ -1208,7 +1203,6 @@ button:active{
 
 </main>
 
-
 <button
  id="fab"
  class="fab"
@@ -1217,11 +1211,6 @@ button:active{
  +
 </button>
 
-
-<!--
-  پروفایل از Bottom Navigation حذف شد.
-  فقط Home و Transactions باقی هستند.
--->
 <nav id="bottom-nav"
      class="bottom-nav"
      style="display:none">
@@ -1239,7 +1228,6 @@ button:active{
 
  </button>
 
-
  <button
   id="transactions-nav"
   class="nav-item"
@@ -1256,7 +1244,6 @@ button:active{
 </nav>
 
 </div>
-
 
 <div id="delete-modal"
      class="modal-backdrop">
@@ -1291,9 +1278,7 @@ button:active{
 
 </div>
 
-
 <div id="toast"></div>
-
 
 <script>
 
@@ -1353,12 +1338,8 @@ let ratesTimer=null;
 
 let lastCloudSignature='';
 
-/*
-  مهم:
-  جلوگیری از اجرای دوباره initializeLoggedInPage
-  در زمان شروع Auth.
-*/
 let authInitialized=false;
+
 let loggedInPageInitializing=false;
 
 
@@ -2242,18 +2223,7 @@ function updateHeader(){
 }
 
 
-/* =========================================================
-   PROFILE DATA
-   نگه داشته شده چون profile.html از آن استفاده می‌کند.
-========================================================= */
-
 function updateNavigationProfile(){
-
- /*
-   Bottom Profile حذف شده،
-   اما این تابع را نگه داشتیم تا profile data
-   و سازگاری سایر صفحات خراب نشود.
- */
 
 }
 
@@ -2498,17 +2468,19 @@ function getTransactionKind(tx){
 
 
 /* =========================================================
-   GET ABSOLUTE AMOUNT
+   ORIGINAL TRANSACTION AMOUNT
+   مهم:
+   اولویت با rawAmount/amount است، نه amountInBase
 ========================================================= */
 
-function getTransactionAmount(tx){
+function getOriginalTransactionAmount(tx){
 
  const candidates=[
-  tx?.amountInBase,
-  tx?.totalAFN,
-  tx?.amountAFN,
+  tx?.rawAmount,
   tx?.amount,
-  tx?.rawAmount
+  tx?.originalAmount,
+  tx?.amountOriginal,
+  tx?.value
  ];
 
  for(const value of candidates){
@@ -2520,20 +2492,78 @@ function getTransactionAmount(tx){
   ){
 
    const n=
-    safeNumber(
-     Math.abs(
-      Number(
-       String(value)
-        .replace(/,/g,'')
-     )
-    )
-   );
+    Number(
+     String(value)
+      .replace(/,/g,'')
+      .replace(/[^\d.-]/g,'')
+    );
 
-   if(n>0){
-    return n;
+   if(Number.isFinite(n)){
+    return Math.abs(n);
    }
 
   }
+
+ }
+
+ return 0;
+
+}
+
+
+/* =========================================================
+   AFN CONVERTED AMOUNT
+========================================================= */
+
+function getAFNTransactionAmount(tx){
+
+ const candidates=[
+  tx?.totalAFN,
+  tx?.amountInBase,
+  tx?.amountAFN,
+  tx?.afnAmount,
+  tx?.convertedAFN
+ ];
+
+ for(const value of candidates){
+
+  if(
+   value!==undefined &&
+   value!==null &&
+   value!==''
+  ){
+
+   const n=
+    Number(
+     String(value)
+      .replace(/,/g,'')
+      .replace(/[^\d.-]/g,'')
+    );
+
+   if(Number.isFinite(n)){
+    return Math.abs(n);
+   }
+
+  }
+
+ }
+
+ /*
+   برای معاملات قدیمی که مقدار تبدیل‌شده ندارند:
+   اگر ارز AFN باشد، همان مقدار اصلی AFN است.
+ */
+ const currency=
+  String(
+   tx?.currency ||
+   tx?.currencyCode ||
+   'AFN'
+  )
+  .trim()
+  .toUpperCase();
+
+ if(currency==='AFN'){
+
+  return getOriginalTransactionAmount(tx);
 
  }
 
@@ -2560,7 +2590,7 @@ function renderClientCard(client){
  transactions.forEach(tx=>{
 
   const amount=
-   getTransactionAmount(tx);
+   getAFNTransactionAmount(tx);
 
   const kind=
    getTransactionKind(tx);
@@ -2618,7 +2648,6 @@ function renderClientCard(client){
 
    </div>
 
-
    <div class="card-menu">
 
     <button
@@ -2626,7 +2655,6 @@ function renderClientCard(client){
      onclick="toggleClientMenu('${escapeHtml(client.id)}')">
      ⋮
     </button>
-
 
     <div
      id="menu-${escapeHtml(client.id)}"
@@ -2646,7 +2674,6 @@ function renderClientCard(client){
 
   </div>
 
-
   <div class="client-balance">
 
    <div class="balance-box">
@@ -2661,7 +2688,6 @@ function renderClientCard(client){
 
    </div>
 
-
    <div class="balance-box">
 
     <div class="balance-label">
@@ -2673,7 +2699,6 @@ function renderClientCard(client){
     </div>
 
    </div>
-
 
    <div class="balance-box">
 
@@ -2699,7 +2724,6 @@ function renderClientCard(client){
 
   </div>
 
-
   ${
    transactions.length
     ? `
@@ -2719,6 +2743,7 @@ function renderClientCard(client){
 
 /* =========================================================
    TRANSACTION
+   مقدار اصلی ارز و AFN کاملاً جدا
 ========================================================= */
 
 function renderTransaction(
@@ -2740,15 +2765,19 @@ function renderTransaction(
    ? t('credit')
    : t('debit');
 
- const amount=
-  getTransactionAmount(tx);
+ const originalAmount=
+  getOriginalTransactionAmount(tx);
+
+ const afnAmount=
+  getAFNTransactionAmount(tx);
 
  const currency=
   String(
    tx.currency ||
    tx.currencyCode ||
    'AFN'
-  ).toUpperCase();
+  )
+  .toUpperCase();
 
  const sign=
   type==='credit'
@@ -2757,6 +2786,14 @@ function renderTransaction(
 
  const dates=
   getTransactionDates(tx);
+
+ const originalText=
+  `${sign}${formatMoney(originalAmount)} ${currencySymbol(currency)} ${currency}`;
+
+ const afnText=
+  currency==='AFN'
+   ? ''
+   : `≈ ${formatMoney(afnAmount)} AFN`;
 
  return `
 
@@ -2776,18 +2813,25 @@ function renderTransaction(
 
    </div>
 
+   <div style="text-align:right">
 
-   <div class="tx-amount ${type}">
+    <div class="tx-original ${type}">
+     ${escapeHtml(originalText)}
+    </div>
 
-    ${sign}
-    ${formatMoney(amount)}
-    ${escapeHtml(currencySymbol(currency))}
-    ${escapeHtml(currency)}
+    ${
+     afnText
+      ? `
+       <div class="tx-afn">
+        ${escapeHtml(afnText)}
+       </div>
+      `
+      : ''
+    }
 
    </div>
 
   </div>
-
 
   <div class="tx-dates">
 
@@ -2805,7 +2849,6 @@ function renderTransaction(
 
   </div>
 
-
   <div class="tx-actions">
 
    <button
@@ -2815,7 +2858,6 @@ function renderTransaction(
     ✏️ ${escapeHtml(t('edit'))}
 
    </button>
-
 
    <button
     class="tx-action delete-btn"
@@ -2913,7 +2955,6 @@ function formatDates(date){
   }catch(e2){}
 
  }
-
 
  try{
 
@@ -3585,7 +3626,6 @@ function renderRates(){
    })
    .join('');
 
-
  const updated=
   document.createElement('span');
 
@@ -3938,9 +3978,6 @@ function hideAuthGate(){
 
  gate.classList.add('hidden');
 
- /*
-   بعد از transition کاملاً از جریان خارج می‌شود.
- */
  setTimeout(()=>{
   gate.style.display='none';
  },220);
@@ -3990,10 +4027,6 @@ async function initializeLoggedInPage(){
 
   updateNavigationProfile();
 
-  /*
-    نرخ‌ها جدا از Auth هستند.
-    صفحه Login برای Session معتبر اصلاً باز نمی‌شود.
-  */
   updateRates();
 
   detectRealLocation();
@@ -4027,19 +4060,12 @@ async function initializeLoggedInPage(){
 
 /* =========================================================
    INITIALIZE
-   نسخه جدید:
-   اول Session را مشخص می‌کنیم.
-   نرخ ارز باعث تأخیر Login/Auth نمی‌شود.
 ========================================================= */
 
 async function initialize(){
 
  showAuthGate();
 
- /*
-   Auth را فوراً بررسی می‌کنیم.
-   دیگر await updateRates() قبل از getSession نداریم.
- */
  try{
 
   const {
@@ -4094,10 +4120,6 @@ async function initialize(){
 
   hideAuthGate();
 
-  /*
-    نرخ‌ها در پس‌زمینه بارگذاری می‌شوند
-    و باعث فلش Login نمی‌شوند.
-  */
   updateRates();
 
  }
@@ -4112,20 +4134,12 @@ async function initialize(){
 supabaseClient.auth.onAuthStateChange(
  async function(event,session){
 
-  /*
-    هنگام boot اولیه، initialize() مسئول
-    راه‌اندازی صفحه است.
-  */
   if(!authInitialized){
    return;
   }
 
   if(session?.user){
 
-   /*
-     اگر Login دستی یا OTP انجام شده باشد،
-     currentUser قبلاً تنظیم شده است.
-   */
    if(
     currentUser?.id===
     session.user.id
@@ -4145,9 +4159,6 @@ supabaseClient.auth.onAuthStateChange(
    return;
   }
 
-  /*
-    Logout
-   */
   if(!session){
 
    currentUser=null;
