@@ -343,6 +343,7 @@ button:active,
  align-items:center;
  justify-content:space-between;
  font-size:10px;
+ gap:8px;
 }
 
 .client-balance.positive{
@@ -364,6 +365,7 @@ button:active,
  font-weight:bold;
  direction:ltr;
  font-size:10px;
+ text-align:left;
 }
 
 /* =========================================================
@@ -707,6 +709,7 @@ button:active,
  font-weight:bold;
  font-size:12px;
  color:var(--primary);
+ text-align:left;
 }
 
 .afn-total{
@@ -716,6 +719,7 @@ button:active,
  display:flex;
  justify-content:space-between;
  align-items:center;
+ gap:8px;
 }
 
 .afn-total span{
@@ -727,6 +731,29 @@ button:active,
  direction:ltr;
  font-size:14px;
  color:var(--primary-dark);
+ text-align:left;
+}
+
+.base-equivalent{
+ margin-top:6px;
+ padding-top:6px;
+ border-top:1px dashed #ddd2f0;
+ display:flex;
+ justify-content:space-between;
+ align-items:center;
+ gap:8px;
+}
+
+.base-equivalent span{
+ font-size:9px;
+ color:#6b7280;
+}
+
+.base-equivalent strong{
+ direction:ltr;
+ font-size:14px;
+ color:var(--primary-dark);
+ text-align:left;
 }
 
 .modal-actions{
@@ -1230,8 +1257,8 @@ button:active,
 
             <div class="rate-result-top">
 
-                <span class="rate-label" data-i18n="todayRate">
-                    نرخ امروز به افغانی
+                <span class="rate-label" id="rateLabel">
+                    نرخ امروز
                 </span>
 
                 <strong class="rate-number" id="rateDisplay">—</strong>
@@ -1239,10 +1266,21 @@ button:active,
             </div>
 
 
+            <div class="base-equivalent">
+
+                <span id="baseEquivalentLabel">
+                    معادل ارز کشور
+                </span>
+
+                <strong id="baseTotal">—</strong>
+
+            </div>
+
+
             <div class="afn-total">
 
-                <span data-i18n="transactionValueAFN">
-                    ارزش معامله به افغانی
+                <span id="afnTotalLabel">
+                    ارزش ثبت‌شده به افغانی
                 </span>
 
                 <strong id="afnTotal">0 AFN</strong>
@@ -1330,23 +1368,14 @@ button:active,
 </div>
 
 
+<!-- =========================================================
+     BOTTOM NAV
+     خانه اول / معاملات دوم
+========================================================= -->
+
 <nav class="bottom-nav">
 
     <div class="nav-inner">
-
-        <a
-            class="nav-item active"
-            href="transactions.html"
-        >
-
-            <span class="nav-icon">⇄</span>
-
-            <span data-i18n="transactions">
-                معاملات
-            </span>
-
-        </a>
-
 
         <a
             class="nav-item"
@@ -1357,6 +1386,20 @@ button:active,
 
             <span data-i18n="home">
                 خانه
+            </span>
+
+        </a>
+
+
+        <a
+            class="nav-item active"
+            href="transactions.html"
+        >
+
+            <span class="nav-icon">⇄</span>
+
+            <span data-i18n="transactions">
+                معاملات
             </span>
 
         </a>
@@ -1481,9 +1524,395 @@ function applyPageLanguage(){
 }
 
 
+/* =========================================================
+   SELECTED COUNTRY BASE CURRENCY
+========================================================= */
+
+function getSelectedBaseCurrency(){
+
+    try{
+
+        if(
+            window.DailyTranslator &&
+            typeof window.DailyTranslator.getBaseCurrency ===
+            "function"
+        ){
+
+            const value =
+                window.DailyTranslator.getBaseCurrency();
+
+            if(
+                typeof value === "string" &&
+                value.trim()
+            ){
+
+                return value
+                    .trim()
+                    .toUpperCase();
+
+            }
+
+            if(
+                value &&
+                typeof value === "object"
+            ){
+
+                const code =
+                    value.code ||
+                    value.currency ||
+                    value.currencyCode;
+
+                if(code){
+
+                    return String(code)
+                        .trim()
+                        .toUpperCase();
+
+                }
+
+            }
+
+        }
+
+    }catch(error){
+
+        console.warn(
+            "Base currency error:",
+            error
+        );
+
+    }
+
+
+    try{
+
+        if(
+            window.DailyTranslator &&
+            typeof window.DailyTranslator.getCurrencyCode ===
+            "function"
+        ){
+
+            const code =
+                window.DailyTranslator.getCurrencyCode();
+
+            if(code){
+
+                return String(code)
+                    .trim()
+                    .toUpperCase();
+
+            }
+
+        }
+
+    }catch(error){
+
+        console.warn(
+            "Currency code error:",
+            error
+        );
+
+    }
+
+
+    return "AFN";
+
+}
+
+
+function getSelectedBaseCurrencyName(){
+
+    const code =
+        getSelectedBaseCurrency();
+
+    const names = {
+
+        AFN:"افغانی",
+        USD:"دلار",
+        EUR:"یورو",
+        IRR:"ریال ایران",
+        TRY:"لیر ترکیه",
+        SAR:"ریال سعودی",
+        AED:"درهم امارات",
+        GBP:"پوند",
+        CAD:"دلار کانادا",
+        AUD:"دلار استرالیا",
+        CHF:"فرانک سوئیس",
+        INR:"روپیه هند",
+        PKR:"روپیه پاکستان",
+        CNY:"یوان چین",
+        RUB:"روبل روسیه",
+        JPY:"ین ژاپن",
+        TOMAN:"تومان"
+
+    };
+
+    return names[code] || code;
+
+}
+
+
+/* =========================================================
+   LIVE CROSS-CURRENCY RATE
+========================================================= */
+
+function getLiveRate(
+    fromCurrency,
+    toCurrency
+){
+
+    const from =
+        String(
+            fromCurrency || "AFN"
+        )
+        .trim()
+        .toUpperCase();
+
+    const to =
+        String(
+            toCurrency ||
+            getSelectedBaseCurrency()
+        )
+        .trim()
+        .toUpperCase();
+
+
+    if(from === to){
+
+        return 1;
+
+    }
+
+
+    if(
+        window.CinaSarafi &&
+        typeof window.CinaSarafi.getSarafiRate ===
+        "function"
+    ){
+
+        try{
+
+            const rate =
+                window.CinaSarafi.getSarafiRate(
+                    from,
+                    to
+                );
+
+            if(
+                rate !== null &&
+                Number.isFinite(
+                    Number(rate)
+                ) &&
+                Number(rate) > 0
+            ){
+
+                return Number(rate);
+
+            }
+
+        }catch(error){
+
+            console.warn(
+                "CinaSarafi cross-rate error:",
+                error
+            );
+
+        }
+
+    }
+
+
+    if(!liveRates){
+
+        return null;
+
+    }
+
+
+    const fromRate =
+        from === "AFN"
+            ? 1
+            : getRateForCurrency(
+                from
+            );
+
+    const toRate =
+        to === "AFN"
+            ? 1
+            : getRateForCurrency(
+                to
+            );
+
+
+    if(
+        fromRate === null ||
+        toRate === null ||
+        !Number.isFinite(
+            Number(fromRate)
+        ) ||
+        !Number.isFinite(
+            Number(toRate)
+        ) ||
+        Number(fromRate) <= 0 ||
+        Number(toRate) <= 0
+    ){
+
+        return null;
+
+    }
+
+
+    /*
+      API مبنا را AFN دارد:
+
+      1 USD = X AFN
+      1 EUR = Y AFN
+
+      بنابراین:
+
+      1 USD به IRR =
+      USD_AFN / IRR_AFN
+    */
+
+    return Number(fromRate) /
+           Number(toRate);
+
+}
+
+
+/* =========================================================
+   LIVE CONVERSION
+========================================================= */
+
+function convertLiveCurrency(
+    amount,
+    fromCurrency,
+    toCurrency
+){
+
+    const number =
+        Number(amount);
+
+    if(
+        !Number.isFinite(number)
+    ){
+
+        return null;
+
+    }
+
+
+    const rate =
+        getLiveRate(
+            fromCurrency,
+            toCurrency
+        );
+
+
+    if(
+        rate === null ||
+        !Number.isFinite(rate)
+    ){
+
+        return null;
+
+    }
+
+
+    return number * rate;
+
+}
+
+
+/* =========================================================
+   COUNTRY/CURRENCY UI
+========================================================= */
+
+function updateCurrencyInterface(){
+
+    const base =
+        getSelectedBaseCurrency();
+
+    const baseName =
+        getSelectedBaseCurrencyName();
+
+
+    const rateLabel =
+        document.getElementById(
+            "rateLabel"
+        );
+
+    if(rateLabel){
+
+        rateLabel.textContent =
+            `${pageT(
+                "todayRate",
+                "نرخ امروز"
+            )} به ${base}`;
+
+    }
+
+
+    const equivalentLabel =
+        document.getElementById(
+            "baseEquivalentLabel"
+        );
+
+    if(equivalentLabel){
+
+        equivalentLabel.textContent =
+            `${pageT(
+                "equivalent",
+                "معادل"
+            )} ${baseName} (${base})`;
+
+    }
+
+
+    const afnLabel =
+        document.getElementById(
+            "afnTotalLabel"
+        );
+
+    if(afnLabel){
+
+        afnLabel.textContent =
+            pageT(
+                "transactionValueAFN",
+                "ارزش ثبت‌شده به افغانی"
+            );
+
+    }
+
+
+    const status =
+        document.getElementById(
+            "rateStatus"
+        );
+
+    if(
+        status &&
+        liveRates
+    ){
+
+        status.textContent =
+            `${pageT(
+                "ratesOnline",
+                "نرخ اسعار آنلاین است"
+            )} • ${base}`;
+
+    }
+
+}
+
+
+/* =========================================================
+   SETTINGS EVENTS
+========================================================= */
+
 window.addEventListener(
     "storage",
-    event => {
+    async event => {
 
         if(
             event.key ===
@@ -1491,6 +1920,10 @@ window.addEventListener(
         ){
 
             applyPageLanguage();
+
+            updateCurrencyInterface();
+
+            await refreshRates();
 
             renderClients();
 
@@ -1502,11 +1935,51 @@ window.addEventListener(
 
 window.addEventListener(
     "dailyAccountingSettingsChanged",
-    () => {
+    async () => {
 
         applyPageLanguage();
 
+        updateCurrencyInterface();
+
+        await refreshRates();
+
         renderClients();
+
+    }
+);
+
+
+window.addEventListener(
+    "dailyAccountingCurrencyChanged",
+    async () => {
+
+        applyPageLanguage();
+
+        updateCurrencyInterface();
+
+        await refreshRates();
+
+        renderClients();
+
+        calculateTransaction();
+
+    }
+);
+
+
+window.addEventListener(
+    "dailyAccountingCountryChanged",
+    async () => {
+
+        applyPageLanguage();
+
+        updateCurrencyInterface();
+
+        await refreshRates();
+
+        renderClients();
+
+        calculateTransaction();
 
     }
 );
@@ -1549,11 +2022,17 @@ document.addEventListener(
 
         applyPageLanguage();
 
+        updateCurrencyInterface();
+
         setToday();
 
         await checkAuth();
 
         await refreshRates();
+
+        updateCurrencyInterface();
+
+        renderClients();
 
     }
 );
@@ -1942,7 +2421,7 @@ function renderClient(client){
             ? client.transactions
             : [];
 
-    let balance = 0;
+    let balanceAFN = 0;
 
     transactions.forEach(
         tx => {
@@ -1957,16 +2436,28 @@ function renderClient(client){
                 tx.direction === "in"
             ){
 
-                balance += value;
+                balanceAFN += value;
 
             }else{
 
-                balance -= value;
+                balanceAFN -= value;
 
             }
 
         }
     );
+
+
+    const baseCurrency =
+        getSelectedBaseCurrency();
+
+
+    const balanceBase =
+        convertLiveCurrency(
+            balanceAFN,
+            "AFN",
+            baseCurrency
+        );
 
 
     let balanceClass =
@@ -1979,7 +2470,7 @@ function renderClient(client){
         );
 
 
-    if(balance > 0.000001){
+    if(balanceAFN > 0.000001){
 
         balanceClass =
             "positive";
@@ -1991,7 +2482,7 @@ function renderClient(client){
             );
 
     }else if(
-        balance < -0.000001
+        balanceAFN < -0.000001
     ){
 
         balanceClass =
@@ -2014,6 +2505,14 @@ function renderClient(client){
             .trim()
             .charAt(0)
         );
+
+
+    const balanceDisplay =
+        balanceBase === null
+            ? `— ${escapeHtml(baseCurrency)}`
+            : `${formatNumber(
+                Math.abs(balanceBase)
+            )} ${escapeHtml(baseCurrency)}`;
 
 
     const transactionsHTML =
@@ -2111,10 +2610,7 @@ function renderClient(client){
                 </span>
 
                 <span class="balance-value">
-                    ${formatNumber(
-                        Math.abs(balance)
-                    )}
-                    AFN
+                    ${balanceDisplay}
                 </span>
 
             </div>
@@ -2163,7 +2659,10 @@ function renderTransaction(
         isIn ? "↓" : "↑";
 
     const currency =
-        tx.currency || "AFN";
+        String(
+            tx.currency || "AFN"
+        )
+        .toUpperCase();
 
     const amount =
         Number(
@@ -2177,15 +2676,53 @@ function renderTransaction(
         tx.date ||
         "";
 
-    const rate =
+    const afnRate =
         Number(
             tx.rateAtTransaction
         ) || 0;
+
+    const baseCurrency =
+        getSelectedBaseCurrency();
+
+    const equivalent =
+        convertLiveCurrency(
+            amount,
+            currency,
+            baseCurrency
+        );
 
     const note =
         tx.note
             ? escapeHtml(tx.note)
             : "";
+
+
+    let equivalentText;
+
+
+    if(equivalent === null){
+
+        equivalentText =
+            `${pageT(
+                "equivalent",
+                "معادل"
+            )}: — ${escapeHtml(
+                baseCurrency
+            )}`;
+
+    }else{
+
+        equivalentText =
+            `${pageT(
+                "equivalent",
+                "معادل"
+            )}: ${formatNumber(
+                equivalent
+            )} ${escapeHtml(
+                baseCurrency
+            )}`;
+
+    }
 
 
     return `
@@ -2252,19 +2789,18 @@ function renderTransaction(
 
                 <div class="transaction-meta">
 
-                    ${formatNumber(
-                        Number(
-                            tx.totalAFN
-                        ) || 0
-                    )}
-                    AFN
+                    <strong>
+                        ${equivalentText}
+                    </strong>
 
                     ${
-                        rate
+                        afnRate
                             ? ` • ${pageT(
                                 "rate",
                                 "نرخ"
-                            )} ${formatNumber(rate)}`
+                            )} ${formatNumber(
+                                afnRate
+                            )} AFN`
                             : ""
                     }
 
@@ -2539,6 +3075,8 @@ async function openTransactionModal(
 
     setDirection("in");
 
+    updateCurrencyInterface();
+
     openModal(
         "transactionModal"
     );
@@ -2718,6 +3256,8 @@ async function editTransaction(
     );
 
 
+    updateCurrencyInterface();
+
     openModal(
         "transactionModal"
     );
@@ -2744,7 +3284,9 @@ async function saveTransaction(){
     const currency =
         document.getElementById(
             "transactionCurrency"
-        ).value;
+        ).value
+        .trim()
+        .toUpperCase();
 
     const amount =
         Number(
@@ -2812,6 +3354,11 @@ async function saveTransaction(){
     }
 
 
+    /*
+      نرخ AFN همچنان برای سازگاری با
+      اطلاعات قبلی ذخیره می‌شود.
+    */
+
     const rate =
         getRateForCurrency(
             currency
@@ -2860,6 +3407,28 @@ async function saveTransaction(){
     }
 
 
+    /*
+      ارز کشور انتخاب‌شده.
+      اگر API آن ارز را نداشته باشد،
+      amountInSelectedBaseAtTransaction
+      مقدار null خواهد بود و هیچ نرخ ساختگی استفاده نمی‌شود.
+    */
+
+    const selectedBase =
+        getSelectedBaseCurrency();
+
+    const selectedBaseRate =
+        getLiveRate(
+            currency,
+            selectedBase
+        );
+
+    const amountInSelectedBase =
+        selectedBaseRate === null
+            ? null
+            : amount * selectedBaseRate;
+
+
     const tx = {
 
         id:
@@ -2873,14 +3442,26 @@ async function saveTransaction(){
         direction:
             selectedDirection,
 
+        /*
+          ارز اصلی معامله بدون تغییر
+        */
+
         currency:
             currency,
+
+        /*
+          مبلغ اصلی معامله بدون تغییر
+        */
 
         rawAmount:
             amount,
 
         amount:
             amount,
+
+        /*
+          نرخ اصلی AFN برای سازگاری
+        */
 
         rateAtTransaction:
             rate,
@@ -2890,6 +3471,19 @@ async function saveTransaction(){
 
         amountInBase:
             totalAFN,
+
+        /*
+          اطلاعات جدید برای ارز کشور
+        */
+
+        baseCurrencyAtTransaction:
+            selectedBase,
+
+        baseRateAtTransaction:
+            selectedBaseRate,
+
+        amountInSelectedBaseAtTransaction:
+            amountInSelectedBase,
 
         rawDate:
             date,
@@ -3153,20 +3747,42 @@ async function refreshRates(){
 
     try{
 
+        let rates = null;
+
+
+        /*
+          نسخه جدید Sarafi API
+        */
+
         if(
-            typeof getSarafiRates !==
+            window.CinaSarafi &&
+            typeof window.CinaSarafi.refreshSarafiRates ===
             "function"
         ){
 
+            rates =
+                await window.CinaSarafi
+                    .refreshSarafiRates();
+
+        }else if(
+            typeof getSarafiRates ===
+            "function"
+        ){
+
+            /*
+              سازگاری با نسخه قبلی
+            */
+
+            rates =
+                await getSarafiRates();
+
+        }else{
+
             throw new Error(
-                "getSarafiRates() not found"
+                "Sarafi API function not found"
             );
 
         }
-
-
-        const rates =
-            await getSarafiRates();
 
 
         if(!rates){
@@ -3187,11 +3803,18 @@ async function refreshRates(){
         );
 
 
+        const base =
+            getSelectedBaseCurrency();
+
+
         status.textContent =
-            pageT(
+            `${pageT(
                 "ratesOnline",
                 "نرخ اسعار آنلاین است"
-            );
+            )} • ${base}`;
+
+
+        updateCurrencyInterface();
 
 
         const transactionModal =
@@ -3210,6 +3833,9 @@ async function refreshRates(){
             calculateTransaction();
 
         }
+
+
+        renderClients();
 
 
         return rates;
@@ -3239,6 +3865,9 @@ async function refreshRates(){
             null;
 
 
+        renderClients();
+
+
         return null;
 
     }
@@ -3247,12 +3876,20 @@ async function refreshRates(){
 
 
 /* =========================================================
-   GET RATE
+   GET RATE IN AFN
 ========================================================= */
 
 function getRateForCurrency(
     currency
 ){
+
+    currency =
+        String(
+            currency || "AFN"
+        )
+        .trim()
+        .toUpperCase();
+
 
     if(currency === "AFN"){
 
@@ -3396,7 +4033,21 @@ function getRateForCurrency(
     }
 
 
-    return Number(found);
+    const number =
+        Number(found);
+
+
+    if(
+        !Number.isFinite(number) ||
+        number <= 0
+    ){
+
+        return null;
+
+    }
+
+
+    return number;
 
 }
 
@@ -3648,29 +4299,62 @@ function normalizeKey(
 
 function calculateTransaction(){
 
-    const currency =
+    const currencyElement =
         document.getElementById(
             "transactionCurrency"
-        ).value;
+        );
+
+    const amountElement =
+        document.getElementById(
+            "transactionAmount"
+        );
+
+
+    if(!currencyElement || !amountElement){
+
+        return;
+
+    }
+
+
+    const currency =
+        currencyElement.value
+            .trim()
+            .toUpperCase();
 
 
     const amount =
         Number(
-            document.getElementById(
-                "transactionAmount"
-            ).value
+            amountElement.value
         ) || 0;
 
 
-    const rate =
+    const baseCurrency =
+        getSelectedBaseCurrency();
+
+
+    const afnRate =
         getRateForCurrency(
             currency
+        );
+
+
+    const baseRate =
+        getLiveRate(
+            currency,
+            baseCurrency
         );
 
 
     const rateDisplay =
         document.getElementById(
             "rateDisplay"
+        );
+
+
+    const baseTotal =
+        document.getElementById(
+            "baseTotal"
         );
 
 
@@ -3686,7 +4370,11 @@ function calculateTransaction(){
         );
 
 
-    if(rate === null){
+    /*
+      نرخ ارز به ارز کشور انتخاب‌شده
+    */
+
+    if(baseRate === null){
 
         rateDisplay.textContent =
             pageT(
@@ -3695,37 +4383,77 @@ function calculateTransaction(){
             );
 
 
-        totalDisplay.textContent =
-            "—";
+        baseTotal.textContent =
+            `— ${baseCurrency}`;
 
+    }else{
+
+        rateDisplay.textContent =
+            `1 ${currency} = ${formatNumber(
+                baseRate
+            )} ${baseCurrency}`;
+
+
+        const equivalent =
+            amount *
+            baseRate;
+
+
+        baseTotal.textContent =
+            `${formatNumber(
+                equivalent
+            )} ${baseCurrency}`;
+
+    }
+
+
+    /*
+      مقدار AFN همچنان برای سازگاری
+      با داده‌های قدیمی محاسبه می‌شود.
+    */
+
+    if(afnRate === null){
+
+        totalDisplay.textContent =
+            "— AFN";
+
+        /*
+          اگر ارز اصلی غیر AFN باشد
+          و نرخ AFN موجود نباشد، ذخیره
+          معامله طبق رفتار قبلی غیرفعال است.
+        */
 
         saveButton.disabled =
             true;
-
 
         return;
 
     }
 
 
-    saveButton.disabled =
-        false;
-
-
-    rateDisplay.textContent =
-        `${formatNumber(rate)} AFN`;
-
-
     const total =
         calculateAFN(
             amount,
-            rate,
+            afnRate,
             currency
         );
 
 
     totalDisplay.textContent =
-        `${formatNumber(total)} AFN`;
+        `${formatNumber(
+            total
+        )} AFN`;
+
+
+    /*
+      تا زمانی که نرخ AFN وجود داشته باشد،
+      معامله قابل ذخیره است.
+      نبودن نرخ ارز پایه فقط معادل پایه
+      را unavailable می‌کند.
+    */
+
+    saveButton.disabled =
+        false;
 
 }
 
@@ -4219,6 +4947,10 @@ setTimeout(
     () => {
 
         applyPageLanguage();
+
+        updateCurrencyInterface();
+
+        renderClients();
 
     },
     100
