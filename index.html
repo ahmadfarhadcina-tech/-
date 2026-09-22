@@ -50,10 +50,6 @@ body{
  overflow-x:hidden;
 }
 
-/* =========================
-   AUTH STARTUP GATE
-========================= */
-
 #auth-gate{
  position:fixed;
  inset:0;
@@ -101,8 +97,6 @@ body{
  color:#9ca3af;
  font-size:10px;
 }
-
-/* ========================= */
 
 .app{
  width:100%;
@@ -205,10 +199,6 @@ header h1{
  transform:scale(.92);
 }
 
-/* =========================
-   RATES
-========================= */
-
 .rates{
  background:#fff;
  padding:8px 16px;
@@ -267,10 +257,6 @@ header h1{
  font-size:8px;
 }
 
-/* =========================
-   LOCATION
-========================= */
-
 .location-status{
  background:#fafafa;
  color:#9ca3af;
@@ -280,10 +266,6 @@ header h1{
  border-bottom:1px solid #e5e7eb;
  min-height:25px;
 }
-
-/* =========================
-   MAIN
-========================= */
 
 main{
  position:relative;
@@ -412,10 +394,6 @@ button:active{
  margin-bottom:6px;
 }
 
-/* =========================
-   DASHBOARD
-========================= */
-
 .dashboard-top{
  display:flex;
  justify-content:space-between;
@@ -441,10 +419,6 @@ button:active{
  align-items:center;
  justify-content:center;
 }
-
-/* =========================
-   ACCOUNTS
-========================= */
 
 .accounts{
  display:flex;
@@ -537,10 +511,6 @@ button:active{
 .balance-value.debit{
  color:var(--red);
 }
-
-/* =========================
-   TRANSACTIONS
-========================= */
 
 .transactions{
  border-top:1px solid #f0f0f0;
@@ -667,10 +637,6 @@ button:active{
  color:#dc2626;
 }
 
-/* =========================
-   MENU
-========================= */
-
 .card-menu{
  position:relative;
 }
@@ -731,10 +697,6 @@ button:active{
  color:#dc2626;
 }
 
-/* =========================
-   BOTTOM NAV
-========================= */
-
 .bottom-nav{
  position:fixed;
  left:0;
@@ -774,10 +736,6 @@ button:active{
 .nav-item.active{
  color:var(--primary);
 }
-
-/* =========================
-   MODAL
-========================= */
 
 .modal-backdrop{
  position:fixed;
@@ -850,10 +808,6 @@ button:active{
  color:#fff;
 }
 
-/* =========================
-   TOAST
-========================= */
-
 #toast{
  position:fixed;
  left:50%;
@@ -879,10 +833,6 @@ button:active{
  opacity:1;
  transform:translateX(-50%) translateY(0);
 }
-
-/* =========================
-   LOADING
-========================= */
 
 .loading{
  display:flex;
@@ -914,10 +864,6 @@ button:active{
  }
 }
 
-/* =========================
-   CLICK ANIMATION
-========================= */
-
 .click-animation{
  animation:clickPulse .22s ease;
 }
@@ -927,10 +873,6 @@ button:active{
   transform:scale(.96);
  }
 }
-
-/* =========================
-   SMALL PHONES
-========================= */
 
 @media(max-width:380px){
 
@@ -1007,11 +949,9 @@ button:active{
 </header>
 
 <div class="rates" id="rates">
-
  <span id="rates-status" data-i18n="loadingRates">
   🔄 Loading rates...
  </span>
-
 </div>
 
 <div class="location-status" id="location-status">
@@ -1268,8 +1208,130 @@ button:active{
 <script>
 
 /* =========================================================
+   STARTUP PROTECTION
+   این بخش برای جلوگیری از گیر کردن روی Checking account
+   اضافه شده است.
+========================================================= */
+
+window.addEventListener(
+ 'error',
+ function(event){
+
+  console.error(
+   'Global JavaScript error:',
+   event.error || event.message
+  );
+
+  const gateText=
+   document.querySelector(
+    '.auth-gate-text'
+   );
+
+  /*
+   فقط در صورتی پیام خطا را نشان بده که
+   هنوز صفحه در مرحله شروع باشد.
+  */
+  const gate=
+   document.getElementById(
+    'auth-gate'
+   );
+
+  if(
+   gate &&
+   !gate.classList.contains('hidden') &&
+   gateText &&
+   event.message
+  ){
+
+   gateText.textContent=
+    'Error: '+event.message;
+
+  }
+
+ },
+ true
+);
+
+
+window.addEventListener(
+ 'unhandledrejection',
+ function(event){
+
+  console.error(
+   'Unhandled Promise rejection:',
+   event.reason
+  );
+
+  const gate=
+   document.getElementById(
+    'auth-gate'
+   );
+
+  const gateText=
+   document.querySelector(
+    '.auth-gate-text'
+   );
+
+  if(
+   gate &&
+   !gate.classList.contains('hidden') &&
+   gateText
+  ){
+
+   const message=
+    event.reason?.message ||
+    String(
+     event.reason ||
+     'Unknown error'
+    );
+
+   gateText.textContent=
+    'Error: '+message;
+
+  }
+
+ },
+ true
+);
+
+
+/*
+ * هیچ درخواست Supabase نباید بتواند
+ * برای همیشه برنامه را متوقف کند.
+ */
+function withTimeout(
+ promise,
+ milliseconds=10000
+){
+
+ return Promise.race([
+
+  promise,
+
+  new Promise(
+   (_,reject)=>{
+
+    setTimeout(
+     ()=>{
+      reject(
+       new Error(
+        'Request timeout'
+       )
+      );
+     },
+     milliseconds
+    );
+
+   }
+  )
+
+ ]);
+
+}
+
+
+/* =========================================================
    SUPABASE
-   همان Supabase قبلی
 ========================================================= */
 
 const SUPABASE_URL =
@@ -1278,11 +1340,59 @@ const SUPABASE_URL =
 const SUPABASE_KEY =
 'sb_publishable_9pkhkb88LNXJw457Sx8dpA_0E231JwH';
 
-const supabaseClient =
-supabase.createClient(
- SUPABASE_URL,
- SUPABASE_KEY
-);
+
+/*
+ * قبلاً این قسمت مستقیماً
+ *
+ * const supabaseClient =
+ * supabase.createClient(...)
+ *
+ * بود.
+ *
+ * اگر CDN لود نمی‌شد، کل JavaScript متوقف می‌شد
+ * و auth-gate برای همیشه باقی می‌ماند.
+ */
+let supabaseClient=null;
+
+try{
+
+ if(
+  !window.supabase ||
+  typeof window.supabase.createClient!=='function'
+ ){
+
+  throw new Error(
+   'Supabase library did not load.'
+  );
+
+ }
+
+ supabaseClient=
+  window.supabase.createClient(
+   SUPABASE_URL,
+   SUPABASE_KEY
+  );
+
+}catch(error){
+
+ console.error(
+  'Supabase initialization:',
+  error
+ );
+
+ const gateText=
+  document.querySelector(
+   '.auth-gate-text'
+  );
+
+ if(gateText){
+
+  gateText.textContent=
+   'Supabase connection error';
+
+ }
+
+}
 
 
 /* =========================================================
@@ -1304,8 +1414,6 @@ let userProfile={
  avatar:'',
  themeColor:'#7c3aed',
  language:'en',
-
- /* اطلاعات جدید پروفایل */
  countryCode:'AF',
  countryName:'Afghanistan',
  countryFlag:'🇦🇫',
@@ -1649,7 +1757,6 @@ function lang(){
  }
 
  return 'en';
-
 }
 
 
@@ -1657,10 +1764,6 @@ function t(key){
 
  const current=lang();
 
- /*
-  اگر translator.js این کلید را داشته باشد،
-  از ترجمه سراسری استفاده می‌کنیم.
- */
  try{
 
   if(
@@ -1710,45 +1813,34 @@ function syncGlobalTranslator(){
     name:userProfile.name||'',
     phone:userProfile.phone||'',
     avatar:userProfile.avatar||'',
-
     language:userProfile.language||'en',
-
     themeColor:
      userProfile.themeColor||
      '#7c3aed',
-
     countryCode:
      userProfile.countryCode||
      'AF',
-
     countryName:
      userProfile.countryName||
      'Afghanistan',
-
     countryFlag:
      userProfile.countryFlag||
      '🇦🇫',
-
     currencyCode:
      userProfile.currencyCode||
      'AFN',
-
     currencyName:
      userProfile.currencyName||
      'Afghan Afghani',
-
     currencySymbol:
      userProfile.currencySymbol||
      '؋',
-
     state:
      userProfile.state||
      '',
-
     city:
      userProfile.city||
      '',
-
     location:
      userProfile.location||
      ''
@@ -1788,7 +1880,9 @@ function syncGlobalTranslator(){
 function toast(msg){
 
  const e=
-  document.getElementById('toast');
+  document.getElementById(
+   'toast'
+  );
 
  if(!e) return;
 
@@ -2130,6 +2224,14 @@ function setThemeColor(color){
 
 async function handleSignIn(){
 
+ if(!supabaseClient){
+
+  toast('Supabase connection error');
+
+  return;
+
+ }
+
  const email=
   document
    .getElementById('auth-email')
@@ -2148,33 +2250,60 @@ async function handleSignIn(){
   return;
  }
 
- const {
-  data,
-  error
- }=
- await supabaseClient.auth
-  .signInWithPassword({
-   email,
-   password
-  });
+ try{
 
- if(error){
+  const {
+   data,
+   error
+  }=
+  await withTimeout(
+   supabaseClient.auth
+    .signInWithPassword({
+     email,
+     password
+    }),
+   10000
+  );
 
-  toast(error.message);
+  if(error){
 
-  return;
+   toast(error.message);
+
+   return;
+  }
+
+  currentUser=data.user;
+
+  await loadDataFromSupabase();
+
+  await initializeLoggedInPage();
+
+ }catch(error){
+
+  console.error(
+   'Sign in:',
+   error
+  );
+
+  toast(
+   error.message ||
+   'Sign in failed.'
+  );
+
  }
-
- currentUser=data.user;
-
- await loadDataFromSupabase();
-
- await initializeLoggedInPage();
 
 }
 
 
 async function handleSignUp(){
+
+ if(!supabaseClient){
+
+  toast('Supabase connection error');
+
+  return;
+
+ }
 
  const email=
   document
@@ -2196,69 +2325,88 @@ async function handleSignUp(){
   return;
  }
 
- const {
-  data,
-  error
- }=
- await supabaseClient.functions
-  .invoke(
-   'smooth-responder',
-   {
-    body:{
-     email,
-     password
-    }
-   }
+ try{
+
+  const {
+   data,
+   error
+  }=
+  await withTimeout(
+   supabaseClient.functions
+    .invoke(
+     'smooth-responder',
+     {
+      body:{
+       email,
+       password
+      }
+     }
+    ),
+   15000
   );
 
- if(error){
+  if(error){
 
-  toast(error.message);
+   toast(error.message);
 
-  return;
+   return;
+  }
+
+  pendingSignup={
+   email,
+   password,
+   userId:data?.user_id||''
+  };
+
+  document
+   .getElementById('email-group')
+   .style.display='none';
+
+  document
+   .getElementById('password-group')
+   .style.display='none';
+
+  document
+   .getElementById('signin-btn')
+   .style.display='none';
+
+  document
+   .getElementById('signup-btn')
+   .style.display='none';
+
+  document
+   .getElementById('otp-section')
+   .style.display='block';
+
+  document
+   .getElementById('otp-email-display')
+   .innerText=email;
+
+  document
+   .getElementById('otp-code')
+   .value='';
+
+  document
+   .getElementById('otp-code')
+   .focus();
+
+  toast(
+   t('verificationSent')
+  );
+
+ }catch(error){
+
+  console.error(
+   'Sign up:',
+   error
+  );
+
+  toast(
+   error.message ||
+   'Sign up failed.'
+  );
+
  }
-
- pendingSignup={
-  email,
-  password,
-  userId:data?.user_id||''
- };
-
- document
-  .getElementById('email-group')
-  .style.display='none';
-
- document
-  .getElementById('password-group')
-  .style.display='none';
-
- document
-  .getElementById('signin-btn')
-  .style.display='none';
-
- document
-  .getElementById('signup-btn')
-  .style.display='none';
-
- document
-  .getElementById('otp-section')
-  .style.display='block';
-
- document
-  .getElementById('otp-email-display')
-  .innerText=email;
-
- document
-  .getElementById('otp-code')
-  .value='';
-
- document
-  .getElementById('otp-code')
-  .focus();
-
- toast(
-  t('verificationSent')
- );
 
 }
 
@@ -2321,11 +2469,14 @@ async function verifySignupCode(){
    data:loginData,
    error
   }=
-   await supabaseClient.auth
-    .signInWithPassword({
-     email:pendingSignup.email,
-     password:pendingSignup.password
-    });
+   await withTimeout(
+    supabaseClient.auth
+     .signInWithPassword({
+      email:pendingSignup.email,
+      password:pendingSignup.password
+     }),
+    10000
+   );
 
   if(error){
 
@@ -2357,37 +2508,53 @@ async function verifySignupCode(){
 
 async function resendSignupCode(){
 
- if(!pendingSignup) return;
+ if(!pendingSignup || !supabaseClient) return;
 
- const {
-  data,
-  error
- }=
-  await supabaseClient.functions
-   .invoke(
-    'smooth-responder',
-    {
-     body:{
-      email:pendingSignup.email,
-      password:pendingSignup.password
-     }
-    }
+ try{
+
+  const {
+   data,
+   error
+  }=
+   await withTimeout(
+    supabaseClient.functions
+     .invoke(
+      'smooth-responder',
+      {
+       body:{
+        email:pendingSignup.email,
+        password:pendingSignup.password
+       }
+      }
+     ),
+    15000
    );
 
- if(error){
+  if(error){
 
-  toast(error.message);
+   toast(error.message);
 
-  return;
+   return;
+  }
+
+  pendingSignup.userId=
+   data?.user_id||
+   pendingSignup.userId;
+
+  toast(
+   t('codeSentAgain')
+  );
+
+ }catch(error){
+
+  console.error(error);
+
+  toast(
+   error.message ||
+   'Could not resend code.'
+  );
+
  }
-
- pendingSignup.userId=
-  data?.user_id||
-  pendingSignup.userId;
-
- toast(
-  t('codeSentAgain')
- );
 
 }
 
@@ -2430,9 +2597,20 @@ function backToSignup(){
 async function logoutUser(){
 
  try{
-  await supabaseClient.auth.signOut();
+
+  if(supabaseClient){
+
+   await withTimeout(
+    supabaseClient.auth.signOut(),
+    10000
+   );
+
+  }
+
  }catch(e){
+
   console.error(e);
+
  }
 
  currentUser=null;
@@ -2443,8 +2621,12 @@ async function logoutUser(){
 
  if(realtimeChannel){
 
-  await supabaseClient
-   .removeChannel(realtimeChannel);
+  try{
+
+   await supabaseClient
+    .removeChannel(realtimeChannel);
+
+  }catch(e){}
 
   realtimeChannel=null;
 
@@ -2528,7 +2710,7 @@ function getDefaultProfile(){
 
 async function loadDataFromSupabase(){
 
- if(!currentUser) return;
+ if(!currentUser || !supabaseClient) return;
 
  try{
 
@@ -2536,11 +2718,14 @@ async function loadDataFromSupabase(){
    data,
    error
   }=
-  await supabaseClient
-   .from('exchange_users')
-   .select('*')
-   .eq('user_id',currentUser.id)
-   .maybeSingle();
+  await withTimeout(
+   supabaseClient
+    .from('exchange_users')
+    .select('*')
+    .eq('user_id',currentUser.id)
+    .maybeSingle(),
+   10000
+  );
 
   if(error){
 
@@ -2576,6 +2761,10 @@ async function loadDataFromSupabase(){
    userProfile=
     getDefaultProfile();
 
+   /*
+    اگر رکورد هنوز وجود ندارد، ذخیره‌سازی اولیه
+    نیز دارای timeout است.
+   */
    await saveDataToSupabase();
 
   }
@@ -2648,7 +2837,7 @@ async function loadDataFromSupabase(){
 
 async function saveDataToSupabase(){
 
- if(!currentUser) return false;
+ if(!currentUser || !supabaseClient) return false;
 
  try{
 
@@ -2662,13 +2851,16 @@ async function saveDataToSupabase(){
   const {
    error
   }=
-   await supabaseClient
-   .from('exchange_users')
-   .upsert(
-    payload,
-    {
-     onConflict:'user_id'
-    }
+   await withTimeout(
+    supabaseClient
+     .from('exchange_users')
+     .upsert(
+      payload,
+      {
+       onConflict:'user_id'
+      }
+     ),
+    10000
    );
 
   if(error){
@@ -3120,10 +3312,6 @@ function getAFNTransactionAmount(tx){
 
  }
 
- /*
-  اگر معامله مقدار AFN ذخیره‌شده نداشت،
-  از نرخ واقعی sarafi-api.js استفاده می‌کنیم.
- */
  const rate=
   getRate(currency);
 
@@ -3469,15 +3657,9 @@ function renderTransaction(
  const dates=
   getTransactionDates(tx);
 
- /*
-  مبلغ اصلی معامله دقیقاً همان ارز خودش می‌ماند.
- */
  const originalText=
   `${sign}${formatMoney(originalAmount)} ${currencySymbol(currency)} ${currency}`;
 
- /*
-  معادل ارز انتخاب‌شده از Profile جداگانه نمایش داده می‌شود.
- */
  const equivalent=
   getEquivalentToSelectedCurrency(tx);
 
@@ -3503,10 +3685,6 @@ function renderTransaction(
 
  }
 
- /*
-  AFN هم جداگانه حفظ می‌شود تا قابلیت قبلی پروژه
-  از بین نرود.
- */
  let afnText='';
 
  if(currency!=='AFN'){
@@ -3984,10 +4162,6 @@ function detectRealLocation(){
      userProfile.location||
      'Unknown';
 
-    /*
-     اگر کاربر در Profile شهر مشخص کرده باشد،
-     تشخیص خودکار آن را جایگزین نمی‌کند.
-    */
     if(
      !userProfile.city &&
      !userProfile.state
@@ -4392,10 +4566,6 @@ async function updateRates(){
 
  renderRates();
 
- /*
-  وقتی نرخ جدید آمد، معادل معاملات هم باید
-  دوباره محاسبه شود.
- */
  if(currentUser){
   renderDashboard();
  }
@@ -4459,14 +4629,18 @@ window.addEventListener(
 
 function startRealtime(){
 
- if(!currentUser) return;
+ if(!currentUser || !supabaseClient) return;
 
  if(realtimeChannel){
 
-  supabaseClient
-   .removeChannel(
-    realtimeChannel
-   );
+  try{
+
+   supabaseClient
+    .removeChannel(
+     realtimeChannel
+    );
+
+  }catch(e){}
 
  }
 
@@ -4530,10 +4704,6 @@ window.addEventListener(
 
   }
 
-  /*
-   تغییرات translator.js در Profile
-   در همین صفحه هم اعمال می‌شود.
-  */
   if(
    e.key==='dailyAccountingSettings' &&
    e.newValue
@@ -4591,7 +4761,7 @@ function startCloudPolling(){
   setInterval(
    async()=>{
 
-    if(!currentUser) return;
+    if(!currentUser || !supabaseClient) return;
 
     try{
 
@@ -4599,16 +4769,19 @@ function startCloudPolling(){
       data,
       error
      }=
-      await supabaseClient
-       .from('exchange_users')
-       .select(
-        'content,profile'
-       )
-       .eq(
-        'user_id',
-        currentUser.id
-       )
-       .maybeSingle();
+      await withTimeout(
+       supabaseClient
+        .from('exchange_users')
+        .select(
+         'content,profile'
+        )
+        .eq(
+         'user_id',
+         currentUser.id
+        )
+        .maybeSingle(),
+       10000
+      );
 
      if(error || !data) return;
 
@@ -4711,9 +4884,6 @@ function applyLanguage(){
    ? 'rtl'
    : 'ltr';
 
- /*
-  اول translator.js را اجرا می‌کنیم.
- */
  try{
 
   if(
@@ -4733,11 +4903,6 @@ function applyLanguage(){
   );
 
  }
-
- /*
-  سپس متن‌های اختصاصی index را
-  با تابع t خودمان به‌روز می‌کنیم.
- */
 
  const setText=
   (id,key)=>{
@@ -4956,6 +5121,10 @@ async function initializeLoggedInPage(){
 
   updateNavigationProfile();
 
+  /*
+   updateRates خودش async است؛
+   اینجا نباید باعث قفل شدن صفحه شود.
+  */
   updateRates();
 
   detectRealLocation();
@@ -4996,30 +5165,86 @@ async function initialize(){
  showAuthGate();
 
  /*
-  translator.js حتی قبل از ورود هم
-  زبان و رنگ ذخیره‌شده را اعمال می‌کند.
+  اگر initialize به هر دلیل غیرعادی
+  گیر کرد، بعد از 15 ثانیه gate بسته می‌شود.
  */
+ const gateFailsafe=
+  setTimeout(
+   ()=>{
+
+    console.warn(
+     'Auth gate failsafe triggered.'
+    );
+
+    hideAuthGate();
+
+   },
+   15000
+  );
+
  try{
 
-  if(
-   window.DailyTranslator &&
-   typeof window.DailyTranslator.applyGlobalSettings==='function'
-  ){
+  try{
 
-   window.DailyTranslator.applyGlobalSettings();
+   if(
+    window.DailyTranslator &&
+    typeof window.DailyTranslator.applyGlobalSettings==='function'
+   ){
+
+    window.DailyTranslator.applyGlobalSettings();
+
+   }
+
+  }catch(e){
+
+   console.warn(
+    'Global settings startup:',
+    e
+   );
 
   }
 
- }catch(e){}
 
- try{
+  /*
+   اگر Supabase ساخته نشده باشد،
+   دیگر getSession اجرا نمی‌شود.
+  */
+  if(!supabaseClient){
 
+   currentUser=null;
+
+   showLogin();
+
+   const gateText=
+    document.querySelector(
+     '.auth-gate-text'
+    );
+
+   if(gateText){
+
+    gateText.textContent=
+     'Supabase connection error';
+
+   }
+
+   return;
+
+  }
+
+
+  /*
+   مهم:
+   getSession دیگر نمی‌تواند
+   برای همیشه صفحه را متوقف کند.
+  */
   const {
    data,
    error
   }=
-   await supabaseClient.auth
-    .getSession();
+   await withTimeout(
+    supabaseClient.auth.getSession(),
+    10000
+   );
 
   if(error){
 
@@ -5032,11 +5257,15 @@ async function initialize(){
 
    showLogin();
 
-  }else if(data.session?.user){
+  }else if(data?.session?.user){
 
    currentUser=
     data.session.user;
 
+   /*
+    حتی اگر دریافت داده‌های کاربر مشکل داشته باشد،
+    خود initialize در نهایت gate را می‌بندد.
+   */
    await loadDataFromSupabase();
 
    await initializeLoggedInPage();
@@ -5060,12 +5289,46 @@ async function initialize(){
 
   showLogin();
 
+  const gateText=
+   document.querySelector(
+    '.auth-gate-text'
+   );
+
+  /*
+   خطا را برای تست قابل مشاهده می‌کنیم.
+   */
+  if(
+   gateText &&
+   !authInitialized
+  ){
+
+   gateText.textContent=
+    error?.message ===
+    'Request timeout'
+     ? 'Connection timeout'
+     : (
+       'Startup error: '+
+       (error?.message||'Unknown error')
+      );
+
+  }
+
  }finally{
+
+  clearTimeout(
+   gateFailsafe
+  );
 
   authInitialized=true;
 
+  /*
+   در هر شرایطی gate بسته می‌شود.
+   */
   hideAuthGate();
 
+  /*
+   نرخ‌ها نباید مانع نمایش Login شوند.
+   */
   updateRates();
 
  }
@@ -5077,72 +5340,82 @@ async function initialize(){
    AUTH STATE
 ========================================================= */
 
-supabaseClient.auth.onAuthStateChange(
- async function(event,session){
+if(
+ supabaseClient &&
+ supabaseClient.auth
+){
 
-  if(!authInitialized){
-   return;
-  }
+ supabaseClient.auth.onAuthStateChange(
+  async function(event,session){
 
-  if(session?.user){
+   if(!authInitialized){
+    return;
+   }
 
-   if(
-    currentUser?.id===
-    session.user.id
-   ){
+   if(session?.user){
+
+    if(
+     currentUser?.id===
+     session.user.id
+    ){
+
+     return;
+
+    }
+
+    currentUser=
+     session.user;
+
+    await loadDataFromSupabase();
+
+    await initializeLoggedInPage();
 
     return;
-
    }
 
-   currentUser=
-    session.user;
+   if(!session){
 
-   await loadDataFromSupabase();
+    currentUser=null;
 
-   await initializeLoggedInPage();
+    if(realtimeChannel){
 
-   return;
-  }
+     try{
 
-  if(!session){
+      await supabaseClient
+       .removeChannel(
+        realtimeChannel
+       );
 
-   currentUser=null;
+     }catch(e){}
 
-   if(realtimeChannel){
+     realtimeChannel=null;
 
-    try{
-     await supabaseClient
-      .removeChannel(
-       realtimeChannel
-      );
-    }catch(e){}
+    }
 
-    realtimeChannel=null;
+    if(refreshTimer){
 
-   }
+     clearInterval(refreshTimer);
 
-   if(refreshTimer){
+     refreshTimer=null;
 
-    clearInterval(refreshTimer);
+    }
 
-    refreshTimer=null;
+    if(ratesTimer){
 
-   }
+     clearInterval(ratesTimer);
 
-   if(ratesTimer){
+     ratesTimer=null;
 
-    clearInterval(ratesTimer);
+    }
 
-    ratesTimer=null;
+    showLogin();
 
    }
-
-   showLogin();
 
   }
+ );
 
- });
+}
 
 
 /* =========================================================
