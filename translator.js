@@ -257,7 +257,7 @@
       email: 'البريد الإلكتروني',
       password: 'كلمة المرور',
       login: 'تسجيل الدخول',
-      logout: 'تسجيل الخروج',
+      logout: 'خروج',
       signIn: 'تسجيل الدخول',
       signUp: 'إنشاء حساب',
       register: 'تسجيل',
@@ -542,6 +542,183 @@
     return {
       ...settings
     };
+  }
+
+  /*
+   * =========================================================
+   * GLOBAL CURRENCY
+   * =========================================================
+   *
+   * ارز انتخاب‌شده در تنظیمات، ارز پایه نمایش برنامه است.
+   *
+   * مثال:
+   * Afghanistan -> AFN
+   * Iran       -> IRR
+   * Turkey     -> TRY
+   * USA        -> USD
+   *
+   * نرخ واقعی توسط sarafi-api.js محاسبه می‌شود.
+   */
+
+  function getCurrency() {
+
+    return {
+      code:
+        settings.currencyCode ||
+        DEFAULT_SETTINGS.currencyCode,
+
+      name:
+        settings.currencyName ||
+        DEFAULT_SETTINGS.currencyName,
+
+      symbol:
+        settings.currencySymbol ||
+        DEFAULT_SETTINGS.currencySymbol
+    };
+  }
+
+  function getBaseCurrency() {
+    return getCurrency();
+  }
+
+  function getCurrencyCode() {
+    return getCurrency().code;
+  }
+
+  function getCurrencyName() {
+    return getCurrency().name;
+  }
+
+  function getCurrencySymbol() {
+    return getCurrency().symbol;
+  }
+
+  function formatCurrency(amount, currencyCode = null) {
+
+    const currency =
+      currencyCode ||
+      getCurrencyCode();
+
+    const numericAmount =
+      Number(amount);
+
+    if (!Number.isFinite(numericAmount)) {
+      return '—';
+    }
+
+    try {
+
+      return new Intl.NumberFormat(
+        getLanguage(),
+        {
+          style: 'currency',
+          currency,
+          maximumFractionDigits: 2
+        }
+      ).format(numericAmount);
+
+    } catch (error) {
+
+      const symbol =
+        currencyCode === getCurrencyCode()
+          ? getCurrencySymbol()
+          : currency;
+
+      return `${numericAmount.toLocaleString()} ${symbol}`;
+    }
+  }
+
+  function setBaseCurrency(currency = {}) {
+
+    const oldCurrencyCode =
+      settings.currencyCode;
+
+    settings = {
+      ...settings,
+
+      ...(currency.code !== undefined
+        ? {
+            currencyCode:
+              currency.code
+          }
+        : {}),
+
+      ...(currency.currencyCode !== undefined
+        ? {
+            currencyCode:
+              currency.currencyCode
+          }
+        : {}),
+
+      ...(currency.name !== undefined
+        ? {
+            currencyName:
+              currency.name
+          }
+        : {}),
+
+      ...(currency.currencyName !== undefined
+        ? {
+            currencyName:
+              currency.currencyName
+          }
+        : {}),
+
+      ...(currency.symbol !== undefined
+        ? {
+            currencySymbol:
+              currency.symbol
+          }
+        : {}),
+
+      ...(currency.currencySymbol !== undefined
+        ? {
+            currencySymbol:
+              currency.currencySymbol
+          }
+        : {})
+    };
+
+    try {
+      localStorage.setItem(
+        STORAGE_KEY,
+        JSON.stringify(settings)
+      );
+    } catch (error) {
+      console.error(
+        'DailyTranslator setBaseCurrency:',
+        error
+      );
+    }
+
+    applyGlobalSettings();
+
+    if (
+      oldCurrencyCode !==
+      settings.currencyCode
+    ) {
+
+      window.dispatchEvent(
+        new CustomEvent(
+          'dailyAccountingCurrencyChanged',
+          {
+            detail: {
+              previousCurrencyCode:
+                oldCurrencyCode || '',
+
+              currency:
+                getCurrency(),
+
+              settings: {
+                ...settings
+              }
+            }
+          }
+        )
+      );
+    }
+
+    return getCurrency();
   }
 
   function getLanguage() {
@@ -855,12 +1032,20 @@
 
     translatePage();
 
+    /*
+     * کشور
+     */
+
     document
       .querySelectorAll('[data-setting="country"]')
       .forEach(element => {
         element.textContent =
           settings.countryName || '';
       });
+
+    /*
+     * پرچم کشور
+     */
 
     document
       .querySelectorAll('[data-setting="country-flag"]')
@@ -871,11 +1056,29 @@
           '';
       });
 
+    /*
+     * ارز انتخاب‌شده
+     */
+
     document
       .querySelectorAll('[data-setting="currency"]')
       .forEach(element => {
         element.textContent =
           settings.currencyCode || '';
+      });
+
+    document
+      .querySelectorAll('[data-setting="currency-code"]')
+      .forEach(element => {
+        element.textContent =
+          settings.currencyCode || '';
+      });
+
+    document
+      .querySelectorAll('[data-setting="currency-name"]')
+      .forEach(element => {
+        element.textContent =
+          settings.currencyName || '';
       });
 
     document
@@ -885,6 +1088,35 @@
           settings.currencySymbol || '';
       });
 
+    /*
+     * ارز پایه
+     */
+
+    document
+      .querySelectorAll('[data-setting="base-currency"]')
+      .forEach(element => {
+        element.textContent =
+          settings.currencyCode || '';
+      });
+
+    document
+      .querySelectorAll('[data-setting="base-currency-name"]')
+      .forEach(element => {
+        element.textContent =
+          settings.currencyName || '';
+      });
+
+    document
+      .querySelectorAll('[data-setting="base-currency-symbol"]')
+      .forEach(element => {
+        element.textContent =
+          settings.currencySymbol || '';
+      });
+
+    /*
+     * نام
+     */
+
     document
       .querySelectorAll('[data-setting="name"]')
       .forEach(element => {
@@ -892,12 +1124,20 @@
           settings.name || '';
       });
 
+    /*
+     * تلفن
+     */
+
     document
       .querySelectorAll('[data-setting="phone"]')
       .forEach(element => {
         element.textContent =
           settings.phone || '';
       });
+
+    /*
+     * آواتار
+     */
 
     document
       .querySelectorAll('[data-setting="avatar"]')
@@ -1023,6 +1263,12 @@
 
   function setCountry(country = {}) {
 
+    const oldCurrencyCode =
+      settings.currencyCode;
+
+    const oldCountryCode =
+      settings.countryCode;
+
     settings = {
       ...settings,
 
@@ -1121,12 +1367,84 @@
 
     applyGlobalSettings();
 
+    /*
+     * رویداد تغییر کشور
+     */
+
     window.dispatchEvent(
       new CustomEvent(
         'dailyAccountingCountryChanged',
         {
           detail: {
+            previousCountryCode:
+              oldCountryCode || '',
+
             country,
+
+            settings: {
+              ...settings
+            }
+          }
+        }
+      )
+    );
+
+    /*
+     * اگر ارز کشور تغییر کرده باشد،
+     * تمام صفحات می‌توانند نرخ‌ها را
+     * دوباره دریافت کنند.
+     */
+
+    if (
+      oldCurrencyCode !==
+      settings.currencyCode
+    ) {
+
+      window.dispatchEvent(
+        new CustomEvent(
+          'dailyAccountingCurrencyChanged',
+          {
+            detail: {
+              previousCurrencyCode:
+                oldCurrencyCode || '',
+
+              currency:
+                getCurrency(),
+
+              settings: {
+                ...settings
+              }
+            }
+          }
+        )
+      );
+    }
+
+    /*
+     * رویداد عمومی تنظیمات
+     */
+
+    window.dispatchEvent(
+      new CustomEvent(
+        'dailyAccountingSettingsChanged',
+        {
+          detail: {
+            reason: 'country-changed',
+
+            country: {
+              code:
+                settings.countryCode,
+
+              name:
+                settings.countryName,
+
+              flag:
+                settings.countryFlag
+            },
+
+            currency:
+              getCurrency(),
+
             settings: {
               ...settings
             }
@@ -1139,9 +1457,12 @@
   }
 
   /*
+   * =========================================================
    * Storage synchronization
-   * این بخش باعث می‌شود اگر تنظیمات در یک صفحه
-   * تغییر کرد، صفحات دیگر هم تنظیمات جدید را بگیرند.
+   * =========================================================
+   *
+   * اگر تنظیمات در یک صفحه تغییر کند،
+   * صفحات دیگر نیز تنظیمات جدید را می‌گیرند.
    */
 
   window.addEventListener(
@@ -1154,15 +1475,63 @@
         return;
       }
 
+      const oldCurrency =
+        settings.currencyCode;
+
       settings =
         loadSettings();
 
       applyGlobalSettings();
+
+      if (
+        oldCurrency !==
+        settings.currencyCode
+      ) {
+
+        window.dispatchEvent(
+          new CustomEvent(
+            'dailyAccountingCurrencyChanged',
+            {
+              detail: {
+                previousCurrencyCode:
+                  oldCurrency || '',
+
+                currency:
+                  getCurrency(),
+
+                settings: {
+                  ...settings
+                }
+              }
+            }
+          )
+        );
+      }
+
+      window.dispatchEvent(
+        new CustomEvent(
+          'dailyAccountingSettingsChanged',
+          {
+            detail: {
+              reason: 'storage-sync',
+
+              currency:
+                getCurrency(),
+
+              settings: {
+                ...settings
+              }
+            }
+          }
+        )
+      );
     }
   );
 
   /*
+   * =========================================================
    * Custom event synchronization
+   * =========================================================
    */
 
   window.addEventListener(
@@ -1177,12 +1546,9 @@
   );
 
   /*
+   * =========================================================
    * Mutation observer
-   *
-   * فقط برای عناصر جدیدی که بعداً به صفحه
-   * اضافه می‌شوند، ترجمه را اعمال می‌کند.
-   *
-   * از اجرای دوباره بی‌نهایت جلوگیری شده است.
+   * =========================================================
    */
 
   let observerRunning = false;
@@ -1277,7 +1643,9 @@
   }
 
   /*
+   * =========================================================
    * Initial application
+   * =========================================================
    */
 
   function initializeTranslator() {
@@ -1308,7 +1676,9 @@
   }
 
   /*
+   * =========================================================
    * Public API
+   * =========================================================
    */
 
   window.DailyTranslator = {
@@ -1327,7 +1697,21 @@
 
     setCountry,
 
+    setBaseCurrency,
+
     getSettings,
+
+    getCurrency,
+
+    getBaseCurrency,
+
+    getCurrencyCode,
+
+    getCurrencyName,
+
+    getCurrencySymbol,
+
+    formatCurrency,
 
     saveSettings,
 
