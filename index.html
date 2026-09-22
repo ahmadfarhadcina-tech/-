@@ -1144,13 +1144,6 @@ button:active{
 <div id="toast"></div>
 
 
-<!-- =====================================================
-     BOOT WATCHDOG
-     این اسکریپت عمداً قبل از اسکریپت اصلی است.
-     اگر اسکریپت اصلی به هر دلیل اجرا نشود، صفحه
-     برای همیشه روی Checking account نمی‌ماند.
-====================================================== -->
-
 <script>
 (function(){
 
@@ -1187,10 +1180,6 @@ button:active{
 
 
 <script>
-
-/* =========================================================
-   STARTUP PROTECTION
-========================================================= */
 
 window.addEventListener('error',function(event){
 
@@ -1245,10 +1234,6 @@ window.addEventListener('unhandledrejection',function(event){
 },true);
 
 
-/* =========================================================
-   TIMEOUT
-========================================================= */
-
 function withTimeout(promise,milliseconds=10000){
 
  return Promise.race([
@@ -1271,10 +1256,6 @@ function withTimeout(promise,milliseconds=10000){
 
 }
 
-
-/* =========================================================
-   SUPABASE
-========================================================= */
 
 const SUPABASE_URL=
  'https://hvsymjkbmpmvjycwenbd.supabase.co';
@@ -1312,10 +1293,6 @@ try{
 
 }
 
-
-/* =========================================================
-   GLOBAL
-========================================================= */
 
 let currentUser=null;
 let pendingSignup=null;
@@ -1355,10 +1332,6 @@ let lastCloudSignature='';
 let authInitialized=false;
 let loggedInPageInitializing=false;
 
-
-/* =========================================================
-   TRANSLATIONS
-========================================================= */
 
 const translations={
 
@@ -1532,7 +1505,8 @@ const translations={
   verificationError:'خطأ في التحقق.',
   enterEmailPassword:'أدخل البريد الإلكتروني وكلمة المرور.',
   enterValidPassword:'أدخل بريدًا إلكترونيًا وكلمة مرور من 6 أحرف على الأقل.',
-  deleteTransaction:'حذف هذه المعاملة؟'
+  deleteTransaction:'حذف هذه المعاملة؟',
+  transactionDeletedQuestion:'هل أنت متأكد من حذف هذه المعاملة؟'
  },
 
  ps:{
@@ -1650,10 +1624,6 @@ const translations={
 };
 
 
-/* =========================================================
-   LANGUAGE
-========================================================= */
-
 function lang(){
 
  const selected=
@@ -1664,6 +1634,7 @@ function lang(){
   : 'en';
 
 }
+
 
 function t(key){
 
@@ -1698,10 +1669,6 @@ function t(key){
 
 }
 
-
-/* =========================================================
-   GLOBAL SETTINGS
-========================================================= */
 
 function syncGlobalTranslator(){
 
@@ -1758,10 +1725,6 @@ function syncGlobalTranslator(){
 }
 
 
-/* =========================================================
-   TOAST
-========================================================= */
-
 function toast(msg){
 
  const e=document.getElementById('toast');
@@ -1779,10 +1742,6 @@ function toast(msg){
 
 }
 
-
-/* =========================================================
-   HELPERS
-========================================================= */
 
 function escapeHtml(value){
 
@@ -1869,17 +1828,48 @@ function currencySymbol(code){
   JPY:'¥',
   RUB:'₽',
   CAD:'C$',
-  AUD:'A$'
+  AUD:'A$',
+  CHF:'CHF',
+  SEK:'kr',
+  NOK:'kr',
+  DKK:'kr',
+  NZD:'NZ$',
+  SGD:'S$',
+  HKD:'HK$',
+  MYR:'RM',
+  THB:'฿',
+  IDR:'Rp',
+  KRW:'₩',
+  VND:'₫',
+  BDT:'৳',
+  LKR:'Rs',
+  NPR:'₨',
+  KWD:'د.ك',
+  QAR:'﷼',
+  OMR:'﷼',
+  BHD:'.د.ب',
+  JOD:'د.ا',
+  EGP:'£',
+  MAD:'د.م.',
+  ZAR:'R',
+  BRL:'R$',
+  MXN:'$',
+  ARS:'$',
+  CLP:'$',
+  COP:'$',
+  UAH:'₴',
+  PLN:'zł',
+  CZK:'Kč',
+  HUF:'Ft',
+  RON:'lei',
+  BGN:'лв',
+  ISK:'kr'
  };
 
  return map[String(code||'').toUpperCase()]||code;
 
 }
 
-
-/* =========================================================
-   COUNTRY / CURRENCY
-========================================================= */
 
 function getSelectedCurrency(){
 
@@ -1945,17 +1935,47 @@ function currencyFlag(code){
   RUB:'🇷🇺',
   CAD:'🇨🇦',
   AUD:'🇦🇺',
-  TOMAN:'🇮🇷'
+  CHF:'🇨🇭',
+  SEK:'🇸🇪',
+  NOK:'🇳🇴',
+  DKK:'🇩🇰',
+  NZD:'🇳🇿',
+  SGD:'🇸🇬',
+  HKD:'🇭🇰',
+  MYR:'🇲🇾',
+  THB:'🇹🇭',
+  IDR:'🇮🇩',
+  KRW:'🇰🇷',
+  VND:'🇻🇳',
+  BDT:'🇧🇩',
+  LKR:'🇱🇰',
+  NPR:'🇳🇵',
+  KWD:'🇰🇼',
+  QAR:'🇶🇦',
+  OMR:'🇴🇲',
+  BHD:'🇧🇭',
+  JOD:'🇯🇴',
+  EGP:'🇪🇬',
+  MAD:'🇲🇦',
+  ZAR:'🇿🇦',
+  BRL:'🇧🇷',
+  MXN:'🇲🇽',
+  ARS:'🇦🇷',
+  CLP:'🇨🇱',
+  COP:'🇨🇴',
+  UAH:'🇺🇦',
+  PLN:'🇵🇱',
+  CZK:'🇨🇿',
+  HUF:'🇭🇺',
+  RON:'🇷🇴',
+  BGN:'🇧🇬',
+  ISK:'🇮🇸'
  };
 
  return flags[String(code||'').trim().toUpperCase()]||'🌐';
 
 }
 
-
-/* =========================================================
-   THEME
-========================================================= */
 
 function shadeColor(hex,percent){
 
@@ -2031,10 +2051,6 @@ function setThemeColor(color){
 
 }
 
-
-/* =========================================================
-   AUTH
-========================================================= */
 
 async function handleSignIn(){
 
@@ -2327,10 +2343,6 @@ function backToSignup(){
 }
 
 
-/* =========================================================
-   LOGOUT
-========================================================= */
-
 async function logoutUser(){
 
  try{
@@ -2385,10 +2397,6 @@ async function logoutUser(){
 }
 
 
-/* =========================================================
-   PROFILE
-========================================================= */
-
 function getDefaultProfile(){
 
  const emailName=
@@ -2434,10 +2442,6 @@ function getDefaultProfile(){
 
 }
 
-
-/* =========================================================
-   SUPABASE LOAD
-========================================================= */
 
 async function loadDataFromSupabase(){
 
@@ -2534,10 +2538,6 @@ async function loadDataFromSupabase(){
 }
 
 
-/* =========================================================
-   SUPABASE SAVE
-========================================================= */
-
 async function saveDataToSupabase(){
 
  if(!currentUser||!supabaseClient) return false;
@@ -2590,10 +2590,6 @@ async function saveDataToSupabase(){
 
 }
 
-
-/* =========================================================
-   HEADER
-========================================================= */
 
 function updateHeader(){
 
@@ -2663,10 +2659,6 @@ function updateHeader(){
 function updateNavigationProfile(){}
 
 
-/* =========================================================
-   NAVIGATION
-========================================================= */
-
 function showPage(){
 
  document.getElementById('login-page').style.display='none';
@@ -2719,10 +2711,6 @@ function goProfile(){
 }
 
 
-/* =========================================================
-   DASHBOARD
-========================================================= */
-
 function renderDashboard(){
 
  const container=
@@ -2757,10 +2745,6 @@ function renderDashboard(){
 
 }
 
-
-/* =========================================================
-   TRANSACTION HELPERS
-========================================================= */
 
 function getTransactionKind(tx){
 
@@ -2938,7 +2922,14 @@ function getAFNTransactionAmount(tx){
 }
 
 
-function getEquivalentToSelectedCurrency(tx){
+/*
+=========================================================
+ تبدیل مبلغ از ارز اصلی معامله به ارز انتخاب‌شده
+ بدون تغییر مبلغ اصلی معامله
+=========================================================
+*/
+
+function convertTransactionToSelectedCurrency(tx){
 
  const selected=getSelectedCurrency();
 
@@ -2949,10 +2940,17 @@ function getEquivalentToSelectedCurrency(tx){
    'AFN'
   ).trim().toUpperCase();
 
- const original=getOriginalTransactionAmount(tx);
+ const original=
+  getOriginalTransactionAmount(tx);
 
  if(!Number.isFinite(original)){
-  return null;
+  return{
+   amount:null,
+   currency:selected.code,
+   symbol:selected.symbol,
+   available:false,
+   same:false
+  };
  }
 
  if(transactionCurrency===selected.code){
@@ -2967,25 +2965,61 @@ function getEquivalentToSelectedCurrency(tx){
 
  }
 
- let afnAmount=getAFNTransactionAmount(tx);
-
- if(!afnAmount&&transactionCurrency!=='AFN'){
-
-  const transactionRate=
-   getRate(transactionCurrency);
+ /*
+  اگر API جدید sarafi-api.js در دسترس باشد،
+  ابتدا از تابع خودش استفاده می‌کنیم.
+ */
+ try{
 
   if(
-   transactionRate!==null&&
-   transactionRate>0
+   window.CinaSarafi &&
+   typeof window.CinaSarafi.convertCurrency==='function'
   ){
 
-   afnAmount=original*transactionRate;
+   const converted=
+    window.CinaSarafi.convertCurrency(
+     original,
+     transactionCurrency,
+     selected.code
+    );
+
+   if(
+    converted!==null&&
+    converted!==undefined&&
+    Number.isFinite(Number(converted))
+   ){
+
+    return{
+     amount:Number(converted),
+     currency:selected.code,
+     symbol:selected.symbol,
+     available:true,
+     same:false
+    };
+
+   }
 
   }
 
+ }catch(error){
+
+  console.warn(
+   'CinaSarafi transaction conversion:',
+   error
+  );
+
  }
 
- if(!afnAmount){
+ /*
+  fallback بر اساس نرخ AFN
+ */
+ const afnAmount=
+  getAFNTransactionAmount(tx);
+
+ if(
+  !Number.isFinite(afnAmount)||
+  afnAmount<=0
+ ){
 
   return{
    amount:null,
@@ -3037,6 +3071,100 @@ function getEquivalentToSelectedCurrency(tx){
 }
 
 
+function getEquivalentToSelectedCurrency(tx){
+
+ return convertTransactionToSelectedCurrency(tx);
+
+}
+
+
+/*
+=========================================================
+ مقدار AFN را به ارز انتخاب‌شده تبدیل می‌کند
+=========================================================
+*/
+
+function convertAFNToSelectedCurrency(amount){
+
+ const numeric=safeNumber(amount);
+
+ if(!Number.isFinite(numeric)){
+  return null;
+ }
+
+ const selected=getSelectedCurrency();
+
+ if(selected.code==='AFN'){
+  return numeric;
+ }
+
+ try{
+
+  if(
+   window.CinaSarafi &&
+   typeof window.CinaSarafi.convertCurrency==='function'
+  ){
+
+   const converted=
+    window.CinaSarafi.convertCurrency(
+     numeric,
+     'AFN',
+     selected.code
+    );
+
+   if(
+    converted!==null&&
+    converted!==undefined&&
+    Number.isFinite(Number(converted))
+   ){
+
+    return Number(converted);
+
+   }
+
+  }
+
+ }catch(error){
+
+  console.warn(
+   'AFN selected conversion:',
+   error
+  );
+
+ }
+
+ const selectedRate=getRate(selected.code);
+
+ if(
+  selectedRate===null||
+  selectedRate<=0
+ ){
+  return null;
+ }
+
+ return numeric/selectedRate;
+
+}
+
+
+function getSelectedDisplayAmountFromAFN(amount){
+
+ const converted=
+  convertAFNToSelectedCurrency(amount);
+
+ if(converted===null){
+  return null;
+ }
+
+ return{
+  amount:converted,
+  currency:getSelectedCurrency().code,
+  symbol:getSelectedCurrency().symbol
+ };
+
+}
+
+
 /* =========================================================
    CLIENT CARD
 ========================================================= */
@@ -3048,8 +3176,8 @@ function renderClientCard(client){
    ? client.transactions
    : [];
 
- let credit=0;
- let debit=0;
+ let creditAFN=0;
+ let debitAFN=0;
 
  transactions.forEach(function(tx){
 
@@ -3057,21 +3185,60 @@ function renderClientCard(client){
   const kind=getTransactionKind(tx);
 
   if(kind==='credit'){
-   credit+=amount;
+   creditAFN+=amount;
   }else{
-   debit+=amount;
+   debitAFN+=amount;
   }
 
  });
 
- const balance=credit-debit;
+ const balanceAFN=
+  creditAFN-debitAFN;
 
  const balanceClass=
-  balance>0
+  balanceAFN>0
    ? 'credit'
-   : balance<0
+   : balanceAFN<0
     ? 'debit'
     : 'balance';
+
+ const selected=
+  getSelectedCurrency();
+
+ const creditSelected=
+  convertAFNToSelectedCurrency(creditAFN);
+
+ const debitSelected=
+  convertAFNToSelectedCurrency(debitAFN);
+
+ const balanceSelected=
+  convertAFNToSelectedCurrency(
+   Math.abs(balanceAFN)
+  );
+
+ const creditText=
+  creditSelected===null
+   ? `⚠️ ${escapeHtml(t('rateUnavailable'))}`
+   : `${formatMoney(creditSelected)} ${escapeHtml(selected.symbol)} ${escapeHtml(selected.code)}`;
+
+ const debitText=
+  debitSelected===null
+   ? `⚠️ ${escapeHtml(t('rateUnavailable'))}`
+   : `${formatMoney(debitSelected)} ${escapeHtml(selected.symbol)} ${escapeHtml(selected.code)}`;
+
+ let balanceText='';
+
+ if(balanceSelected===null){
+
+  balanceText=
+   `⚠️ ${escapeHtml(t('rateUnavailable'))}`;
+
+ }else{
+
+  balanceText=
+   `${balanceAFN>0?'+':balanceAFN<0?'-':''}${formatMoney(balanceSelected)} ${escapeHtml(selected.symbol)} ${escapeHtml(selected.code)}`;
+
+ }
 
  const transactionRows=
   transactions.map(function(tx,index){
@@ -3130,22 +3297,24 @@ function renderClientCard(client){
    <div class="balance-box">
     <div class="balance-label">${escapeHtml(t('credit'))}</div>
     <div class="balance-value credit">
-     ${formatMoney(credit)} AFN
+     ${creditText}
     </div>
    </div>
 
    <div class="balance-box">
     <div class="balance-label">${escapeHtml(t('debit'))}</div>
     <div class="balance-value debit">
-     ${formatMoney(debit)} AFN
+     ${debitText}
     </div>
    </div>
 
    <div class="balance-box">
-    <div class="balance-label">${escapeHtml(t('balance'))}</div>
+    <div class="balance-label">
+     ${escapeHtml(t('balance'))}
+    </div>
+
     <div class="balance-value ${balanceClass}">
-     ${balance>0?'+':balance<0?'-':''}
-     ${formatMoney(Math.abs(balance))} AFN
+     ${balanceText}
     </div>
    </div>
 
@@ -3220,9 +3389,17 @@ function renderTransaction(tx,index,clientId){
 
  }
 
+ /*
+  نمایش AFN قدیمی را نگه می‌داریم تا اطلاعات
+  قبلی از بین نرود، اما فقط وقتی ارز انتخاب‌شده
+  AFN نیست و معامله نیز غیر AFN است.
+ */
  let afnText='';
 
- if(currency!=='AFN'){
+ if(
+  currency!=='AFN'&&
+  getSelectedCurrency().code!=='AFN'
+ ){
 
   const afnAmount=
    getAFNTransactionAmount(tx);
@@ -3314,10 +3491,6 @@ function renderTransaction(tx,index,clientId){
 
 }
 
-
-/* =========================================================
-   DATES
-========================================================= */
 
 function getTransactionDates(tx){
 
@@ -3433,10 +3606,6 @@ function formatDates(date){
 }
 
 
-/* =========================================================
-   MENU
-========================================================= */
-
 function toggleClientMenu(id){
 
  document.querySelectorAll('.menu-popup').forEach(function(menu){
@@ -3474,10 +3643,6 @@ document.addEventListener(
  }
 );
 
-
-/* =========================================================
-   DELETE CLIENT
-========================================================= */
 
 function openDeleteClient(id){
 
@@ -3536,10 +3701,6 @@ async function confirmDeleteClient(){
 }
 
 
-/* =========================================================
-   DELETE TRANSACTION
-========================================================= */
-
 async function deleteTransaction(clientId,index){
 
  const client=
@@ -3571,10 +3732,6 @@ async function deleteTransaction(clientId,index){
 }
 
 
-/* =========================================================
-   EDIT
-========================================================= */
-
 function editTransaction(clientId,index){
 
  window.location.href=
@@ -3582,10 +3739,6 @@ function editTransaction(clientId,index){
 
 }
 
-
-/* =========================================================
-   LOCATION
-========================================================= */
 
 function updateLocationDisplay(){
 
@@ -3846,6 +3999,36 @@ async function readSarafiRates(){
 
  try{
 
+  /*
+   نسخه جدید sarafi-api.js
+   نرخ‌های AFN-base را مستقیماً مدیریت می‌کند.
+  */
+  if(
+   window.CinaSarafi &&
+   typeof window.CinaSarafi.getCachedRates==='function'
+  ){
+
+   const cached=
+    window.CinaSarafi.getCachedRates();
+
+   if(
+    cached&&
+    typeof cached==='object'&&
+    Object.keys(cached).length>1
+   ){
+
+    rates=
+     Object.assign(
+      {AFN:1},
+      cached
+     );
+
+    ratesLoaded=true;
+
+   }
+
+  }
+
   if(
    typeof window.getSarafiRates!=='function'
   ){
@@ -3928,9 +4111,113 @@ function getRate(code){
   return 1;
  }
 
+ /*
+  نرخ‌ها AFN-base هستند:
+  1 USD = X AFN
+  1 JPY = Y AFN
+ */
  return normalizeRateValue(
   rates[normalized]
  );
+
+}
+
+
+/*
+=========================================================
+ نرخ مستقیم یک ارز نسبت به ارز انتخاب‌شده
+=========================================================
+*/
+
+function getRateToSelectedCurrency(fromCode){
+
+ const from=
+  String(fromCode||'AFN').trim().toUpperCase();
+
+ const selected=
+  getSelectedCurrency().code;
+
+ if(from===selected){
+  return 1;
+ }
+
+ /*
+  اول از API جدید استفاده می‌کنیم.
+ */
+ try{
+
+  if(
+   window.CinaSarafi &&
+   typeof window.CinaSarafi.getSarafiRate==='function'
+  ){
+
+   const liveRate=
+    window.CinaSarafi.getSarafiRate(
+     from,
+     selected
+    );
+
+   if(
+    liveRate!==null&&
+    liveRate!==undefined&&
+    Number.isFinite(Number(liveRate))&&
+    Number(liveRate)>0
+   ){
+
+    return Number(liveRate);
+
+   }
+
+  }
+
+ }catch(error){
+
+  console.warn(
+   'Selected currency rate:',
+   error
+  );
+
+ }
+
+ const fromRate=
+  getRate(from);
+
+ const selectedRate=
+  getRate(selected);
+
+ if(from==='AFN'){
+
+  if(
+   selectedRate!==null&&
+   selectedRate>0
+  ){
+
+   return 1/selectedRate;
+
+  }
+
+  return null;
+
+ }
+
+ if(selected==='AFN'){
+
+  return fromRate;
+
+ }
+
+ if(
+  fromRate===null||
+  selectedRate===null||
+  fromRate<=0||
+  selectedRate<=0
+ ){
+
+  return null;
+
+ }
+
+ return fromRate/selectedRate;
 
 }
 
@@ -3939,16 +4226,20 @@ function getRate(code){
    RATES
 ========================================================= */
 
-function renderRates(){
+function getPreferredRateCurrencies(){
 
- const container=
-  document.getElementById('rates');
+ const selected=
+  getSelectedCurrency().code;
 
- if(!container) return;
-
+ /*
+  ارز انتخاب‌شده همیشه در محاسبات پایه است،
+  اما خودش در لیست به‌عنوان 1 نمایش داده نمی‌شود.
+ */
  const preferred=[
+
   'USD',
   'EUR',
+  'AFN',
   'PKR',
   'IRR',
   'TRY',
@@ -3958,48 +4249,223 @@ function renderRates(){
   'SAR',
   'GBP',
   'JPY',
-  'RUB'
+  'CAD',
+  'AUD',
+  'RUB',
+  'CHF',
+  'SEK',
+  'NOK',
+  'DKK',
+  'NZD',
+  'SGD',
+  'HKD',
+  'MYR',
+  'THB',
+  'IDR',
+  'KRW',
+  'VND',
+  'BDT',
+  'LKR',
+  'NPR',
+  'KWD',
+  'QAR',
+  'OMR',
+  'BHD',
+  'JOD',
+  'EGP',
+  'MAD',
+  'ZAR',
+  'BRL',
+  'MXN',
+  'ARS',
+  'CLP',
+  'COP',
+  'UAH',
+  'PLN',
+  'CZK',
+  'HUF',
+  'RON',
+  'BGN',
+  'ISK'
+
  ];
 
+ /*
+  اگر ارز کشور در لیست بالا نبود، خودش را
+  به ابتدای لیست اضافه می‌کنیم.
+ */
+ if(
+  selected&&
+  !preferred.includes(selected)
+ ){
+
+  preferred.unshift(selected);
+
+ }
+
+ return preferred;
+
+}
+
+
+function getAvailableCurrenciesForSelectedBase(){
+
+ const selected=
+  getSelectedCurrency().code;
+
+ /*
+  اگر نسخه جدید API قابلیت دریافت ارزها را داشته باشد،
+  از آن استفاده می‌کنیم.
+ */
+ try{
+
+  if(
+   window.CinaSarafi &&
+   typeof window.CinaSarafi.getSarafiRatesForSelectedCurrency==='function'
+  ){
+
+   const live=
+    window.CinaSarafi.getSarafiRatesForSelectedCurrency();
+
+   if(
+    live&&
+    typeof live==='object'
+   ){
+
+    return live;
+
+   }
+
+  }
+
+ }catch(error){
+
+  console.warn(
+   'Selected rates list:',
+   error
+  );
+
+ }
+
+ const output={};
+
+ getPreferredRateCurrencies().forEach(function(code){
+
+  if(code===selected){
+
+   return;
+
+  }
+
+  const rate=
+   getRateToSelectedCurrency(code);
+
+  if(
+   rate!==null&&
+   rate>0
+  ){
+
+   output[code]=rate;
+
+  }
+
+ });
+
+ return output;
+
+}
+
+
+function renderRates(){
+
+ const container=
+  document.getElementById('rates');
+
+ if(!container) return;
+
+ const selected=
+  getSelectedCurrency();
+
  const available=
-  preferred.filter(function(code){
-   return getRate(code)!==null;
-  });
+  getAvailableCurrenciesForSelectedBase();
 
- if(!available.length){
+ const codes=
+  Object.keys(available);
 
-  container.innerHTML=
-   `<span class="rate-error">
+ if(!codes.length){
+
+  container.innerHTML=`
+   <span class="rate-error">
     ⚠️ ${escapeHtml(t('rateUnavailable'))}
-   </span>`;
+   </span>
+  `;
 
   return;
 
  }
 
- container.innerHTML=
-  available.map(function(code){
+ /*
+  ارز پایه انتخاب‌شده را در ابتدای ردیف نشان می‌دهیم.
+ */
+ const baseItem=`
+  <div class="rate-item">
+   <span class="rate-flag">
+    ${escapeHtml(getSelectedCountryFlag())}
+   </span>
 
-   const value=getRate(code);
+   <span class="rate-code">
+    ${escapeHtml(selected.code)}
+   </span>
+
+   <span style="color:#9ca3af">
+    BASE
+   </span>
+  </div>
+ `;
+
+ const rateItems=
+  codes.map(function(code){
+
+   const value=
+    normalizeRateValue(
+     available[code]
+    );
+
+   if(
+    value===null||
+    value<=0
+   ){
+    return '';
+   }
 
    return`
     <div class="rate-item">
+
      <span class="rate-flag">
       ${currencyFlag(code)}
      </span>
+
      <span class="rate-code">
       ${escapeHtml(code)}
      </span>
+
      <span>→</span>
+
      <span class="rate-value">
-      ${formatMoney(value)} AFN
+      ${formatMoney(value)} ${escapeHtml(selected.code)}
      </span>
+
     </div>
    `;
 
   }).join('');
 
- const updated=document.createElement('span');
+ container.innerHTML=
+  baseItem+
+  rateItems;
+
+ const updated=
+  document.createElement('span');
 
  updated.className='rate-ok';
  updated.innerText='● LIVE';
@@ -4087,6 +4553,189 @@ window.addEventListener(
 );
 
 
+/*
+=========================================================
+ تغییر کشور / ارز از translator.js
+=========================================================
+*/
+
+window.addEventListener(
+ 'dailyAccountingCurrencyChanged',
+ async function(event){
+
+  try{
+
+   const detail=
+    event?.detail||{};
+
+   if(detail.currencyCode){
+
+    userProfile.currencyCode=
+     String(detail.currencyCode)
+      .toUpperCase();
+
+   }
+
+   if(detail.currencyName){
+    userProfile.currencyName=
+     detail.currencyName;
+   }
+
+   if(detail.currencySymbol){
+    userProfile.currencySymbol=
+     detail.currencySymbol;
+   }
+
+  }catch(error){
+
+   console.warn(
+    'Currency changed event:',
+    error
+   );
+
+  }
+
+  syncGlobalTranslator();
+  updateHeader();
+  renderRates();
+  renderDashboard();
+
+  try{
+
+   if(
+    window.CinaSarafi &&
+    typeof window.CinaSarafi.refreshSarafiRates==='function'
+   ){
+
+    await window.CinaSarafi.refreshSarafiRates();
+
+   }else{
+
+    await updateRates();
+
+   }
+
+  }catch(error){
+
+   console.error(
+    'Currency refresh:',
+    error
+   );
+
+  }
+
+  renderRates();
+  renderDashboard();
+
+ }
+);
+
+
+window.addEventListener(
+ 'dailyAccountingCountryChanged',
+ function(event){
+
+  try{
+
+   const detail=
+    event?.detail||{};
+
+   if(detail.countryCode){
+    userProfile.countryCode=
+     detail.countryCode;
+   }
+
+   if(detail.countryName){
+    userProfile.countryName=
+     detail.countryName;
+   }
+
+   if(detail.countryFlag){
+    userProfile.countryFlag=
+     detail.countryFlag;
+   }
+
+   if(detail.currencyCode){
+    userProfile.currencyCode=
+     String(detail.currencyCode)
+      .toUpperCase();
+   }
+
+   if(detail.currencyName){
+    userProfile.currencyName=
+     detail.currencyName;
+   }
+
+   if(detail.currencySymbol){
+    userProfile.currencySymbol=
+     detail.currencySymbol;
+   }
+
+  }catch(error){
+
+   console.warn(
+    'Country changed event:',
+    error
+   );
+
+  }
+
+  syncGlobalTranslator();
+  updateHeader();
+  renderRates();
+  renderDashboard();
+
+ }
+);
+
+
+window.addEventListener(
+ 'dailyAccountingSettingsChanged',
+ function(event){
+
+  try{
+
+   const settings=
+    event?.detail||{};
+
+   if(
+    settings&&
+    typeof settings==='object'
+   ){
+
+    userProfile=
+     Object.assign(
+      userProfile,
+      settings
+     );
+
+   }
+
+  }catch(error){
+
+   console.warn(
+    'Settings changed event:',
+    error
+   );
+
+  }
+
+  setThemeColor(
+   userProfile.themeColor||
+   '#7c3aed'
+  );
+
+  syncGlobalTranslator();
+  applyLanguage();
+  updateHeader();
+  updateLocationDisplay();
+  renderRates();
+  renderDashboard();
+
+ }
+);
+
+
 /* =========================================================
    REALTIME
 ========================================================= */
@@ -4131,10 +4780,6 @@ function startRealtime(){
 
 }
 
-
-/* =========================================================
-   CROSS PAGE
-========================================================= */
 
 function broadcastUpdate(){
 
@@ -4185,6 +4830,8 @@ window.addEventListener(
 
     syncGlobalTranslator();
     applyLanguage();
+    renderRates();
+    renderDashboard();
 
    }catch(error){
 
@@ -4200,10 +4847,6 @@ window.addEventListener(
  }
 );
 
-
-/* =========================================================
-   CLOUD POLLING
-========================================================= */
 
 function startCloudPolling(){
 
@@ -4267,6 +4910,7 @@ function startCloudPolling(){
       updateHeader();
       updateNavigationProfile();
       updateLocationDisplay();
+      renderRates();
       renderDashboard();
 
      }
@@ -4288,10 +4932,6 @@ function startCloudPolling(){
 
 }
 
-
-/* =========================================================
-   LANGUAGE
-========================================================= */
 
 function applyLanguage(){
 
@@ -4382,14 +5022,11 @@ function applyLanguage(){
  updateLocationDisplay();
  updateHeader();
  updateNavigationProfile();
+ renderRates();
  renderDashboard();
 
 }
 
-
-/* =========================================================
-   NAVIGATION
-========================================================= */
 
 function updateNavigation(){
 
@@ -4405,10 +5042,6 @@ function updateNavigation(){
 
 }
 
-
-/* =========================================================
-   AUTH GATE
-========================================================= */
 
 function hideAuthGate(){
 
@@ -4446,10 +5079,6 @@ function showAuthGate(){
 }
 
 
-/* =========================================================
-   LOGGED IN PAGE
-========================================================= */
-
 async function initializeLoggedInPage(){
 
  if(!currentUser) return;
@@ -4467,9 +5096,6 @@ async function initializeLoggedInPage(){
   updateHeader();
   updateNavigationProfile();
 
-  /*
-   نرخ ارز نباید جلوی باز شدن برنامه را بگیرد.
-  */
   updateRates().catch(function(error){
    console.error(error);
   });
@@ -4511,10 +5137,6 @@ async function initializeLoggedInPage(){
 }
 
 
-/* =========================================================
-   INITIALIZE
-========================================================= */
-
 async function initialize(){
 
  console.log(
@@ -4539,10 +5161,6 @@ async function initialize(){
 
  try{
 
-  /*
-   translator.js اختیاری است.
-   اگر لود نشده باشد برنامه نباید متوقف شود.
-  */
   try{
 
    if(
@@ -4655,15 +5273,8 @@ async function initialize(){
 
   authInitialized=true;
 
-  /*
-   بسیار مهم:
-   در هر حالت Gate بسته می‌شود.
-  */
   hideAuthGate();
 
-  /*
-   نرخ‌ها کاملاً جدا از Auth اجرا می‌شوند.
-  */
   updateRates().catch(function(error){
    console.error(
     'Startup rates:',
@@ -4675,10 +5286,6 @@ async function initialize(){
 
 }
 
-
-/* =========================================================
-   AUTH STATE
-========================================================= */
 
 if(
  supabaseClient&&
@@ -4752,12 +5359,6 @@ if(
 }
 
 
-/* =========================================================
-   SAFE EVENT BINDING
-   قبلاً اگر یکی از عناصر پیدا نمی‌شد،
-   کل Startup می‌توانست با TypeError متوقف شود.
-========================================================= */
-
 const otpInput=
  document.getElementById('otp-code');
 
@@ -4816,10 +5417,6 @@ if(deleteModal){
 }
 
 
-/* =========================================================
-   CLICK ANIMATION
-========================================================= */
-
 document.addEventListener(
  'click',
  function(e){
@@ -4846,10 +5443,6 @@ document.addEventListener(
 );
 
 
-/* =========================================================
-   START
-========================================================= */
-
 if(document.readyState==='loading'){
 
  document.addEventListener(
@@ -4866,11 +5459,6 @@ if(document.readyState==='loading'){
 
 }
 
-
-/* =========================================================
-   SERVICE WORKER
-   نسخه جدید برای جلوگیری از Cache قدیمی
-========================================================= */
 
 if('serviceWorker' in navigator){
 
@@ -4893,9 +5481,6 @@ if('serviceWorker' in navigator){
      registration.scope
     );
 
-    /*
-     درخواست نسخه جدید
-    */
     if(registration.update){
      registration.update().catch(function(){});
     }
