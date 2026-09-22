@@ -1,631 +1,1757 @@
 /* =========================================================
-   DAILY ACCOUNTING - GLOBAL TRANSLATOR & SETTINGS
-   مشترک بین تمام صفحات
+   DAILY ACCOUNTING - GLOBAL TRANSLATOR
+   translator.js
 ========================================================= */
 
-(function(){
+(function () {
+  'use strict';
 
-'use strict';
+  /* =======================================================
+     LANGUAGES
+  ======================================================= */
 
-const STORAGE_KEY='dailyAccountingSettings';
+  const LANGUAGES = {
+    en: {
+      name: 'English',
+      nativeName: 'English',
+      dir: 'ltr'
+    },
 
-const LANGUAGES={
- en:{name:'English',flag:'🇬🇧',dir:'ltr'},
- fa:{name:'فارسی',flag:'🇦🇫',dir:'rtl'},
- ar:{name:'العربية',flag:'🇸🇦',dir:'rtl'},
- ps:{name:'پښتو',flag:'🇦🇫',dir:'rtl'},
- tr:{name:'Türkçe',flag:'🇹🇷',dir:'ltr'}
-};
+    fa: {
+      name: 'Persian',
+      nativeName: 'فارسی',
+      dir: 'rtl'
+    },
 
-const TRANSLATIONS={
+    ar: {
+      name: 'Arabic',
+      nativeName: 'العربية',
+      dir: 'rtl'
+    },
 
-en:{
- home:'Home',
- transactions:'Transactions',
- profile:'Profile',
- logout:'Logout',
- loading:'Loading...',
- myAccounts:'My Accounts',
- noAccounts:'No accounts yet',
- noAccountsText:'Create a transaction to start your accounting.',
- credit:'Credit',
- debit:'Debit',
- transaction:'Transaction',
- transactionsCount:'transactions',
- edit:'Edit',
- delete:'Delete',
- confirmDelete:'Confirm Deletion',
- deleteAccount:'Are you sure you want to delete this account?',
- cancel:'Cancel',
- yesDelete:'Yes, Delete',
- location:'Location',
- detecting:'Detecting...',
- online:'Online',
- signIn:'Sign In',
- register:'Create New Account',
- email:'Email Address',
- password:'Password',
- verifyEmail:'Verify Your Email',
- verificationCode:'Verification Code',
- verifyCode:'Verify Code',
- resend:'Resend Code',
- back:'Back',
- addTransaction:'Add transaction',
- balance:'Balance',
- country:'Country',
- state:'Province / State',
- city:'City',
- language:'Language',
- theme:'Theme',
- save:'Save',
- phone:'Phone',
- name:'Name',
- uploading:'Uploading...',
- noResults:'No results',
- ratesLoading:'Loading rates...',
- live:'LIVE',
- ratesUnavailable:'Rates API unavailable'
-},
+    ps: {
+      name: 'Pashto',
+      nativeName: 'پښتو',
+      dir: 'rtl'
+    },
 
-fa:{
- home:'خانه',
- transactions:'معاملات',
- profile:'پروفایل',
- logout:'خروج',
- loading:'در حال بارگذاری...',
- myAccounts:'حساب‌های من',
- noAccounts:'هنوز حسابی وجود ندارد',
- noAccountsText:'برای شروع، یک معامله ثبت کنید.',
- credit:'طلب',
- debit:'بدهی',
- transaction:'معامله',
- transactionsCount:'معامله',
- edit:'ویرایش',
- delete:'حذف',
- confirmDelete:'تأیید حذف',
- deleteAccount:'آیا از حذف این حساب مطمئن هستید؟',
- cancel:'لغو',
- yesDelete:'بله، حذف شود',
- location:'موقعیت',
- detecting:'در حال تشخیص...',
- online:'آنلاین',
- signIn:'ورود',
- register:'ایجاد حساب جدید',
- email:'آدرس ایمیل',
- password:'رمز عبور',
- verifyEmail:'تأیید ایمیل',
- verificationCode:'کد تأیید',
- verifyCode:'تأیید کد',
- resend:'ارسال دوباره',
- back:'برگشت',
- addTransaction:'افزودن معامله',
- balance:'موجودی',
- country:'کشور',
- state:'ولایت / ایالت',
- city:'شهر',
- language:'زبان',
- theme:'رنگ',
- save:'ذخیره',
- phone:'شماره تلفن',
- name:'نام',
- uploading:'در حال آپلود...',
- noResults:'نتیجه‌ای پیدا نشد',
- ratesLoading:'در حال دریافت نرخ‌ها...',
- live:'زنده',
- ratesUnavailable:'نرخ ارز در دسترس نیست'
-},
+    tr: {
+      name: 'Turkish',
+      nativeName: 'Türkçe',
+      dir: 'ltr'
+    }
+  };
 
-ar:{
- home:'الرئيسية',
- transactions:'المعاملات',
- profile:'الملف الشخصي',
- logout:'تسجيل الخروج',
- loading:'جارٍ التحميل...',
- myAccounts:'حساباتي',
- noAccounts:'لا توجد حسابات بعد',
- noAccountsText:'أنشئ معاملة لبدء المحاسبة.',
- credit:'دائن',
- debit:'مدين',
- transaction:'معاملة',
- transactionsCount:'معاملات',
- edit:'تعديل',
- delete:'حذف',
- confirmDelete:'تأكيد الحذف',
- deleteAccount:'هل أنت متأكد من حذف هذا الحساب؟',
- cancel:'إلغاء',
- yesDelete:'نعم، حذف',
- location:'الموقع',
- detecting:'جارٍ التحديد...',
- online:'متصل',
- signIn:'تسجيل الدخول',
- register:'إنشاء حساب جديد',
- email:'البريد الإلكتروني',
- password:'كلمة المرور',
- verifyEmail:'تأكيد البريد الإلكتروني',
- verificationCode:'رمز التحقق',
- verifyCode:'تأكيد الرمز',
- resend:'إعادة الإرسال',
- back:'رجوع',
- addTransaction:'إضافة معاملة',
- balance:'الرصيد',
- country:'الدولة',
- state:'المقاطعة / الولاية',
- city:'المدينة',
- language:'اللغة',
- theme:'اللون',
- save:'حفظ',
- phone:'رقم الهاتف',
- name:'الاسم',
- uploading:'جارٍ الرفع...',
- noResults:'لا توجد نتائج',
- ratesLoading:'جارٍ تحميل الأسعار...',
- live:'مباشر',
- ratesUnavailable:'أسعار العملات غير متاحة'
-},
 
-ps:{
- home:'کور',
- transactions:'معاملې',
- profile:'پروفایل',
- logout:'وتل',
- loading:'د بارولو په حال کې...',
- myAccounts:'زما حسابونه',
- noAccounts:'تر اوسه حساب نشته',
- noAccountsText:'د حسابدارۍ د پیل لپاره یوه معامله جوړه کړئ.',
- credit:'طلب',
- debit:'پور',
- transaction:'معامله',
- transactionsCount:'معاملې',
- edit:'سمون',
- delete:'حذف',
- confirmDelete:'د حذف تایید',
- deleteAccount:'ایا غواړئ دا حساب حذف کړئ؟',
- cancel:'لغوه',
- yesDelete:'هو، حذف یې کړه',
- location:'ځای',
- detecting:'د موندلو په حال کې...',
- online:'آنلاین',
- signIn:'ننوتل',
- register:'نوی حساب جوړول',
- email:'ایمیل',
- password:'پټ نوم',
- verifyEmail:'د ایمیل تایید',
- verificationCode:'د تایید کوډ',
- verifyCode:'کوډ تایید کړه',
- resend:'بیا ولېږه',
- back:'بېرته',
- addTransaction:'معامله اضافه کړه',
- balance:'بیلانس',
- country:'هیواد',
- state:'ولایت / ایالت',
- city:'ښار',
- language:'ژبه',
- theme:'رنګ',
- save:'ساتل',
- phone:'د تلیفون شمېره',
- name:'نوم',
- uploading:'اپلوډېږي...',
- noResults:'پایله ونه موندل شوه',
- ratesLoading:'نرخونه پورته کېږي...',
- live:'ژوندی',
- ratesUnavailable:'د اسعارو نرخونه شتون نه لري'
-},
+  /* =======================================================
+     DEFAULT SETTINGS
+  ======================================================= */
 
-tr:{
- home:'Ana Sayfa',
- transactions:'İşlemler',
- profile:'Profil',
- logout:'Çıkış',
- loading:'Yükleniyor...',
- myAccounts:'Hesaplarım',
- noAccounts:'Henüz hesap yok',
- noAccountsText:'Muhasebeye başlamak için bir işlem oluşturun.',
- credit:'Alacak',
- debit:'Borç',
- transaction:'İşlem',
- transactionsCount:'işlem',
- edit:'Düzenle',
- delete:'Sil',
- confirmDelete:'Silmeyi Onayla',
- deleteAccount:'Bu hesabı silmek istediğinizden emin misiniz?',
- cancel:'İptal',
- yesDelete:'Evet, Sil',
- location:'Konum',
- detecting:'Algılanıyor...',
- online:'Çevrimiçi',
- signIn:'Giriş Yap',
- register:'Yeni Hesap Oluştur',
- email:'E-posta Adresi',
- password:'Şifre',
- verifyEmail:'E-postanızı Doğrulayın',
- verificationCode:'Doğrulama Kodu',
- verifyCode:'Kodu Doğrula',
- resend:'Kodu Tekrar Gönder',
- back:'Geri',
- addTransaction:'İşlem ekle',
- balance:'Bakiye',
- country:'Ülke',
- state:'Eyalet / İl',
- city:'Şehir',
- language:'Dil',
- theme:'Renk',
- save:'Kaydet',
- phone:'Telefon',
- name:'İsim',
- uploading:'Yükleniyor...',
- noResults:'Sonuç bulunamadı',
- ratesLoading:'Kurlar yükleniyor...',
- live:'CANLI',
- ratesUnavailable:'Kur bilgileri kullanılamıyor'
-}
+  const DEFAULT_SETTINGS = {
+    language: 'en',
 
-};
+    themeColor: '#7c3aed',
 
-const DEFAULT_SETTINGS={
- language:'en',
- themeColor:'#7c3aed',
- countryCode:'AF',
- countryName:'Afghanistan',
- countryFlag:'🇦🇫',
- currencyCode:'AFN',
- currencyName:'Afghan Afghani',
- currencySymbol:'؋',
- state:'Jawzjan',
- city:'',
- name:'',
- phone:'',
- avatar:''
-};
+    countryCode: 'AF',
+    countryName: 'Afghanistan',
+    countryFlag: '🇦🇫',
 
-function cloneDefault(){
- return Object.assign({},DEFAULT_SETTINGS);
-}
+    currencyCode: 'AFN',
+    currencyName: 'Afghan Afghani',
+    currencySymbol: '؋',
 
-function getSettings(){
+    state: 'Jawzjan',
+    city: '',
 
- try{
+    name: '',
+    phone: '',
+    avatar: ''
+  };
 
-  const raw=
-   localStorage.getItem(STORAGE_KEY);
 
-  if(!raw){
-   return cloneDefault();
+  const STORAGE_KEY =
+    'dailyAccountingSettings';
+
+
+  /* =======================================================
+     TRANSLATIONS
+  ======================================================= */
+
+  const TRANSLATIONS = {
+
+    en: {
+
+      dailyAccounting: 'Daily Accounting',
+
+      home: 'Home',
+      transactions: 'Transactions',
+      profile: 'Profile',
+      settings: 'Settings',
+      logout: 'Logout',
+
+      loading: 'Loading...',
+      checkingAccount: 'Checking account...',
+
+      signInOrRegister: 'Sign In or Register',
+      loginDescription:
+        'Log in to access your cloud accounts.',
+
+      emailAddress: 'Email Address',
+      password: 'Password',
+
+      emailPlaceholder:
+        'example@gmail.com',
+
+      passwordPlaceholder:
+        'At least 6 characters',
+
+      signIn: 'Sign In',
+      createAccount: 'Create New Account',
+
+      verifyEmail: 'Verify Your Email',
+
+      verifyEmailDescription:
+        'Enter the 6-digit code sent to your email.',
+
+      verificationCode:
+        'Verification Code',
+
+      verificationCodePlaceholder:
+        'Enter 6-digit code',
+
+      verifyCode: 'Verify Code',
+      resendCode: 'Resend Code',
+      back: 'Back',
+
+      myAccounts: 'My Accounts',
+
+      noAccounts: 'No accounts yet',
+
+      noAccountsText:
+        'Create a transaction to start your accounting.',
+
+      credit: 'Credit',
+      debit: 'Debit',
+      balance: 'Balance',
+
+      transaction: 'Transaction',
+      transactionsCount: 'transactions',
+
+      edit: 'Edit',
+      delete: 'Delete',
+
+      confirmDeletion:
+        'Confirm Deletion',
+
+      deleteAccount:
+        'Are you sure you want to delete this account?',
+
+      cancel: 'Cancel',
+      yesDelete: 'Yes, Delete',
+
+      location: 'Location',
+      detecting: 'Detecting...',
+
+      live: 'LIVE',
+      ratesUnavailable:
+        'Rates API unavailable',
+
+      rateUnavailable:
+        'Rate unavailable',
+
+      accountDeleted:
+        'Account deleted.',
+
+      transactionDeleted:
+        'Transaction deleted.',
+
+      deleteTransaction:
+        'Delete this transaction?',
+
+      signupSessionExpired:
+        'Signup session expired.',
+
+      enterEmailPassword:
+        'Enter email and password.',
+
+      enterValidPassword:
+        'Enter email and a password of at least 6 characters.',
+
+      verificationSent:
+        'Verification code sent.',
+
+      verificationCodeSent:
+        'Code sent again.',
+
+      invalidCode:
+        'Invalid code.',
+
+      codeSixDigits:
+        'Code must contain 6 digits.',
+
+      accountCreated:
+        'Account created successfully.',
+
+      verificationError:
+        'Verification error.'
+    },
+
+
+    fa: {
+
+      dailyAccounting: 'حسابداری روزانه',
+
+      home: 'خانه',
+      transactions: 'معاملات',
+      profile: 'پروفایل',
+      settings: 'تنظیمات',
+      logout: 'خروج',
+
+      loading: 'در حال بارگذاری...',
+      checkingAccount: 'در حال بررسی حساب...',
+
+      signInOrRegister:
+        'ورود یا ثبت‌نام',
+
+      loginDescription:
+        'برای دسترسی به حساب‌های ابری خود وارد شوید.',
+
+      emailAddress:
+        'آدرس ایمیل',
+
+      password:
+        'رمز عبور',
+
+      emailPlaceholder:
+        'example@gmail.com',
+
+      passwordPlaceholder:
+        'حداقل ۶ حرف',
+
+      signIn:
+        'ورود',
+
+      createAccount:
+        'ایجاد حساب جدید',
+
+      verifyEmail:
+        'تأیید ایمیل',
+
+      verifyEmailDescription:
+        'کد ۶ رقمی ارسال‌شده به ایمیل خود را وارد کنید.',
+
+      verificationCode:
+        'کد تأیید',
+
+      verificationCodePlaceholder:
+        'کد ۶ رقمی را وارد کنید',
+
+      verifyCode:
+        'تأیید کد',
+
+      resendCode:
+        'ارسال دوباره کد',
+
+      back:
+        'بازگشت',
+
+      myAccounts:
+        'حساب‌های من',
+
+      noAccounts:
+        'هنوز حسابی وجود ندارد',
+
+      noAccountsText:
+        'برای شروع حسابداری، یک معامله ثبت کنید.',
+
+      credit:
+        'طلب',
+
+      debit:
+        'بدهی',
+
+      balance:
+        'موجودی',
+
+      transaction:
+        'معامله',
+
+      transactionsCount:
+        'معامله',
+
+      edit:
+        'ویرایش',
+
+      delete:
+        'حذف',
+
+      confirmDeletion:
+        'تأیید حذف',
+
+      deleteAccount:
+        'آیا از حذف این حساب مطمئن هستید؟',
+
+      cancel:
+        'لغو',
+
+      yesDelete:
+        'بله، حذف شود',
+
+      location:
+        'موقعیت',
+
+      detecting:
+        'در حال تشخیص...',
+
+      live:
+        'زنده',
+
+      ratesUnavailable:
+        'API نرخ ارز در دسترس نیست',
+
+      rateUnavailable:
+        'نرخ در دسترس نیست',
+
+      accountDeleted:
+        'حساب حذف شد.',
+
+      transactionDeleted:
+        'معامله حذف شد.',
+
+      deleteTransaction:
+        'آیا این معامله حذف شود؟',
+
+      signupSessionExpired:
+        'جلسه ثبت‌نام منقضی شده است.',
+
+      enterEmailPassword:
+        'ایمیل و رمز عبور را وارد کنید.',
+
+      enterValidPassword:
+        'ایمیل و رمز عبور حداقل ۶ حرفی وارد کنید.',
+
+      verificationSent:
+        'کد تأیید ارسال شد.',
+
+      verificationCodeSent:
+        'کد دوباره ارسال شد.',
+
+      invalidCode:
+        'کد نادرست است.',
+
+      codeSixDigits:
+        'کد باید ۶ رقمی باشد.',
+
+      accountCreated:
+        'حساب با موفقیت ایجاد شد.',
+
+      verificationError:
+        'خطا در تأیید کد.'
+    },
+
+
+    ar: {
+
+      dailyAccounting:
+        'المحاسبة اليومية',
+
+      home:
+        'الرئيسية',
+
+      transactions:
+        'المعاملات',
+
+      profile:
+        'الملف الشخصي',
+
+      settings:
+        'الإعدادات',
+
+      logout:
+        'تسجيل الخروج',
+
+      loading:
+        'جار التحميل...',
+
+      checkingAccount:
+        'جارٍ التحقق من الحساب...',
+
+      signInOrRegister:
+        'تسجيل الدخول أو إنشاء حساب',
+
+      loginDescription:
+        'سجّل الدخول للوصول إلى حساباتك السحابية.',
+
+      emailAddress:
+        'عنوان البريد الإلكتروني',
+
+      password:
+        'كلمة المرور',
+
+      emailPlaceholder:
+        'example@gmail.com',
+
+      passwordPlaceholder:
+        '6 أحرف على الأقل',
+
+      signIn:
+        'تسجيل الدخول',
+
+      createAccount:
+        'إنشاء حساب جديد',
+
+      verifyEmail:
+        'تأكيد البريد الإلكتروني',
+
+      verifyEmailDescription:
+        'أدخل الرمز المكون من 6 أرقام المرسل إلى بريدك الإلكتروني.',
+
+      verificationCode:
+        'رمز التحقق',
+
+      verificationCodePlaceholder:
+        'أدخل الرمز المكون من 6 أرقام',
+
+      verifyCode:
+        'تأكيد الرمز',
+
+      resendCode:
+        'إعادة إرسال الرمز',
+
+      back:
+        'رجوع',
+
+      myAccounts:
+        'حساباتي',
+
+      noAccounts:
+        'لا توجد حسابات بعد',
+
+      noAccountsText:
+        'أنشئ معاملة لبدء المحاسبة.',
+
+      credit:
+        'دائن',
+
+      debit:
+        'مدين',
+
+      balance:
+        'الرصيد',
+
+      transaction:
+        'معاملة',
+
+      transactionsCount:
+        'معاملات',
+
+      edit:
+        'تعديل',
+
+      delete:
+        'حذف',
+
+      confirmDeletion:
+        'تأكيد الحذف',
+
+      deleteAccount:
+        'هل أنت متأكد أنك تريد حذف هذا الحساب؟',
+
+      cancel:
+        'إلغاء',
+
+      yesDelete:
+        'نعم، حذف',
+
+      location:
+        'الموقع',
+
+      detecting:
+        'جارٍ التحديد...',
+
+      live:
+        'مباشر',
+
+      ratesUnavailable:
+        'واجهة أسعار الصرف غير متاحة',
+
+      rateUnavailable:
+        'السعر غير متاح',
+
+      accountDeleted:
+        'تم حذف الحساب.',
+
+      transactionDeleted:
+        'تم حذف المعاملة.',
+
+      deleteTransaction:
+        'هل تريد حذف هذه المعاملة؟',
+
+      signupSessionExpired:
+        'انتهت جلسة التسجيل.',
+
+      enterEmailPassword:
+        'أدخل البريد الإلكتروني وكلمة المرور.',
+
+      enterValidPassword:
+        'أدخل بريدًا إلكترونيًا وكلمة مرور من 6 أحرف على الأقل.',
+
+      verificationSent:
+        'تم إرسال رمز التحقق.',
+
+      verificationCodeSent:
+        'تم إرسال الرمز مرة أخرى.',
+
+      invalidCode:
+        'الرمز غير صحيح.',
+
+      codeSixDigits:
+        'يجب أن يتكون الرمز من 6 أرقام.',
+
+      accountCreated:
+        'تم إنشاء الحساب بنجاح.',
+
+      verificationError:
+        'حدث خطأ أثناء التحقق.'
+    },
+
+
+    ps: {
+
+      dailyAccounting:
+        'ورځنی حساب',
+
+      home:
+        'کور',
+
+      transactions:
+        'معاملات',
+
+      profile:
+        'پروفایل',
+
+      settings:
+        'تنظیمات',
+
+      logout:
+        'وتل',
+
+      loading:
+        'لوډ کېږي...',
+
+      checkingAccount:
+        'حساب کتل کېږي...',
+
+      signInOrRegister:
+        'ننوتل یا ثبت نام',
+
+      loginDescription:
+        'خپل کلاوډ حسابونو ته د لاسرسي لپاره ننوتل وکړئ.',
+
+      emailAddress:
+        'د ایمیل پته',
+
+      password:
+        'پټ نوم',
+
+      emailPlaceholder:
+        'example@gmail.com',
+
+      passwordPlaceholder:
+        'لږ تر لږه ۶ توري',
+
+      signIn:
+        'ننوتل',
+
+      createAccount:
+        'نوی حساب جوړول',
+
+      verifyEmail:
+        'د ایمیل تایید',
+
+      verifyEmailDescription:
+        'خپل ایمیل ته لېږل شوی ۶ عددي کوډ داخل کړئ.',
+
+      verificationCode:
+        'د تایید کوډ',
+
+      verificationCodePlaceholder:
+        '۶ عددي کوډ داخل کړئ',
+
+      verifyCode:
+        'کوډ تاییدول',
+
+      resendCode:
+        'کوډ بیا لېږل',
+
+      back:
+        'بېرته',
+
+      myAccounts:
+        'زما حسابونه',
+
+      noAccounts:
+        'تر اوسه حساب نشته',
+
+      noAccountsText:
+        'د حسابدارۍ د پیل لپاره یوه معامله ثبت کړئ.',
+
+      credit:
+        'طلب',
+
+      debit:
+        'پور',
+
+      balance:
+        'بیلانس',
+
+      transaction:
+        'معامله',
+
+      transactionsCount:
+        'معاملې',
+
+      edit:
+        'سمول',
+
+      delete:
+        'حذف',
+
+      confirmDeletion:
+        'د حذف تایید',
+
+      deleteAccount:
+        'ایا ډاډه یاست چې دا حساب حذف کړئ؟',
+
+      cancel:
+        'لغوه',
+
+      yesDelete:
+        'هو، حذف یې کړه',
+
+      location:
+        'موقعیت',
+
+      detecting:
+        'موقعیت معلومېږي...',
+
+      live:
+        'ژوندی',
+
+      ratesUnavailable:
+        'د اسعارو API شتون نه لري',
+
+      rateUnavailable:
+        'نرخ شتون نه لري',
+
+      accountDeleted:
+        'حساب حذف شو.',
+
+      transactionDeleted:
+        'معامله حذف شوه.',
+
+      deleteTransaction:
+        'ایا دا معامله حذف شي؟',
+
+      signupSessionExpired:
+        'د ثبت نام موده پای ته رسېدلې.',
+
+      enterEmailPassword:
+        'ایمیل او پټ نوم داخل کړئ.',
+
+      enterValidPassword:
+        'ایمیل او لږ تر لږه ۶ توري پټ نوم داخل کړئ.',
+
+      verificationSent:
+        'د تایید کوډ ولېږل شو.',
+
+      verificationCodeSent:
+        'کوډ بیا ولېږل شو.',
+
+      invalidCode:
+        'کوډ ناسم دی.',
+
+      codeSixDigits:
+        'کوډ باید ۶ عددي وي.',
+
+      accountCreated:
+        'حساب په بریالیتوب جوړ شو.',
+
+      verificationError:
+        'د تایید پر مهال تېروتنه وشوه.'
+    },
+
+
+    tr: {
+
+      dailyAccounting:
+        'Günlük Muhasebe',
+
+      home:
+        'Ana Sayfa',
+
+      transactions:
+        'İşlemler',
+
+      profile:
+        'Profil',
+
+      settings:
+        'Ayarlar',
+
+      logout:
+        'Çıkış',
+
+      loading:
+        'Yükleniyor...',
+
+      checkingAccount:
+        'Hesap kontrol ediliyor...',
+
+      signInOrRegister:
+        'Giriş Yap veya Kayıt Ol',
+
+      loginDescription:
+        'Bulut hesaplarınıza erişmek için giriş yapın.',
+
+      emailAddress:
+        'E-posta Adresi',
+
+      password:
+        'Şifre',
+
+      emailPlaceholder:
+        'example@gmail.com',
+
+      passwordPlaceholder:
+        'En az 6 karakter',
+
+      signIn:
+        'Giriş Yap',
+
+      createAccount:
+        'Yeni Hesap Oluştur',
+
+      verifyEmail:
+        'E-postanızı Doğrulayın',
+
+      verifyEmailDescription:
+        'E-postanıza gönderilen 6 haneli kodu girin.',
+
+      verificationCode:
+        'Doğrulama Kodu',
+
+      verificationCodePlaceholder:
+        '6 haneli kodu girin',
+
+      verifyCode:
+        'Kodu Doğrula',
+
+      resendCode:
+        'Kodu Tekrar Gönder',
+
+      back:
+        'Geri',
+
+      myAccounts:
+        'Hesaplarım',
+
+      noAccounts:
+        'Henüz hesap yok',
+
+      noAccountsText:
+        'Muhasebenize başlamak için bir işlem oluşturun.',
+
+      credit:
+        'Alacak',
+
+      debit:
+        'Borç',
+
+      balance:
+        'Bakiye',
+
+      transaction:
+        'İşlem',
+
+      transactionsCount:
+        'işlem',
+
+      edit:
+        'Düzenle',
+
+      delete:
+        'Sil',
+
+      confirmDeletion:
+        'Silmeyi Onayla',
+
+      deleteAccount:
+        'Bu hesabı silmek istediğinizden emin misiniz?',
+
+      cancel:
+        'İptal',
+
+      yesDelete:
+        'Evet, Sil',
+
+      location:
+        'Konum',
+
+      detecting:
+        'Algılanıyor...',
+
+      live:
+        'CANLI',
+
+      ratesUnavailable:
+        'Kur API kullanılamıyor',
+
+      rateUnavailable:
+        'Kur mevcut değil',
+
+      accountDeleted:
+        'Hesap silindi.',
+
+      transactionDeleted:
+        'İşlem silindi.',
+
+      deleteTransaction:
+        'Bu işlem silinsin mi?',
+
+      signupSessionExpired:
+        'Kayıt oturumu sona erdi.',
+
+      enterEmailPassword:
+        'E-posta ve şifre girin.',
+
+      enterValidPassword:
+        'E-posta ve en az 6 karakterli bir şifre girin.',
+
+      verificationSent:
+        'Doğrulama kodu gönderildi.',
+
+      verificationCodeSent:
+        'Kod tekrar gönderildi.',
+
+      invalidCode:
+        'Geçersiz kod.',
+
+      codeSixDigits:
+        'Kod 6 haneli olmalıdır.',
+
+      accountCreated:
+        'Hesap başarıyla oluşturuldu.',
+
+      verificationError:
+        'Doğrulama hatası.'
+    }
+
+  };
+
+
+  /* =======================================================
+     STORAGE
+  ======================================================= */
+
+  function loadSettings() {
+
+    try {
+
+      const saved =
+        localStorage.getItem(STORAGE_KEY);
+
+      if (!saved) {
+
+        return {
+          ...DEFAULT_SETTINGS
+        };
+
+      }
+
+      const parsed =
+        JSON.parse(saved);
+
+      return {
+        ...DEFAULT_SETTINGS,
+        ...(parsed || {})
+      };
+
+    } catch (error) {
+
+      console.error(
+        'Translator settings:',
+        error
+      );
+
+      return {
+        ...DEFAULT_SETTINGS
+      };
+
+    }
+
   }
 
-  const parsed=JSON.parse(raw);
 
-  return Object.assign(
-   cloneDefault(),
-   parsed||{}
-  );
+  let settings = loadSettings();
 
- }catch(e){
 
-  console.error(
-   'Global settings:',
-   e
-  );
+  /* =======================================================
+     SAVE SETTINGS
+  ======================================================= */
 
-  return cloneDefault();
+  function saveSettings(newSettings) {
 
- }
+    settings = {
+      ...settings,
+      ...(newSettings || {})
+    };
 
-}
+    try {
 
-function saveSettings(settings){
+      localStorage.setItem(
+        STORAGE_KEY,
+        JSON.stringify(settings)
+      );
 
- const merged=
-  Object.assign(
-   cloneDefault(),
-   getSettings(),
-   settings||{}
-  );
+    } catch (error) {
 
- try{
-  localStorage.setItem(
-   STORAGE_KEY,
-   JSON.stringify(merged)
-  );
- }catch(e){
-  console.error(e);
- }
+      console.error(
+        'Translator save:',
+        error
+      );
 
- applyGlobalSettings(merged);
+    }
 
- window.dispatchEvent(
-  new CustomEvent(
-   'dailyAccountingSettingsChanged',
-   {
-    detail:merged
-   }
-  )
- );
+    applyGlobalSettings(false);
 
- return merged;
-}
+    return settings;
+  }
 
-function isoToFlag(code){
 
- if(!code || String(code).length!==2){
-  return '🌐';
- }
+  /* =======================================================
+     TRANSLATE
+  ======================================================= */
 
- return String(code)
-  .toUpperCase()
-  .replace(
-   /./g,
-   c=>String.fromCodePoint(
-    127397+c.charCodeAt(0)
-   )
-  );
+  function t(key, fallback) {
 
-}
+    const language =
+      settings.language || 'en';
 
-function getLanguage(){
+    const table =
+      TRANSLATIONS[language] ||
+      TRANSLATIONS.en;
 
- const s=getSettings();
+    if (
+      table &&
+      Object.prototype.hasOwnProperty.call(
+        table,
+        key
+      )
+    ) {
 
- return LANGUAGES[s.language]
-  ? s.language
-  : 'en';
+      return table[key];
 
-}
+    }
 
-function t(key){
+    if (
+      TRANSLATIONS.en &&
+      Object.prototype.hasOwnProperty.call(
+        TRANSLATIONS.en,
+        key
+      )
+    ) {
 
- const language=getLanguage();
+      return TRANSLATIONS.en[key];
 
- return (
-  TRANSLATIONS[language]?.[key] ??
-  TRANSLATIONS.en[key] ??
-  key
- );
+    }
 
-}
-
-function applyDirection(language){
-
- const lang=
-  LANGUAGES[language]
-   ? language
-   : 'en';
-
- const info=LANGUAGES[lang];
-
- document.documentElement.lang=lang;
- document.documentElement.dir=info.dir;
-
-}
-
-function applyTheme(color){
-
- if(!color) return;
-
- const root=
-  document.documentElement;
-
- root.style.setProperty(
-  '--primary',
-  color
- );
-
- root.style.setProperty(
-  '--theme-color',
-  color
- );
-
- let dark=color;
-
- try{
-
-  const hex=color.replace('#','');
-
-  if(hex.length===6){
-
-   const r=parseInt(hex.substring(0,2),16);
-   const g=parseInt(hex.substring(2,4),16);
-   const b=parseInt(hex.substring(4,6),16);
-
-   dark=
-    `rgb(${Math.max(0,r-20)},${Math.max(0,g-20)},${Math.max(0,b-20)})`;
+    return (
+      fallback !== undefined
+        ? fallback
+        : key
+    );
 
   }
 
- }catch(e){}
 
- root.style.setProperty(
-  '--primary-dark',
-  dark
- );
+  /* =======================================================
+     DIRECTION
+  ======================================================= */
 
- root.style.setProperty(
-  '--primary-soft',
-  color+'18'
- );
+  function getDirection(language) {
 
-}
-
-function translatePage(){
-
- document
-  .querySelectorAll('[data-i18n]')
-  .forEach(el=>{
-
-   const key=
-    el.getAttribute('data-i18n');
-
-   el.textContent=t(key);
-
-  });
-
- document
-  .querySelectorAll('[data-i18n-placeholder]')
-  .forEach(el=>{
-
-   const key=
-    el.getAttribute(
-     'data-i18n-placeholder'
+    return (
+      LANGUAGES[language]?.dir ||
+      'ltr'
     );
 
-   el.placeholder=t(key);
+  }
 
-  });
 
- document
-  .querySelectorAll('[data-i18n-title]')
-  .forEach(el=>{
+  /* =======================================================
+     ISO COUNTRY → FLAG
+  ======================================================= */
 
-   const key=
-    el.getAttribute(
-     'data-i18n-title'
+  function isoToFlag(code) {
+
+    if (!code) {
+      return '🌐';
+    }
+
+    const normalized =
+      String(code)
+        .trim()
+        .toUpperCase();
+
+    if (
+      normalized.length !== 2
+    ) {
+
+      return '🌐';
+
+    }
+
+    return normalized
+      .split('')
+      .map(
+        char =>
+          String.fromCodePoint(
+            127397 +
+            char.charCodeAt(0)
+          )
+      )
+      .join('');
+
+  }
+
+
+  /* =======================================================
+     THEME
+  ======================================================= */
+
+  function hexToRgb(hex) {
+
+    if (!hex) return null;
+
+    let value =
+      String(hex)
+        .trim()
+        .replace('#', '');
+
+    if (value.length === 3) {
+
+      value =
+        value
+          .split('')
+          .map(x => x + x)
+          .join('');
+
+    }
+
+    if (
+      !/^[0-9a-fA-F]{6}$/.test(value)
+    ) {
+
+      return null;
+
+    }
+
+    return {
+      r: parseInt(
+        value.substring(0, 2),
+        16
+      ),
+
+      g: parseInt(
+        value.substring(2, 4),
+        16
+      ),
+
+      b: parseInt(
+        value.substring(4, 6),
+        16
+      )
+    };
+
+  }
+
+
+  function rgbToHex(r, g, b) {
+
+    return '#' +
+      [r, g, b]
+        .map(
+          value =>
+            Math.max(
+              0,
+              Math.min(
+                255,
+                Math.round(value)
+              )
+            )
+            .toString(16)
+            .padStart(2, '0')
+        )
+        .join('');
+
+  }
+
+
+  function darkenColor(
+    color,
+    amount = 0.15
+  ) {
+
+    const rgb =
+      hexToRgb(color);
+
+    if (!rgb) {
+      return color;
+    }
+
+    return rgbToHex(
+      rgb.r * (1 - amount),
+      rgb.g * (1 - amount),
+      rgb.b * (1 - amount)
     );
 
-   el.title=t(key);
+  }
 
-  });
 
- document
-  .querySelectorAll('[data-i18n-aria-label]')
-  .forEach(el=>{
+  function makeSoftColor(color) {
 
-   const key=
-    el.getAttribute(
-     'data-i18n-aria-label'
+    const rgb =
+      hexToRgb(color);
+
+    if (!rgb) {
+      return '#f5f3ff';
+    }
+
+    const mix = 0.90;
+
+    return rgbToHex(
+      rgb.r +
+        (255 - rgb.r) * mix,
+
+      rgb.g +
+        (255 - rgb.g) * mix,
+
+      rgb.b +
+        (255 - rgb.b) * mix
     );
 
-   el.setAttribute(
-    'aria-label',
-    t(key)
-   );
+  }
 
-  });
 
-}
+  function setTheme(color) {
 
-function applyGlobalSettings(settings){
+    if (!color) {
+      return;
+    }
 
- const s=
-  Object.assign(
-   cloneDefault(),
-   settings||getSettings()
-  );
+    settings.themeColor =
+      color;
 
- applyDirection(s.language);
+    const root =
+      document.documentElement;
 
- applyTheme(s.themeColor);
+    root.style.setProperty(
+      '--primary',
+      color
+    );
 
- translatePage();
+    root.style.setProperty(
+      '--primary-dark',
+      darkenColor(
+        color,
+        0.15
+      )
+    );
 
- window.dispatchEvent(
-  new CustomEvent(
-   'dailyAccountingGlobalApplied',
-   {
-    detail:s
-   }
-  )
- );
+    root.style.setProperty(
+      '--primary-soft',
+      makeSoftColor(color)
+    );
 
-}
+    root.style.setProperty(
+      '--theme-color',
+      color
+    );
 
-function setLanguage(language){
+    const themeMeta =
+      document.querySelector(
+        'meta[name="theme-color"]'
+      );
 
- if(!LANGUAGES[language]){
-  language='en';
- }
+    if (themeMeta) {
 
- return saveSettings({
-  language
- });
+      themeMeta.setAttribute(
+        'content',
+        color
+      );
 
-}
+    }
 
-function setTheme(color){
+  }
 
- return saveSettings({
-  themeColor:color
- });
 
-}
+  /* =======================================================
+     APPLY LANGUAGE TO HTML
+  ======================================================= */
 
-function setProfile(profile){
+  function translatePage() {
 
- return saveSettings(
-  Object.assign(
-   {},
-   profile||{}
-  )
- );
+    const language =
+      settings.language || 'en';
 
-}
+    const direction =
+      getDirection(language);
 
-function setCountry(data){
+    const root =
+      document.documentElement;
 
- return saveSettings({
-  countryCode:data?.countryCode||'',
-  countryName:data?.countryName||'',
-  countryFlag:data?.countryFlag||'🌐',
-  currencyCode:data?.currencyCode||'',
-  currencyName:data?.currencyName||'',
-  currencySymbol:data?.currencySymbol||''
- });
+    root.lang =
+      language;
 
-}
+    root.dir =
+      direction;
 
-window.DailyTranslator={
- LANGUAGES,
- TRANSLATIONS,
- DEFAULT_SETTINGS,
- t,
- getLanguage,
- getSettings,
- saveSettings,
- setLanguage,
- setTheme,
- setProfile,
- setCountry,
- translatePage,
- applyGlobalSettings,
- applyTheme,
- applyDirection,
- isoToFlag
-};
 
-function boot(){
+    /* -----------------------------------------------
+       data-i18n
+    ------------------------------------------------ */
 
- applyGlobalSettings(
-  getSettings()
- );
+    document
+      .querySelectorAll(
+        '[data-i18n]'
+      )
+      .forEach(element => {
 
- const observer=
-  new MutationObserver(
-   function(){
+        const key =
+          element.getAttribute(
+            'data-i18n'
+          );
+
+        if (!key) return;
+
+        element.textContent =
+          t(key);
+
+      });
+
+
+    /* -----------------------------------------------
+       placeholder
+    ------------------------------------------------ */
+
+    document
+      .querySelectorAll(
+        '[data-i18n-placeholder]'
+      )
+      .forEach(element => {
+
+        const key =
+          element.getAttribute(
+            'data-i18n-placeholder'
+          );
+
+        element.setAttribute(
+          'placeholder',
+          t(key)
+        );
+
+      });
+
+
+    /* -----------------------------------------------
+       title
+    ------------------------------------------------ */
+
+    document
+      .querySelectorAll(
+        '[data-i18n-title]'
+      )
+      .forEach(element => {
+
+        const key =
+          element.getAttribute(
+            'data-i18n-title'
+          );
+
+        element.setAttribute(
+          'title',
+          t(key)
+        );
+
+      });
+
+
+    /* -----------------------------------------------
+       aria-label
+    ------------------------------------------------ */
+
+    document
+      .querySelectorAll(
+        '[data-i18n-aria-label]'
+      )
+      .forEach(element => {
+
+        const key =
+          element.getAttribute(
+            'data-i18n-aria-label'
+          );
+
+        element.setAttribute(
+          'aria-label',
+          t(key)
+        );
+
+      });
+
+
+    /* -----------------------------------------------
+       Document title
+    ------------------------------------------------ */
+
+    if (
+      document.title ===
+      'Daily Accounting'
+    ) {
+
+      document.title =
+        t('dailyAccounting');
+
+    }
+
+  }
+
+
+  /* =======================================================
+     APPLY GLOBAL SETTINGS
+  ======================================================= */
+
+  function applyGlobalSettings(
+    save = false
+  ) {
+
+    if (save) {
+
+      try {
+
+        localStorage.setItem(
+          STORAGE_KEY,
+          JSON.stringify(settings)
+        );
+
+      } catch (error) {
+
+        console.error(
+          error
+        );
+
+      }
+
+    }
+
+    setTheme(
+      settings.themeColor
+    );
+
+    const root =
+      document.documentElement;
+
+    root.lang =
+      settings.language || 'en';
+
+    root.dir =
+      getDirection(
+        settings.language
+      );
+
     translatePage();
-   }
+
+    window.dispatchEvent(
+      new CustomEvent(
+        'dailyAccountingSettingsChanged',
+        {
+          detail: {
+            ...settings
+          }
+        }
+      )
+    );
+
+  }
+
+
+  /* =======================================================
+     LANGUAGE
+  ======================================================= */
+
+  function setLanguage(language) {
+
+    if (
+      !LANGUAGES[language]
+    ) {
+
+      language = 'en';
+
+    }
+
+    settings.language =
+      language;
+
+    saveSettings(settings);
+
+    return settings.language;
+
+  }
+
+
+  function getLanguage() {
+
+    return (
+      settings.language ||
+      'en'
+    );
+
+  }
+
+
+  /* =======================================================
+     PROFILE
+  ======================================================= */
+
+  function setProfile(profile) {
+
+    if (
+      !profile ||
+      typeof profile !== 'object'
+    ) {
+
+      return settings;
+
+    }
+
+    settings = {
+      ...settings,
+      ...profile
+    };
+
+    if (
+      settings.countryCode &&
+      !settings.countryFlag
+    ) {
+
+      settings.countryFlag =
+        isoToFlag(
+          settings.countryCode
+        );
+
+    }
+
+    try {
+
+      localStorage.setItem(
+        STORAGE_KEY,
+        JSON.stringify(settings)
+      );
+
+    } catch (error) {
+
+      console.error(
+        'Profile settings:',
+        error
+      );
+
+    }
+
+    applyGlobalSettings(false);
+
+    return settings;
+
+  }
+
+
+  /* =======================================================
+     COUNTRY
+  ======================================================= */
+
+  function setCountry(
+    country
+  ) {
+
+    if (
+      !country ||
+      typeof country !== 'object'
+    ) {
+
+      return settings;
+
+    }
+
+    const countryCode =
+      String(
+        country.countryCode ||
+        country.code ||
+        settings.countryCode ||
+        'AF'
+      ).toUpperCase();
+
+    settings.countryCode =
+      countryCode;
+
+    settings.countryName =
+      country.countryName ||
+      country.name ||
+      settings.countryName;
+
+    settings.countryFlag =
+      country.countryFlag ||
+      country.flag ||
+      isoToFlag(countryCode);
+
+    if (
+      country.currencyCode ||
+      country.currency
+    ) {
+
+      settings.currencyCode =
+        String(
+          country.currencyCode ||
+          country.currency
+        ).toUpperCase();
+
+    }
+
+    if (
+      country.currencyName
+    ) {
+
+      settings.currencyName =
+        country.currencyName;
+
+    }
+
+    if (
+      country.currencySymbol
+    ) {
+
+      settings.currencySymbol =
+        country.currencySymbol;
+
+    }
+
+    if (
+      country.state !== undefined
+    ) {
+
+      settings.state =
+        country.state;
+
+    }
+
+    if (
+      country.city !== undefined
+    ) {
+
+      settings.city =
+        country.city;
+
+    }
+
+    try {
+
+      localStorage.setItem(
+        STORAGE_KEY,
+        JSON.stringify(settings)
+      );
+
+    } catch (error) {
+
+      console.error(
+        'Country settings:',
+        error
+      );
+
+    }
+
+    applyGlobalSettings(false);
+
+    return settings;
+
+  }
+
+
+  /* =======================================================
+     GET SETTINGS
+  ======================================================= */
+
+  function getSettings() {
+
+    return {
+      ...settings
+    };
+
+  }
+
+
+  /* =======================================================
+     CROSS-TAB SETTINGS SYNC
+  ======================================================= */
+
+  window.addEventListener(
+    'storage',
+    function (event) {
+
+      if (
+        event.key !== STORAGE_KEY
+      ) {
+
+        return;
+
+      }
+
+      try {
+
+        if (!event.newValue) {
+          return;
+        }
+
+        const newSettings =
+          JSON.parse(
+            event.newValue
+          );
+
+        settings = {
+          ...DEFAULT_SETTINGS,
+          ...(newSettings || {})
+        };
+
+        applyGlobalSettings(false);
+
+      } catch (error) {
+
+        console.error(
+          'Translator storage sync:',
+          error
+        );
+
+      }
+
+    }
   );
 
- observer.observe(
-  document.documentElement,
-  {
-   childList:true,
-   subtree:true
+
+  /* =======================================================
+     MUTATION OBSERVER
+  ======================================================= */
+
+  let observer = null;
+
+  function startObserver() {
+
+    if (
+      observer ||
+      !document.body
+    ) {
+
+      return;
+
+    }
+
+    observer =
+      new MutationObserver(
+        function () {
+
+          translatePage();
+
+        }
+      );
+
+    observer.observe(
+      document.body,
+      {
+        childList: true,
+        subtree: true
+      }
+    );
+
   }
- );
 
-}
 
-if(
- document.readyState==='loading'
-){
+  /* =======================================================
+     INITIALIZATION
+  ======================================================= */
 
- document.addEventListener(
-  'DOMContentLoaded',
-  boot
- );
+  function initialize() {
 
-}else{
+    applyGlobalSettings(false);
 
- boot();
+    startObserver();
 
-}
+  }
+
+
+  /* =======================================================
+     PUBLIC API
+  ======================================================= */
+
+  window.DailyTranslator = {
+
+    t,
+
+    translatePage,
+
+    setLanguage,
+
+    getLanguage,
+
+    setTheme,
+
+    setProfile,
+
+    setCountry,
+
+    getSettings,
+
+    saveSettings,
+
+    applyGlobalSettings,
+
+    isoToFlag,
+
+    LANGUAGES,
+
+    TRANSLATIONS,
+
+    DEFAULT_SETTINGS
+
+  };
+
+
+  /* =======================================================
+     START
+  ======================================================= */
+
+  if (
+    document.readyState ===
+    'loading'
+  ) {
+
+    document.addEventListener(
+      'DOMContentLoaded',
+      initialize,
+      {
+        once: true
+      }
+    );
+
+  } else {
+
+    initialize();
+
+  }
 
 })();
