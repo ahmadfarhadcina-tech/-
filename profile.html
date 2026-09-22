@@ -4,75 +4,4758 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1.0">
 <title>Profile Settings</title>
+
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
 <style>
-:root{--primary:#7c3aed;--primary-dark:#6d28d9;--bg:#0f172a;--card:#1e293b;--text:#f8fafc;--muted:#94a3b8;--border:#334155;--radius:16px;}
-*{box-sizing:border-box;margin:0;padding:0;font-family:Tahoma,sans-serif;}
-body{background:var(--bg);color:var(--text);min-height:100vh;padding:20px;}
-.app{max-width:560px;margin:0 auto;background:var(--card);border:1px solid var(--border);border-radius:var(--radius);padding:25px;}
-h2{font-size:18px;color:var(--primary);margin-bottom:20px;}
-.group{margin-bottom:18px;}
-.group label{display:block;font-size:13px;color:var(--muted);margin-bottom:8px;}
-input, .custom-select{width:100%;padding:14px 16px;background:#0f172a;border:1px solid var(--border);border-radius:var(--radius);color:var(--text);font-size:14px;outline:none;cursor:pointer;display:flex;justify-content:space-between;align-items:center;}
-button{cursor:pointer;border:0;padding:14px 20px;border-radius:var(--radius);font-size:15px;font-weight:600;width:100%;margin-top:10px;}
-.primary{background:var(--primary);color:white;}
-.secondary{background:transparent;color:var(--muted);}
-.profile-preview{width:85px;height:85px;border-radius:50%;background:var(--primary);margin:0 auto 10px;display:flex;align-items:center;justify-content:center;font-size:32px;overflow:hidden;border:2px solid var(--border);}
-.upload{width:auto!important;padding:6px 14px!important;font-size:12px!important;background:#3b82f6;color:#fff;}
+:root{
+    --primary:#7c3aed;
+    --primary-dark:#6d28d9;
+    --primary-soft:rgba(124,58,237,.15);
+
+    --bg:#0f172a;
+    --card:#1e293b;
+    --card-2:#172033;
+    --text:#f8fafc;
+    --muted:#94a3b8;
+    --border:#334155;
+    --success:#22c55e;
+    --danger:#ef4444;
+
+    --radius:16px;
+}
+
+*{
+    box-sizing:border-box;
+    margin:0;
+    padding:0;
+    font-family:Tahoma,sans-serif;
+}
+
+html{
+    scroll-behavior:smooth;
+}
+
+body{
+    background:
+        radial-gradient(circle at top right,var(--primary-soft),transparent 35%),
+        var(--bg);
+    color:var(--text);
+    min-height:100vh;
+    padding:18px;
+    transition:background .25s ease;
+}
+
+body.modal-open{
+    overflow:hidden;
+}
+
+button,
+input{
+    font-family:inherit;
+}
+
+.app{
+    max-width:600px;
+    margin:0 auto;
+    background:rgba(30,41,59,.96);
+    border:1px solid var(--border);
+    border-radius:22px;
+    padding:20px;
+    box-shadow:0 20px 60px rgba(0,0,0,.28);
+    backdrop-filter:blur(12px);
+}
+
+/* Header */
+
+.top-header{
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+    gap:12px;
+    margin-bottom:22px;
+}
+
+.header-title{
+    display:flex;
+    align-items:center;
+    gap:10px;
+}
+
+.header-icon{
+    width:40px;
+    height:40px;
+    border-radius:12px;
+    background:var(--primary-soft);
+    color:var(--primary);
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    font-size:20px;
+}
+
+h2{
+    font-size:19px;
+    color:var(--text);
+    margin:0;
+}
+
+.header-subtitle{
+    font-size:10px;
+    color:var(--muted);
+    margin-top:4px;
+}
+
+.back-btn{
+    width:auto;
+    margin:0;
+    padding:9px 12px;
+    background:#0f172a;
+    color:var(--muted);
+    border:1px solid var(--border);
+    font-size:11px;
+}
+
+/* Profile */
+
+.profile-section{
+    text-align:center;
+    padding:20px 10px;
+    background:rgba(15,23,42,.55);
+    border:1px solid var(--border);
+    border-radius:18px;
+    margin-bottom:20px;
+}
+
+.profile-preview{
+    width:100px;
+    height:100px;
+    border-radius:50%;
+    background:var(--primary);
+    margin:0 auto 12px;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    font-size:36px;
+    font-weight:bold;
+    overflow:hidden;
+    border:3px solid var(--primary);
+    box-shadow:0 0 0 5px var(--primary-soft);
+    transition:.2s;
+}
+
+.profile-preview img{
+    width:100%;
+    height:100%;
+    object-fit:cover;
+}
+
+.profile-name-preview{
+    font-size:14px;
+    font-weight:bold;
+    margin-bottom:4px;
+}
+
+.profile-email-preview{
+    font-size:10px;
+    color:var(--muted);
+    direction:ltr;
+}
+
+.upload{
+    width:auto!important;
+    padding:8px 14px!important;
+    font-size:11px!important;
+    background:var(--primary);
+    color:#fff;
+    margin-top:10px;
+}
+
+.upload:hover{
+    background:var(--primary-dark);
+}
+
+/* Sections */
+
+.section{
+    margin-bottom:20px;
+}
+
+.section-title{
+    display:flex;
+    align-items:center;
+    gap:8px;
+    font-size:13px;
+    font-weight:bold;
+    margin-bottom:12px;
+    color:var(--text);
+}
+
+.section-title-icon{
+    width:28px;
+    height:28px;
+    border-radius:8px;
+    background:var(--primary-soft);
+    color:var(--primary);
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    font-size:13px;
+}
+
+.group{
+    margin-bottom:15px;
+}
+
+.group label{
+    display:block;
+    font-size:11px;
+    color:var(--muted);
+    margin-bottom:7px;
+}
+
+input{
+    width:100%;
+    padding:13px 14px;
+    background:#0f172a;
+    border:1px solid var(--border);
+    border-radius:13px;
+    color:var(--text);
+    font-size:13px;
+    outline:none;
+    transition:border-color .2s,box-shadow .2s;
+}
+
+input:focus{
+    border-color:var(--primary);
+    box-shadow:0 0 0 3px var(--primary-soft);
+}
+
+input::placeholder{
+    color:#64748b;
+}
+
+/* Custom picker fields */
+
+.custom-picker{
+    width:100%;
+    min-height:48px;
+    padding:10px 13px;
+    background:#0f172a;
+    border:1px solid var(--border);
+    border-radius:13px;
+    color:var(--text);
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+    gap:10px;
+    cursor:pointer;
+    transition:.2s;
+    user-select:none;
+}
+
+.custom-picker:hover{
+    border-color:var(--primary);
+    background:#111b30;
+}
+
+.custom-picker.disabled{
+    opacity:.45;
+    cursor:not-allowed;
+    pointer-events:none;
+}
+
+.picker-left{
+    display:flex;
+    align-items:center;
+    gap:10px;
+    min-width:0;
+}
+
+.picker-icon{
+    width:30px;
+    height:30px;
+    border-radius:9px;
+    background:var(--primary-soft);
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    flex-shrink:0;
+    font-size:16px;
+}
+
+.picker-text{
+    min-width:0;
+}
+
+.picker-value{
+    font-size:13px;
+    white-space:nowrap;
+    overflow:hidden;
+    text-overflow:ellipsis;
+}
+
+.picker-placeholder{
+    color:var(--muted);
+}
+
+.picker-subtitle{
+    font-size:9px;
+    color:var(--muted);
+    margin-top:3px;
+}
+
+.picker-arrow{
+    color:var(--muted);
+    font-size:16px;
+    flex-shrink:0;
+    transition:.2s;
+}
+
+.custom-picker:hover .picker-arrow{
+    color:var(--primary);
+}
+
+/* Location */
+
+.location-card{
+    padding:13px;
+    background:#0f172a;
+    border:1px solid var(--border);
+    border-radius:14px;
+    margin-top:5px;
+}
+
+.currency-preview{
+    display:flex;
+    align-items:center;
+    gap:10px;
+    padding:12px;
+    margin-top:10px;
+    border-radius:13px;
+    background:var(--primary-soft);
+    border:1px solid rgba(124,58,237,.25);
+}
+
+.currency-flag{
+    font-size:28px;
+    width:40px;
+    text-align:center;
+}
+
+.currency-info{
+    min-width:0;
+}
+
+.currency-name{
+    font-size:12px;
+    font-weight:bold;
+}
+
+.currency-code{
+    font-size:10px;
+    color:var(--muted);
+    margin-top:3px;
+}
+
+.currency-symbol{
+    margin-left:auto;
+    font-size:18px;
+    font-weight:bold;
+    color:var(--primary);
+    direction:ltr;
+}
+
+/* Loading */
+
+.loading{
+    display:none;
+    margin-top:7px;
+    padding:10px;
+    border-radius:10px;
+    background:#0f172a;
+    color:var(--muted);
+    font-size:10px;
+    text-align:center;
+}
+
+.loading.show{
+    display:block;
+}
+
+/* Theme */
+
+.theme-grid{
+    display:grid;
+    grid-template-columns:repeat(5,1fr);
+    gap:9px;
+}
+
+.theme-item{
+    position:relative;
+    height:52px;
+    border-radius:13px;
+    border:2px solid transparent;
+    cursor:pointer;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    transition:transform .15s,border-color .15s;
+}
+
+.theme-item:hover{
+    transform:translateY(-2px);
+}
+
+.theme-item.selected{
+    border-color:#fff;
+    box-shadow:0 0 0 3px var(--primary-soft);
+}
+
+.theme-item::after{
+    content:"✓";
+    position:absolute;
+    right:4px;
+    top:4px;
+    width:16px;
+    height:16px;
+    border-radius:50%;
+    background:#fff;
+    color:#111827;
+    font-size:10px;
+    display:none;
+    align-items:center;
+    justify-content:center;
+    font-weight:bold;
+}
+
+.theme-item.selected::after{
+    display:flex;
+}
+
+.theme-name{
+    color:white;
+    font-size:8px;
+    text-shadow:0 1px 3px rgba(0,0,0,.7);
+}
+
+/* Save */
+
+button{
+    cursor:pointer;
+    border:0;
+    padding:14px 20px;
+    border-radius:14px;
+    font-size:14px;
+    font-weight:600;
+    width:100%;
+    margin-top:8px;
+    transition:.2s;
+}
+
+button:disabled{
+    opacity:.6;
+    cursor:not-allowed;
+}
+
+.primary{
+    background:var(--primary);
+    color:white;
+}
+
+.primary:hover{
+    background:var(--primary-dark);
+    transform:translateY(-1px);
+}
+
+.secondary{
+    background:transparent;
+    color:var(--muted);
+    border:1px solid var(--border);
+}
+
+.secondary:hover{
+    background:#0f172a;
+    color:var(--text);
+}
+
+.status{
+    display:none;
+    padding:11px 13px;
+    border-radius:12px;
+    margin-bottom:15px;
+    font-size:11px;
+    line-height:1.6;
+}
+
+.status.show{
+    display:block;
+}
+
+.status.success{
+    background:rgba(34,197,94,.12);
+    border:1px solid rgba(34,197,94,.3);
+    color:#86efac;
+}
+
+.status.error{
+    background:rgba(239,68,68,.12);
+    border:1px solid rgba(239,68,68,.3);
+    color:#fca5a5;
+}
+
+.status.info{
+    background:rgba(59,130,246,.12);
+    border:1px solid rgba(59,130,246,.3);
+    color:#93c5fd;
+}
+
+/* =========================================================
+   CUSTOM MODAL
+========================================================= */
+
+.modal-overlay{
+    position:fixed;
+    inset:0;
+    z-index:9999;
+    display:none;
+    align-items:flex-end;
+    justify-content:center;
+    padding:12px;
+    background:rgba(2,6,23,.72);
+    backdrop-filter:blur(9px);
+    -webkit-backdrop-filter:blur(9px);
+}
+
+.modal-overlay.show{
+    display:flex;
+    animation:fadeIn .18s ease;
+}
+
+.modal-box{
+    width:min(600px,100%);
+    max-height:min(82vh,700px);
+    background:#172033;
+    border:1px solid var(--border);
+    border-radius:24px;
+    box-shadow:0 -10px 60px rgba(0,0,0,.45);
+    overflow:hidden;
+    animation:modalUp .22s ease;
+    display:flex;
+    flex-direction:column;
+}
+
+.modal-header{
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+    gap:10px;
+    padding:16px 17px;
+    border-bottom:1px solid var(--border);
+    flex-shrink:0;
+}
+
+.modal-title-wrap{
+    display:flex;
+    align-items:center;
+    gap:10px;
+    min-width:0;
+}
+
+.modal-title-icon{
+    width:38px;
+    height:38px;
+    border-radius:12px;
+    background:var(--primary-soft);
+    color:var(--primary);
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    font-size:18px;
+    flex-shrink:0;
+}
+
+.modal-title{
+    font-size:14px;
+    font-weight:bold;
+}
+
+.modal-subtitle{
+    color:var(--muted);
+    font-size:9px;
+    margin-top:3px;
+}
+
+.modal-close{
+    width:36px;
+    height:36px;
+    margin:0;
+    padding:0;
+    border-radius:11px;
+    background:#0f172a;
+    border:1px solid var(--border);
+    color:var(--muted);
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    font-size:20px;
+    flex-shrink:0;
+}
+
+.modal-close:hover{
+    color:#fff;
+    border-color:var(--primary);
+}
+
+.modal-search-wrap{
+    padding:12px 14px 8px;
+    flex-shrink:0;
+}
+
+.modal-search{
+    width:100%;
+    padding:12px 13px;
+    border-radius:12px;
+    background:#0f172a;
+    border:1px solid var(--border);
+    color:#fff;
+    outline:none;
+    font-size:12px;
+}
+
+.modal-search:focus{
+    border-color:var(--primary);
+    box-shadow:0 0 0 3px var(--primary-soft);
+}
+
+.modal-list{
+    overflow-y:auto;
+    padding:8px 12px 14px;
+    overscroll-behavior:contain;
+}
+
+.modal-list::-webkit-scrollbar{
+    width:5px;
+}
+
+.modal-list::-webkit-scrollbar-track{
+    background:transparent;
+}
+
+.modal-list::-webkit-scrollbar-thumb{
+    background:#475569;
+    border-radius:20px;
+}
+
+.modal-item{
+    width:100%;
+    min-height:52px;
+    padding:9px 10px;
+    margin:3px 0;
+    border:1px solid transparent;
+    border-radius:13px;
+    background:transparent;
+    color:var(--text);
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+    gap:10px;
+    cursor:pointer;
+    text-align:inherit;
+}
+
+.modal-item:hover{
+    background:#0f172a;
+    border-color:var(--border);
+}
+
+.modal-item.selected{
+    background:var(--primary-soft);
+    border-color:rgba(124,58,237,.4);
+}
+
+.modal-item-left{
+    display:flex;
+    align-items:center;
+    gap:11px;
+    min-width:0;
+}
+
+.modal-item-icon{
+    width:34px;
+    height:34px;
+    border-radius:10px;
+    background:#0f172a;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    font-size:18px;
+    flex-shrink:0;
+}
+
+.modal-item-name{
+    font-size:12px;
+    overflow:hidden;
+    text-overflow:ellipsis;
+    white-space:nowrap;
+}
+
+.modal-item-code{
+    color:var(--muted);
+    font-size:9px;
+    margin-top:3px;
+    direction:ltr;
+}
+
+.modal-check{
+    width:23px;
+    height:23px;
+    border-radius:50%;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    color:#fff;
+    background:var(--primary);
+    font-size:11px;
+    flex-shrink:0;
+    opacity:0;
+}
+
+.modal-item.selected .modal-check{
+    opacity:1;
+}
+
+.empty-modal{
+    padding:30px 15px;
+    text-align:center;
+    color:var(--muted);
+    font-size:11px;
+}
+
+.theme-modal-grid{
+    display:grid;
+    grid-template-columns:repeat(3,1fr);
+    gap:10px;
+    padding:10px 4px 15px;
+}
+
+.theme-modal-item{
+    position:relative;
+    min-height:74px;
+    border:2px solid transparent;
+    border-radius:16px;
+    cursor:pointer;
+    display:flex;
+    align-items:flex-end;
+    justify-content:center;
+    padding:9px;
+    overflow:hidden;
+    transition:.18s;
+}
+
+.theme-modal-item:hover{
+    transform:translateY(-2px);
+}
+
+.theme-modal-item.selected{
+    border-color:#fff;
+    box-shadow:0 0 0 3px var(--primary-soft);
+}
+
+.theme-modal-item::after{
+    content:"✓";
+    position:absolute;
+    top:7px;
+    right:7px;
+    width:21px;
+    height:21px;
+    border-radius:50%;
+    background:#fff;
+    color:#111827;
+    display:none;
+    align-items:center;
+    justify-content:center;
+    font-size:12px;
+    font-weight:bold;
+}
+
+.theme-modal-item.selected::after{
+    display:flex;
+}
+
+.theme-modal-name{
+    color:#fff;
+    font-size:10px;
+    font-weight:bold;
+    text-shadow:0 1px 4px #000;
+}
+
+/* RTL */
+
+html[dir="rtl"] .currency-symbol{
+    margin-left:0;
+    margin-right:auto;
+}
+
+html[dir="rtl"] .theme-item::after{
+    right:auto;
+    left:4px;
+}
+
+html[dir="rtl"] .theme-modal-item::after{
+    right:auto;
+    left:7px;
+}
+
+/* Mobile */
+
+@media(max-width:480px){
+
+    body{
+        padding:10px;
+    }
+
+    .app{
+        padding:15px;
+        border-radius:18px;
+    }
+
+    .theme-grid{
+        grid-template-columns:repeat(4,1fr);
+    }
+
+    .theme-item{
+        height:48px;
+    }
+
+    .modal-overlay{
+        padding:0;
+    }
+
+    .modal-box{
+        max-height:88vh;
+        border-radius:24px 24px 0 0;
+    }
+
+    .theme-modal-grid{
+        grid-template-columns:repeat(3,1fr);
+    }
+}
+
+@keyframes fadeIn{
+    from{opacity:0}
+    to{opacity:1}
+}
+
+@keyframes modalUp{
+    from{
+        opacity:0;
+        transform:translateY(25px);
+    }
+    to{
+        opacity:1;
+        transform:translateY(0);
+    }
+}
 </style>
 </head>
+
 <body>
+
 <div class="app">
-<h2>Profile Settings</h2>
-<div style="text-align:center;margin-bottom:20px">
-<div id="profile-preview" class="profile-preview">U</div>
-<input type="file" id="avatar-input" accept="image/*" style="display:none" onchange="handleImageUpload(event)">
-<button class="upload" onclick="document.getElementById('avatar-input').click()">📷 Upload Photo</button>
+
+    <div class="top-header">
+        <div class="header-title">
+            <div class="header-icon">👤</div>
+
+            <div>
+                <h2 id="page-title">Profile Settings</h2>
+
+                <div
+                    class="header-subtitle"
+                    id="page-subtitle">
+                    Manage your account information
+                </div>
+            </div>
+        </div>
+
+        <button
+            class="back-btn"
+            id="top-back"
+            onclick="window.location.href='index.html'">
+            ←
+        </button>
+    </div>
+
+    <div id="status" class="status"></div>
+
+    <div class="profile-section">
+
+        <div
+            id="profile-preview"
+            class="profile-preview">
+            U
+        </div>
+
+        <div
+            id="profile-name-preview"
+            class="profile-name-preview">
+            User
+        </div>
+
+        <div
+            id="profile-email-preview"
+            class="profile-email-preview">
+            —
+        </div>
+
+        <input
+            type="file"
+            id="avatar-input"
+            accept="image/*"
+            style="display:none"
+            onchange="handleImageUpload(event)">
+
+        <button
+            class="upload"
+            id="upload-button"
+            onclick="document.getElementById('avatar-input').click()">
+            📷 Upload Photo
+        </button>
+
+    </div>
+
+    <div class="section">
+
+        <div class="section-title">
+            <div class="section-title-icon">👤</div>
+            <span id="personal-title">
+                Personal Information
+            </span>
+        </div>
+
+        <div class="group">
+
+            <label id="name-label">
+                Full Name / Username
+            </label>
+
+            <input
+                id="profile-name"
+                type="text"
+                autocomplete="name"
+                placeholder="Enter your name">
+
+        </div>
+
+        <div class="group">
+
+            <label id="phone-label">
+                Phone Number
+            </label>
+
+            <input
+                id="profile-phone"
+                type="tel"
+                autocomplete="tel"
+                placeholder="+93 700 000 000">
+
+        </div>
+
+    </div>
+
+    <div class="section">
+
+        <div class="section-title">
+
+            <div class="section-title-icon">
+                🌍
+            </div>
+
+            <span id="location-title">
+                Country & Location
+            </span>
+
+        </div>
+
+        <div class="group">
+
+            <label id="country-label">
+                Country
+            </label>
+
+            <div
+                id="country-picker"
+                class="custom-picker"
+                onclick="openPicker('country')">
+
+                <div class="picker-left">
+
+                    <div
+                        id="country-picker-icon"
+                        class="picker-icon">
+                        🌍
+                    </div>
+
+                    <div class="picker-text">
+
+                        <div
+                            id="country-picker-value"
+                            class="picker-value picker-placeholder">
+                            Select country
+                        </div>
+
+                        <div
+                            id="country-picker-subtitle"
+                            class="picker-subtitle">
+                            Country
+                        </div>
+
+                    </div>
+
+                </div>
+
+                <div class="picker-arrow">
+                    ›
+                </div>
+
+            </div>
+
+        </div>
+
+        <div
+            id="location-loading"
+            class="loading">
+            Loading country information...
+        </div>
+
+        <div class="group">
+
+            <label id="state-label">
+                State / Province
+            </label>
+
+            <div
+                id="state-picker"
+                class="custom-picker disabled"
+                onclick="openPicker('state')">
+
+                <div class="picker-left">
+
+                    <div class="picker-icon">
+                        📍
+                    </div>
+
+                    <div class="picker-text">
+
+                        <div
+                            id="state-picker-value"
+                            class="picker-value picker-placeholder">
+                            Select state / province
+                        </div>
+
+                        <div
+                            id="state-picker-subtitle"
+                            class="picker-subtitle">
+                            State / Province
+                        </div>
+
+                    </div>
+
+                </div>
+
+                <div class="picker-arrow">
+                    ›
+                </div>
+
+            </div>
+
+        </div>
+
+        <div class="group">
+
+            <label id="city-label">
+                City
+            </label>
+
+            <div
+                id="city-picker"
+                class="custom-picker disabled"
+                onclick="openPicker('city')">
+
+                <div class="picker-left">
+
+                    <div class="picker-icon">
+                        🏙️
+                    </div>
+
+                    <div class="picker-text">
+
+                        <div
+                            id="city-picker-value"
+                            class="picker-value picker-placeholder">
+                            Select city
+                        </div>
+
+                        <div
+                            id="city-picker-subtitle"
+                            class="picker-subtitle">
+                            City
+                        </div>
+
+                    </div>
+
+                </div>
+
+                <div class="picker-arrow">
+                    ›
+                </div>
+
+            </div>
+
+        </div>
+
+        <div
+            id="currency-preview"
+            class="currency-preview">
+
+            <div
+                id="currency-flag"
+                class="currency-flag">
+                🇦🇫
+            </div>
+
+            <div class="currency-info">
+
+                <div
+                    id="currency-name"
+                    class="currency-name">
+                    Afghan Afghani
+                </div>
+
+                <div
+                    id="currency-code"
+                    class="currency-code">
+                    AFN
+                </div>
+
+            </div>
+
+            <div
+                id="currency-symbol"
+                class="currency-symbol">
+                ؋
+            </div>
+
+        </div>
+
+    </div>
+
+    <div class="section">
+
+        <div class="section-title">
+
+            <div class="section-title-icon">
+                🌐
+            </div>
+
+            <span id="language-title">
+                Language
+            </span>
+
+        </div>
+
+        <div class="group">
+
+            <label id="language-label">
+                App Language
+            </label>
+
+            <div
+                id="language-picker"
+                class="custom-picker"
+                onclick="openPicker('language')">
+
+                <div class="picker-left">
+
+                    <div
+                        id="language-picker-icon"
+                        class="picker-icon">
+                        🌐
+                    </div>
+
+                    <div class="picker-text">
+
+                        <div
+                            id="language-picker-value"
+                            class="picker-value">
+                            🇬🇧 English
+                        </div>
+
+                        <div
+                            id="language-picker-subtitle"
+                            class="picker-subtitle">
+                            App Language
+                        </div>
+
+                    </div>
+
+                </div>
+
+                <div class="picker-arrow">
+                    ›
+                </div>
+
+            </div>
+
+        </div>
+
+    </div>
+
+    <div class="section">
+
+        <div class="section-title">
+
+            <div class="section-title-icon">
+                🎨
+            </div>
+
+            <span id="theme-title">
+                Theme Color
+            </span>
+
+        </div>
+
+        <div
+            class="custom-picker"
+            onclick="openPicker('theme')">
+
+            <div class="picker-left">
+
+                <div
+                    id="theme-picker-icon"
+                    class="picker-icon">
+                    🎨
+                </div>
+
+                <div class="picker-text">
+
+                    <div
+                        id="theme-picker-value"
+                        class="picker-value">
+                        Purple
+                    </div>
+
+                    <div
+                        class="picker-subtitle">
+                        Theme Color
+                    </div>
+
+                </div>
+
+            </div>
+
+            <div class="picker-arrow">
+                ›
+            </div>
+
+        </div>
+
+        <div
+            class="theme-grid"
+            id="theme-grid"
+            style="display:none">
+        </div>
+
+    </div>
+
+    <button
+        class="primary"
+        id="save-button"
+        onclick="saveProfileSettings()">
+        💾 Save Profile
+    </button>
+
+    <button
+        class="secondary"
+        id="back-button"
+        onclick="window.location.href='transactions.html'">
+        ← Back to Transactions
+    </button>
+
 </div>
-<div class="group"><label>Full Name / Username</label><input id="profile-name" placeholder="Enter your name"></div>
-<div class="group"><label>Phone Number</label><input id="profile-phone" placeholder="+93 700 000 000"></div>
-<button class="primary" onclick="saveProfileSettings()">Save Profile</button>
-<button class="secondary" onclick="window.location.href='transactions.html'">Back to Transactions</button>
+
+
+<div
+    id="picker-modal"
+    class="modal-overlay"
+    onclick="handleModalBackground(event)">
+
+    <div
+        class="modal-box"
+        onclick="event.stopPropagation()">
+
+        <div class="modal-header">
+
+            <div class="modal-title-wrap">
+
+                <div
+                    id="modal-title-icon"
+                    class="modal-title-icon">
+                    🌍
+                </div>
+
+                <div>
+
+                    <div
+                        id="modal-title"
+                        class="modal-title">
+                        Select
+                    </div>
+
+                    <div
+                        id="modal-subtitle"
+                        class="modal-subtitle">
+                        Choose an option
+                    </div>
+
+                </div>
+
+            </div>
+
+            <button
+                class="modal-close"
+                onclick="closePicker()">
+                ×
+            </button>
+
+        </div>
+
+        <div
+            id="modal-search-wrap"
+            class="modal-search-wrap">
+
+            <input
+                id="modal-search"
+                class="modal-search"
+                type="search"
+                autocomplete="off"
+                placeholder="Search...">
+
+        </div>
+
+        <div
+            id="modal-list"
+            class="modal-list">
+        </div>
+
+    </div>
+
 </div>
+
+
 <script>
-const SUPABASE_URL = 'https://hvsymjkbmpmvjycwenbd.supabase.co';
-const SUPABASE_KEY = 'sb_publishable_9pkhkb88LNXJw457Sx8dpA_0E231JwH';
-const supabaseClient = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
-let currentUser = null, userProfile = { name:'', phone:'', location:'Jawzjan', avatar:'', themeColor:'#7c3aed', language:'en' };
+
+/* =========================================================
+   SUPABASE
+========================================================= */
+
+const SUPABASE_URL =
+'https://hvsymjkbmpmvjycwenbd.supabase.co';
+
+const SUPABASE_KEY =
+'sb_publishable_9pkhkb88LNXJw457Sx8dpA_0E231JwH';
+
+const supabaseClient =
+supabase.createClient(
+    SUPABASE_URL,
+    SUPABASE_KEY
+);
+
+
+/* =========================================================
+   COUNTRIES NOW API
+========================================================= */
+
+const COUNTRIES_API =
+'https://countriesnow.space/api/v0.1';
+
+
+/* =========================================================
+   GLOBAL SETTINGS
+   این قسمت باعث می‌شود صفحات دیگر بتوانند
+   تنظیمات ذخیره‌شده را بخوانند.
+========================================================= */
+
+const GLOBAL_SETTINGS_KEY =
+'dailyAccountingSettings';
+
+
+function saveGlobalSettings(){
+
+    try{
+
+        const settings = {
+
+            language:
+                userProfile.language || 'en',
+
+            themeColor:
+                userProfile.themeColor ||
+                DEFAULT_PROFILE.themeColor,
+
+            countryCode:
+                userProfile.countryCode || 'AF',
+
+            countryName:
+                userProfile.countryName ||
+                'Afghanistan',
+
+            countryFlag:
+                userProfile.countryFlag ||
+                '🇦🇫',
+
+            currencyCode:
+                userProfile.currencyCode ||
+                'AFN',
+
+            currencyName:
+                userProfile.currencyName ||
+                'Afghan Afghani',
+
+            currencySymbol:
+                userProfile.currencySymbol ||
+                '؋',
+
+            state:
+                userProfile.state || '',
+
+            city:
+                userProfile.city || '',
+
+            name:
+                userProfile.name || '',
+
+            phone:
+                userProfile.phone || '',
+
+            avatar:
+                userProfile.avatar || '',
+
+            updatedAt:
+                Date.now()
+
+        };
+
+
+        localStorage.setItem(
+            GLOBAL_SETTINGS_KEY,
+            JSON.stringify(settings)
+        );
+
+
+        localStorage.setItem(
+            'dailyAccountingUpdate',
+            String(Date.now())
+        );
+
+
+    }catch(error){
+
+        console.warn(
+            'Global settings save error:',
+            error
+        );
+
+    }
+
+}
+
+
+/* =========================================================
+   DEFAULT PROFILE
+========================================================= */
+
+const DEFAULT_PROFILE = {
+
+    name:'',
+    phone:'',
+
+    location:'Jawzjan',
+
+    countryCode:'AF',
+    countryName:'Afghanistan',
+    countryFlag:'🇦🇫',
+
+    currencyCode:'AFN',
+    currencyName:'Afghan Afghani',
+    currencySymbol:'؋',
+
+    state:'Jawzjan',
+    city:'',
+
+    avatar:'',
+
+    themeColor:'#7c3aed',
+
+    language:'en'
+
+};
+
+
+let currentUser = null;
+
+let userProfile = {
+    ...DEFAULT_PROFILE
+};
+
+let countries = [];
+
+let states = [];
+
+let cities = [];
+
+let selectedTheme =
+'#7c3aed';
+
+let currentPickerType =
+null;
+
+
+/* =========================================================
+   THEMES
+========================================================= */
+
+const THEMES = [
+
+    {
+        name:'Purple',
+        color:'#7c3aed',
+        dark:'#6d28d9'
+    },
+
+    {
+        name:'Blue',
+        color:'#2563eb',
+        dark:'#1d4ed8'
+    },
+
+    {
+        name:'Cyan',
+        color:'#0891b2',
+        dark:'#0e7490'
+    },
+
+    {
+        name:'Sky',
+        color:'#0284c7',
+        dark:'#0369a1'
+    },
+
+    {
+        name:'Green',
+        color:'#16a34a',
+        dark:'#15803d'
+    },
+
+    {
+        name:'Emerald',
+        color:'#059669',
+        dark:'#047857'
+    },
+
+    {
+        name:'Teal',
+        color:'#0d9488',
+        dark:'#0f766e'
+    },
+
+    {
+        name:'Red',
+        color:'#dc2626',
+        dark:'#b91c1c'
+    },
+
+    {
+        name:'Rose',
+        color:'#e11d48',
+        dark:'#be123c'
+    },
+
+    {
+        name:'Pink',
+        color:'#db2777',
+        dark:'#be185d'
+    },
+
+    {
+        name:'Fuchsia',
+        color:'#c026d3',
+        dark:'#a21caf'
+    },
+
+    {
+        name:'Orange',
+        color:'#ea580c',
+        dark:'#c2410c'
+    },
+
+    {
+        name:'Amber',
+        color:'#d97706',
+        dark:'#b45309'
+    },
+
+    {
+        name:'Yellow',
+        color:'#ca8a04',
+        dark:'#a16207'
+    },
+
+    {
+        name:'Lime',
+        color:'#65a30d',
+        dark:'#4d7c0f'
+    },
+
+    {
+        name:'Indigo',
+        color:'#4f46e5',
+        dark:'#4338ca'
+    },
+
+    {
+        name:'Violet',
+        color:'#8b5cf6',
+        dark:'#7c3aed'
+    },
+
+    {
+        name:'Brown',
+        color:'#92400e',
+        dark:'#78350f'
+    },
+
+    {
+        name:'Slate',
+        color:'#475569',
+        dark:'#334155'
+    },
+
+    {
+        name:'Black',
+        color:'#111827',
+        dark:'#030712'
+    }
+
+];
+
+
+/* =========================================================
+   LANGUAGES
+========================================================= */
+
+const LANGUAGES = [
+
+    {
+        code:'en',
+        flag:'🇬🇧',
+        name:'English'
+    },
+
+    {
+        code:'fa',
+        flag:'🇦🇫',
+        name:'فارسی'
+    },
+
+    {
+        code:'ar',
+        flag:'🇸🇦',
+        name:'العربية'
+    },
+
+    {
+        code:'ps',
+        flag:'🇦🇫',
+        name:'پښتو'
+    },
+
+    {
+        code:'tr',
+        flag:'🇹🇷',
+        name:'Türkçe'
+    }
+
+];
+
+
+/* =========================================================
+   TRANSLATIONS
+========================================================= */
+
+const TRANSLATIONS = {
+
+    en:{
+
+        title:'Profile Settings',
+        subtitle:'Manage your account information',
+
+        personal:'Personal Information',
+        name:'Full Name / Username',
+        namePlaceholder:'Enter your name',
+
+        phone:'Phone Number',
+        phonePlaceholder:'+93 700 000 000',
+
+        location:'Country & Location',
+        country:'Country',
+        state:'State / Province',
+        city:'City',
+
+        language:'Language',
+        appLanguage:'App Language',
+
+        theme:'Theme Color',
+
+        upload:'📷 Upload Photo',
+
+        save:'💾 Save Profile',
+
+        back:'← Back to Transactions',
+
+        selectCountry:'Select country',
+        selectState:'Select state / province',
+        selectCity:'Select city',
+
+        loadingCountries:'Loading countries...',
+        loadingCountry:'Loading country information...',
+        loadingStates:'Loading states...',
+        loadingCities:'Loading cities...',
+
+        saved:'Profile saved successfully.',
+        saveError:'Could not save your profile.',
+
+        uploadSuccess:'Profile photo uploaded.',
+        uploadError:'Could not upload the photo.',
+
+        countriesError:'Could not load countries.',
+
+        noStates:'No states or provinces found.',
+        noCities:'No cities found.',
+
+        currency:'Currency',
+
+        user:'User',
+
+        search:'Search...',
+
+        chooseCountry:'Choose your country',
+        chooseState:'Choose your state or province',
+        chooseCity:'Choose your city',
+        chooseLanguage:'Choose app language',
+        chooseTheme:'Choose your theme',
+
+        uploading:'Uploading...',
+
+        countryInfo:'Country',
+        stateInfo:'State / Province',
+        cityInfo:'City',
+        languageInfo:'App Language',
+        themeInfo:'Theme Color'
+
+    },
+
+    fa:{
+
+        title:'تنظیمات پروفایل',
+        subtitle:'اطلاعات حساب خود را مدیریت کنید',
+
+        personal:'اطلاعات شخصی',
+        name:'نام کامل / نام کاربری',
+        namePlaceholder:'نام خود را وارد کنید',
+
+        phone:'شماره تلفن',
+        phonePlaceholder:'+93 700 000 000',
+
+        location:'کشور و موقعیت',
+        country:'کشور',
+        state:'ولایت / استان',
+        city:'شهر',
+
+        language:'زبان',
+        appLanguage:'زبان برنامه',
+
+        theme:'رنگ تم',
+
+        upload:'📷 آپلود عکس',
+
+        save:'💾 ذخیره پروفایل',
+
+        back:'← برگشت به معاملات',
+
+        selectCountry:'کشور را انتخاب کنید',
+        selectState:'ولایت / استان را انتخاب کنید',
+        selectCity:'شهر را انتخاب کنید',
+
+        loadingCountries:'در حال دریافت کشورها...',
+        loadingCountry:'در حال دریافت اطلاعات کشور...',
+        loadingStates:'در حال دریافت ولایت‌ها / استان‌ها...',
+        loadingCities:'در حال دریافت شهرها...',
+
+        saved:'پروفایل با موفقیت ذخیره شد.',
+        saveError:'ذخیره پروفایل انجام نشد.',
+
+        uploadSuccess:'عکس پروفایل با موفقیت آپلود شد.',
+        uploadError:'آپلود عکس انجام نشد.',
+
+        countriesError:'دریافت کشورها انجام نشد.',
+
+        noStates:'ولایت یا استانی پیدا نشد.',
+        noCities:'شهری پیدا نشد.',
+
+        currency:'ارز',
+
+        user:'کاربر',
+
+        search:'جستجو...',
+
+        chooseCountry:'کشور خود را انتخاب کنید',
+        chooseState:'ولایت یا استان خود را انتخاب کنید',
+        chooseCity:'شهر خود را انتخاب کنید',
+        chooseLanguage:'زبان برنامه را انتخاب کنید',
+        chooseTheme:'رنگ مورد نظر خود را انتخاب کنید',
+
+        uploading:'در حال آپلود...',
+
+        countryInfo:'کشور',
+        stateInfo:'ولایت / استان',
+        cityInfo:'شهر',
+        languageInfo:'زبان برنامه',
+        themeInfo:'رنگ تم'
+
+    },
+
+    ar:{
+
+        title:'إعدادات الملف الشخصي',
+        subtitle:'إدارة معلومات حسابك',
+
+        personal:'المعلومات الشخصية',
+        name:'الاسم الكامل / اسم المستخدم',
+        namePlaceholder:'أدخل اسمك',
+
+        phone:'رقم الهاتف',
+        phonePlaceholder:'+93 700 000 000',
+
+        location:'الدولة والموقع',
+        country:'الدولة',
+        state:'الولاية / المقاطعة',
+        city:'المدينة',
+
+        language:'اللغة',
+        appLanguage:'لغة التطبيق',
+
+        theme:'لون المظهر',
+
+        upload:'📷 رفع الصورة',
+
+        save:'💾 حفظ الملف',
+
+        back:'← العودة إلى المعاملات',
+
+        selectCountry:'اختر الدولة',
+        selectState:'اختر الولاية / المقاطعة',
+        selectCity:'اختر المدينة',
+
+        loadingCountries:'جاري تحميل الدول...',
+        loadingCountry:'جاري تحميل معلومات الدولة...',
+        loadingStates:'جاري تحميل الولايات...',
+        loadingCities:'جاري تحميل المدن...',
+
+        saved:'تم حفظ الملف الشخصي بنجاح.',
+        saveError:'تعذر حفظ الملف الشخصي.',
+
+        uploadSuccess:'تم رفع صورة الملف الشخصي.',
+        uploadError:'تعذر رفع الصورة.',
+
+        countriesError:'تعذر تحميل الدول.',
+
+        noStates:'لم يتم العثور على ولايات أو مقاطعات.',
+        noCities:'لم يتم العثور على مدن.',
+
+        currency:'العملة',
+
+        user:'المستخدم',
+
+        search:'بحث...',
+
+        chooseCountry:'اختر دولتك',
+        chooseState:'اختر ولايتك أو مقاطعتك',
+        chooseCity:'اختر مدينتك',
+        chooseLanguage:'اختر لغة التطبيق',
+        chooseTheme:'اختر المظهر',
+
+        uploading:'جاري الرفع...',
+
+        countryInfo:'الدولة',
+        stateInfo:'الولاية / المقاطعة',
+        cityInfo:'المدينة',
+        languageInfo:'لغة التطبيق',
+        themeInfo:'لون المظهر'
+
+    },
+
+    ps:{
+
+        title:'د پروفایل تنظیمات',
+        subtitle:'د خپل حساب معلومات اداره کړئ',
+
+        personal:'شخصي معلومات',
+        name:'بشپړ نوم / کارن نوم',
+        namePlaceholder:'خپل نوم ولیکئ',
+
+        phone:'د تلیفون شمېره',
+        phonePlaceholder:'+93 700 000 000',
+
+        location:'هیواد او موقعیت',
+        country:'هیواد',
+        state:'ولایت / ایالت',
+        city:'ښار',
+
+        language:'ژبه',
+        appLanguage:'د اپلیکیشن ژبه',
+
+        theme:'د رنګ موضوع',
+
+        upload:'📷 عکس پورته کول',
+
+        save:'💾 پروفایل خوندي کول',
+
+        back:'← معاملو ته بېرته',
+
+        selectCountry:'هیواد انتخاب کړئ',
+        selectState:'ولایت / ایالت انتخاب کړئ',
+        selectCity:'ښار انتخاب کړئ',
+
+        loadingCountries:'هیوادونه پورته کېږي...',
+        loadingCountry:'د هیواد معلومات ترلاسه کېږي...',
+        loadingStates:'ولایتونه ترلاسه کېږي...',
+        loadingCities:'ښارونه ترلاسه کېږي...',
+
+        saved:'پروفایل په بریالیتوب خوندي شو.',
+        saveError:'پروفایل خوندي نه شو.',
+
+        uploadSuccess:'د پروفایل عکس پورته شو.',
+        uploadError:'عکس پورته نه شو.',
+
+        countriesError:'هیوادونه ترلاسه نه شول.',
+
+        noStates:'هیڅ ولایت یا ایالت پیدا نه شو.',
+        noCities:'هیڅ ښار پیدا نه شو.',
+
+        currency:'اسعار',
+
+        user:'کارن',
+
+        search:'لټون...',
+
+        chooseCountry:'خپل هیواد انتخاب کړئ',
+        chooseState:'خپل ولایت یا ایالت انتخاب کړئ',
+        chooseCity:'خپل ښار انتخاب کړئ',
+        chooseLanguage:'د اپلیکیشن ژبه انتخاب کړئ',
+        chooseTheme:'خپله موضوع انتخاب کړئ',
+
+        uploading:'پورته کېږي...',
+
+        countryInfo:'هیواد',
+        stateInfo:'ولایت / ایالت',
+        cityInfo:'ښار',
+        languageInfo:'د اپلیکیشن ژبه',
+        themeInfo:'د رنګ موضوع'
+
+    },
+
+    tr:{
+
+        title:'Profil Ayarları',
+        subtitle:'Hesap bilgilerinizi yönetin',
+
+        personal:'Kişisel Bilgiler',
+        name:'Ad Soyad / Kullanıcı Adı',
+        namePlaceholder:'Adınızı girin',
+
+        phone:'Telefon Numarası',
+        phonePlaceholder:'+90 500 000 0000',
+
+        location:'Ülke ve Konum',
+        country:'Ülke',
+        state:'Eyalet / Bölge',
+        city:'Şehir',
+
+        language:'Dil',
+        appLanguage:'Uygulama Dili',
+
+        theme:'Tema Rengi',
+
+        upload:'📷 Fotoğraf Yükle',
+
+        save:'💾 Profili Kaydet',
+
+        back:'← İşlemlere Dön',
+
+        selectCountry:'Ülke seçin',
+        selectState:'Eyalet / bölge seçin',
+        selectCity:'Şehir seçin',
+
+        loadingCountries:'Ülkeler yükleniyor...',
+        loadingCountry:'Ülke bilgileri yükleniyor...',
+        loadingStates:'Bölgeler yükleniyor...',
+        loadingCities:'Şehirler yükleniyor...',
+
+        saved:'Profil başarıyla kaydedildi.',
+        saveError:'Profil kaydedilemedi.',
+
+        uploadSuccess:'Profil fotoğrafı yüklendi.',
+        uploadError:'Fotoğraf yüklenemedi.',
+
+        countriesError:'Ülkeler yüklenemedi.',
+
+        noStates:'Eyalet veya bölge bulunamadı.',
+        noCities:'Şehir bulunamadı.',
+
+        currency:'Para Birimi',
+
+        user:'Kullanıcı',
+
+        search:'Ara...',
+
+        chooseCountry:'Ülkenizi seçin',
+        chooseState:'Eyaletinizi veya bölgenizi seçin',
+        chooseCity:'Şehrinizi seçin',
+        chooseLanguage:'Uygulama dilini seçin',
+        chooseTheme:'Temanızı seçin',
+
+        uploading:'Yükleniyor...',
+
+        countryInfo:'Ülke',
+        stateInfo:'Eyalet / Bölge',
+        cityInfo:'Şehir',
+        languageInfo:'Uygulama Dili',
+        themeInfo:'Tema Rengi'
+
+    }
+
+};
+
+
+/* =========================================================
+   HELPERS
+========================================================= */
+
+function getLanguage(){
+
+    const lang =
+        userProfile.language || 'en';
+
+    return TRANSLATIONS[lang]
+        ? lang
+        : 'en';
+
+}
+
+
+function t(key){
+
+    const lang =
+        getLanguage();
+
+    return (
+        TRANSLATIONS[lang]?.[key] ||
+        TRANSLATIONS.en[key] ||
+        key
+    );
+
+}
+
+
+function escapeHTML(value){
+
+    return String(value ?? '')
+        .replace(/&/g,'&amp;')
+        .replace(/</g,'&lt;')
+        .replace(/>/g,'&gt;')
+        .replace(/"/g,'&quot;')
+        .replace(/'/g,'&#039;');
+
+}
+
+
+function showStatus(
+    message,
+    type='info'
+){
+
+    const box =
+        document.getElementById('status');
+
+    box.textContent =
+        message;
+
+    box.className =
+        `status show ${type}`;
+
+}
+
+
+function hideStatus(){
+
+    const box =
+        document.getElementById('status');
+
+    box.className =
+        'status';
+
+}
+
+
+/* =========================================================
+   FLAG
+========================================================= */
+
+function isoToFlag(code){
+
+    if(!code){
+        return '🌍';
+    }
+
+    const clean =
+        String(code)
+        .trim()
+        .toUpperCase();
+
+    if(clean.length !== 2){
+        return '🌍';
+    }
+
+    return [...clean]
+        .map(
+            char =>
+            String.fromCodePoint(
+                127397 +
+                char.charCodeAt(0)
+            )
+        )
+        .join('');
+
+}
+
+
+/* =========================================================
+   THEME
+========================================================= */
+
+function hexToRgba(
+    hex,
+    alpha=.15
+){
+
+    const value =
+        hex.replace('#','');
+
+    const r =
+        parseInt(
+            value.substring(0,2),
+            16
+        );
+
+    const g =
+        parseInt(
+            value.substring(2,4),
+            16
+        );
+
+    const b =
+        parseInt(
+            value.substring(4,6),
+            16
+        );
+
+    return `rgba(${r},${g},${b},${alpha})`;
+
+}
+
+
+function setThemeColor(
+    color,
+    darkColor=null
+){
+
+    if(!color){
+        color =
+            DEFAULT_PROFILE.themeColor;
+    }
+
+    const theme =
+        THEMES.find(
+            item =>
+            item.color.toLowerCase() ===
+            color.toLowerCase()
+        );
+
+    if(theme){
+        darkColor =
+            theme.dark;
+    }
+
+    if(!darkColor){
+        darkColor =
+            color;
+    }
+
+    document.documentElement
+        .style
+        .setProperty(
+            '--primary',
+            color
+        );
+
+    document.documentElement
+        .style
+        .setProperty(
+            '--primary-dark',
+            darkColor
+        );
+
+    document.documentElement
+        .style
+        .setProperty(
+            '--primary-soft',
+            hexToRgba(
+                color,
+                .15
+            )
+        );
+
+    selectedTheme =
+        color;
+
+}
+
+
+function renderThemes(){
+
+    const grid =
+        document.getElementById(
+            'theme-grid'
+        );
+
+    grid.innerHTML = '';
+
+    THEMES.forEach(theme => {
+
+        const item =
+            document.createElement(
+                'div'
+            );
+
+        item.className =
+            'theme-item';
+
+        if(
+            String(
+                userProfile.themeColor
+            ).toLowerCase() ===
+            theme.color.toLowerCase()
+        ){
+
+            item.classList.add(
+                'selected'
+            );
+
+        }
+
+        item.style.background =
+            `linear-gradient(135deg,${theme.color},${theme.dark})`;
+
+        item.innerHTML =
+            `<span class="theme-name">${escapeHTML(theme.name)}</span>`;
+
+        item.onclick =
+            () => selectTheme(theme);
+
+        grid.appendChild(
+            item
+        );
+
+    });
+
+}
+
+
+function selectTheme(theme){
+
+    userProfile.themeColor =
+        theme.color;
+
+    selectedTheme =
+        theme.color;
+
+    setThemeColor(
+        theme.color,
+        theme.dark
+    );
+
+    updateThemePicker();
+
+    renderThemes();
+
+    /*
+     * Save immediately to the global localStorage
+     * so other pages can use the selected theme.
+     */
+    saveGlobalSettings();
+
+}
+
+
+/* =========================================================
+   THEME PICKER
+========================================================= */
+
+function updateThemePicker(){
+
+    const theme =
+        THEMES.find(
+            item =>
+            item.color.toLowerCase() ===
+            String(
+                userProfile.themeColor
+            ).toLowerCase()
+        );
+
+    const name =
+        theme?.name ||
+        'Purple';
+
+    const icon =
+        document.getElementById(
+            'theme-picker-icon'
+        );
+
+    icon.style.background =
+        `linear-gradient(135deg,${theme?.color || '#7c3aed'},${theme?.dark || '#6d28d9'})`;
+
+    icon.textContent =
+        '';
+
+    document.getElementById(
+        'theme-picker-value'
+    ).textContent =
+        name;
+
+}
+
+
+/* =========================================================
+   LANGUAGE
+========================================================= */
+
+function updateLanguagePicker(){
+
+    const language =
+        LANGUAGES.find(
+            item =>
+            item.code ===
+            userProfile.language
+        ) ||
+        LANGUAGES[0];
+
+    document.getElementById(
+        'language-picker-value'
+    ).textContent =
+        `${language.flag} ${language.name}`;
+
+}
+
+
+function applyLanguage(){
+
+    const lang =
+        getLanguage();
+
+    const rtl =
+        ['fa','ar','ps']
+        .includes(lang);
+
+    const root =
+        document.getElementById(
+            'html-root'
+        );
+
+    root.lang =
+        lang;
+
+    root.dir =
+        rtl
+        ? 'rtl'
+        : 'ltr';
+
+    document.title =
+        t('title');
+
+    document.getElementById(
+        'page-title'
+    ).textContent =
+        t('title');
+
+    document.getElementById(
+        'page-subtitle'
+    ).textContent =
+        t('subtitle');
+
+    document.getElementById(
+        'personal-title'
+    ).textContent =
+        t('personal');
+
+    document.getElementById(
+        'name-label'
+    ).textContent =
+        t('name');
+
+    document.getElementById(
+        'profile-name'
+    ).placeholder =
+        t('namePlaceholder');
+
+    document.getElementById(
+        'phone-label'
+    ).textContent =
+        t('phone');
+
+    document.getElementById(
+        'profile-phone'
+    ).placeholder =
+        t('phonePlaceholder');
+
+    document.getElementById(
+        'location-title'
+    ).textContent =
+        t('location');
+
+    document.getElementById(
+        'country-label'
+    ).textContent =
+        t('country');
+
+    document.getElementById(
+        'state-label'
+    ).textContent =
+        t('state');
+
+    document.getElementById(
+        'city-label'
+    ).textContent =
+        t('city');
+
+    document.getElementById(
+        'language-title'
+    ).textContent =
+        t('language');
+
+    document.getElementById(
+        'language-label'
+    ).textContent =
+        t('appLanguage');
+
+    document.getElementById(
+        'theme-title'
+    ).textContent =
+        t('theme');
+
+    document.getElementById(
+        'upload-button'
+    ).textContent =
+        t('upload');
+
+    document.getElementById(
+        'save-button'
+    ).textContent =
+        t('save');
+
+    document.getElementById(
+        'back-button'
+    ).textContent =
+        t('back');
+
+    document.getElementById(
+        'location-loading'
+    ).textContent =
+        t('loadingCountry');
+
+    document.getElementById(
+        'modal-search'
+    ).placeholder =
+        t('search');
+
+    updateLanguagePicker();
+    updateLocationPickers();
+    updateCurrencyPreview();
+    updateThemePicker();
+    updateProfilePreview();
+
+}
+
+
+/* =========================================================
+   CUSTOM MODAL
+========================================================= */
+
+function openPicker(type){
+
+    currentPickerType =
+        type;
+
+    const modal =
+        document.getElementById(
+            'picker-modal'
+        );
+
+    const list =
+        document.getElementById(
+            'modal-list'
+        );
+
+    const search =
+        document.getElementById(
+            'modal-search'
+        );
+
+    const searchWrap =
+        document.getElementById(
+            'modal-search-wrap'
+        );
+
+    const title =
+        document.getElementById(
+            'modal-title'
+        );
+
+    const subtitle =
+        document.getElementById(
+            'modal-subtitle'
+        );
+
+    const icon =
+        document.getElementById(
+            'modal-title-icon'
+        );
+
+    list.innerHTML =
+        '';
+
+    search.value =
+        '';
+
+    searchWrap.style.display =
+        'block';
+
+    if(type === 'country'){
+
+        title.textContent =
+            t('country');
+
+        subtitle.textContent =
+            t('chooseCountry');
+
+        icon.textContent =
+            '🌍';
+
+        renderCountryModal('');
+
+    }
+
+    else if(type === 'state'){
+
+        if(!userProfile.countryName){
+            return;
+        }
+
+        title.textContent =
+            t('state');
+
+        subtitle.textContent =
+            t('chooseState');
+
+        icon.textContent =
+            '📍';
+
+        renderStateModal('');
+
+    }
+
+    else if(type === 'city'){
+
+        if(
+            !userProfile.countryName ||
+            !userProfile.state
+        ){
+            return;
+        }
+
+        title.textContent =
+            t('city');
+
+        subtitle.textContent =
+            t('chooseCity');
+
+        icon.textContent =
+            '🏙️';
+
+        renderCityModal('');
+
+    }
+
+    else if(type === 'language'){
+
+        title.textContent =
+            t('language');
+
+        subtitle.textContent =
+            t('chooseLanguage');
+
+        icon.textContent =
+            '🌐';
+
+        renderLanguageModal('');
+
+    }
+
+    else if(type === 'theme'){
+
+        title.textContent =
+            t('theme');
+
+        subtitle.textContent =
+            t('chooseTheme');
+
+        icon.textContent =
+            '🎨';
+
+        searchWrap.style.display =
+            'none';
+
+        renderThemeModal();
+
+    }
+
+    modal.classList.add(
+        'show'
+    );
+
+    document.body.classList.add(
+        'modal-open'
+    );
+
+    if(type !== 'theme'){
+
+        setTimeout(
+            () => search.focus(),
+            100
+        );
+
+    }
+
+}
+
+
+function closePicker(){
+
+    const modal =
+        document.getElementById(
+            'picker-modal'
+        );
+
+    modal.classList.remove(
+        'show'
+    );
+
+    document.body.classList.remove(
+        'modal-open'
+    );
+
+    currentPickerType =
+        null;
+
+}
+
+
+function handleModalBackground(event){
+
+    if(
+        event.target.id ===
+        'picker-modal'
+    ){
+
+        closePicker();
+
+    }
+
+}
+
+
+document.addEventListener(
+    'keydown',
+    event => {
+
+        if(
+            event.key === 'Escape' &&
+            currentPickerType
+        ){
+
+            closePicker();
+
+        }
+
+    }
+);
+
+
+/* =========================================================
+   COUNTRY MODAL
+========================================================= */
+
+function renderCountryModal(
+    query=''
+){
+
+    const list =
+        document.getElementById(
+            'modal-list'
+        );
+
+    const searchText =
+        String(query)
+        .trim()
+        .toLowerCase();
+
+    const filtered =
+        countries.filter(
+            country =>
+            country.name
+            .toLowerCase()
+            .includes(searchText)
+        );
+
+    if(!filtered.length){
+
+        list.innerHTML =
+            `<div class="empty-modal">${escapeHTML(t('countriesError'))}</div>`;
+
+        return;
+
+    }
+
+    list.innerHTML =
+        filtered
+        .map(
+            country => {
+
+                const selected =
+                    String(
+                        userProfile.countryName
+                    ).toLowerCase() ===
+                    String(
+                        country.name
+                    ).toLowerCase();
+
+                const countryName =
+                    escapeHTML(
+                        country.name
+                    );
+
+                const iso =
+                    escapeHTML(
+                        country.iso2 || ''
+                    );
+
+                return `
+
+                <div
+                    class="modal-item ${selected ? 'selected' : ''}"
+                    onclick="selectCountryFromModal(${JSON.stringify(country.name).replace(/"/g,'&quot;')},${JSON.stringify(country.iso2 || '').replace(/"/g,'&quot;')})">
+
+                    <div class="modal-item-left">
+
+                        <div class="modal-item-icon">
+                            ${isoToFlag(country.iso2)}
+                        </div>
+
+                        <div class="modal-item-name">
+                            ${countryName}
+                        </div>
+
+                    </div>
+
+                    <div class="modal-check">
+                        ✓
+                    </div>
+
+                </div>
+
+                `;
+
+            }
+        )
+        .join('');
+
+}
+
+
+async function selectCountryFromModal(
+    countryName,
+    iso2=''
+){
+
+    closePicker();
+
+    userProfile.countryName =
+        countryName;
+
+    userProfile.countryCode =
+        iso2 ||
+        '';
+
+    userProfile.countryFlag =
+        isoToFlag(
+            userProfile.countryCode
+        );
+
+    userProfile.state =
+        '';
+
+    userProfile.city =
+        '';
+
+    states = [];
+    cities = [];
+
+    updateLocationPickers();
+    updateCurrencyPreview();
+
+    saveGlobalSettings();
+
+    await loadCountryData(
+        countryName,
+        iso2,
+        true
+    );
+
+    updateLocationPickers();
+
+    saveGlobalSettings();
+
+}
+
+
+/* =========================================================
+   STATE MODAL
+========================================================= */
+
+function renderStateModal(
+    query=''
+){
+
+    const list =
+        document.getElementById(
+            'modal-list'
+        );
+
+    const searchText =
+        String(query)
+        .trim()
+        .toLowerCase();
+
+    const filtered =
+        states.filter(
+            state =>
+            state.toLowerCase()
+            .includes(searchText)
+        );
+
+    if(!filtered.length){
+
+        list.innerHTML =
+            `<div class="empty-modal">${escapeHTML(t('noStates'))}</div>`;
+
+        return;
+
+    }
+
+    list.innerHTML =
+        filtered
+        .map(
+            state => {
+
+                const selected =
+                    String(
+                        userProfile.state
+                    ).toLowerCase() ===
+                    String(
+                        state
+                    ).toLowerCase();
+
+                return `
+
+                <div
+                    class="modal-item ${selected ? 'selected' : ''}"
+                    onclick="selectStateFromModal(${JSON.stringify(state).replace(/"/g,'&quot;')})">
+
+                    <div class="modal-item-left">
+
+                        <div class="modal-item-icon">
+                            📍
+                        </div>
+
+                        <div class="modal-item-name">
+                            ${escapeHTML(state)}
+                        </div>
+
+                    </div>
+
+                    <div class="modal-check">
+                        ✓
+                    </div>
+
+                </div>
+
+                `;
+
+            }
+        )
+        .join('');
+
+}
+
+
+async function selectStateFromModal(
+    state
+){
+
+    closePicker();
+
+    userProfile.state =
+        state;
+
+    userProfile.city =
+        '';
+
+    updateLocationPickers();
+
+    saveGlobalSettings();
+
+    await loadCities(
+        userProfile.countryName,
+        state,
+        true
+    );
+
+    updateLocationPickers();
+
+    saveGlobalSettings();
+
+}
+
+
+/* =========================================================
+   CITY MODAL
+========================================================= */
+
+function renderCityModal(
+    query=''
+){
+
+    const list =
+        document.getElementById(
+            'modal-list'
+        );
+
+    const searchText =
+        String(query)
+        .trim()
+        .toLowerCase();
+
+    const filtered =
+        cities.filter(
+            city =>
+            city.toLowerCase()
+            .includes(searchText)
+        );
+
+    if(!filtered.length){
+
+        list.innerHTML =
+            `<div class="empty-modal">${escapeHTML(t('noCities'))}</div>`;
+
+        return;
+
+    }
+
+    list.innerHTML =
+        filtered
+        .map(
+            city => {
+
+                const selected =
+                    String(
+                        userProfile.city
+                    ).toLowerCase() ===
+                    String(
+                        city
+                    ).toLowerCase();
+
+                return `
+
+                <div
+                    class="modal-item ${selected ? 'selected' : ''}"
+                    onclick="selectCityFromModal(${JSON.stringify(city).replace(/"/g,'&quot;')})">
+
+                    <div class="modal-item-left">
+
+                        <div class="modal-item-icon">
+                            🏙️
+                        </div>
+
+                        <div class="modal-item-name">
+                            ${escapeHTML(city)}
+                        </div>
+
+                    </div>
+
+                    <div class="modal-check">
+                        ✓
+                    </div>
+
+                </div>
+
+                `;
+
+            }
+        )
+        .join('');
+
+}
+
+
+function selectCityFromModal(
+    city
+){
+
+    userProfile.city =
+        city;
+
+    updateLocationPickers();
+
+    saveGlobalSettings();
+
+    closePicker();
+
+}
+
+
+/* =========================================================
+   LANGUAGE MODAL
+========================================================= */
+
+function renderLanguageModal(
+    query=''
+){
+
+    const list =
+        document.getElementById(
+            'modal-list'
+        );
+
+    const searchText =
+        String(query)
+        .trim()
+        .toLowerCase();
+
+    const filtered =
+        LANGUAGES.filter(
+            language =>
+            language.name
+            .toLowerCase()
+            .includes(searchText) ||
+            language.code
+            .toLowerCase()
+            .includes(searchText)
+        );
+
+    list.innerHTML =
+        filtered
+        .map(
+            language => {
+
+                const selected =
+                    language.code ===
+                    userProfile.language;
+
+                return `
+
+                <div
+                    class="modal-item ${selected ? 'selected' : ''}"
+                    onclick="selectLanguageFromModal('${language.code}')">
+
+                    <div class="modal-item-left">
+
+                        <div class="modal-item-icon">
+                            ${language.flag}
+                        </div>
+
+                        <div>
+
+                            <div class="modal-item-name">
+                                ${escapeHTML(language.name)}
+                            </div>
+
+                            <div class="modal-item-code">
+                                ${language.code.toUpperCase()}
+                            </div>
+
+                        </div>
+
+                    </div>
+
+                    <div class="modal-check">
+                        ✓
+                    </div>
+
+                </div>
+
+                `;
+
+            }
+        )
+        .join('');
+
+}
+
+
+function selectLanguageFromModal(
+    language
+){
+
+    userProfile.language =
+        language;
+
+    applyLanguage();
+
+    saveGlobalSettings();
+
+    closePicker();
+
+}
+
+
+/* =========================================================
+   THEME MODAL
+========================================================= */
+
+function renderThemeModal(){
+
+    const list =
+        document.getElementById(
+            'modal-list'
+        );
+
+    list.innerHTML =
+        `<div class="theme-modal-grid"></div>`;
+
+    const grid =
+        list.querySelector(
+            '.theme-modal-grid'
+        );
+
+    THEMES.forEach(theme => {
+
+        const item =
+            document.createElement(
+                'div'
+            );
+
+        item.className =
+            'theme-modal-item';
+
+        if(
+            String(
+                userProfile.themeColor
+            ).toLowerCase() ===
+            theme.color.toLowerCase()
+        ){
+
+            item.classList.add(
+                'selected'
+            );
+
+        }
+
+        item.style.background =
+            `linear-gradient(135deg,${theme.color},${theme.dark})`;
+
+        item.innerHTML =
+            `<span class="theme-modal-name">${escapeHTML(theme.name)}</span>`;
+
+        item.onclick =
+            () => {
+
+                selectTheme(theme);
+
+                closePicker();
+
+            };
+
+        grid.appendChild(
+            item
+        );
+
+    });
+
+}
+
+
+/* =========================================================
+   MODAL SEARCH
+========================================================= */
+
+document.getElementById(
+    'modal-search'
+).addEventListener(
+    'input',
+    event => {
+
+        const query =
+            event.target.value;
+
+        if(currentPickerType === 'country'){
+
+            renderCountryModal(
+                query
+            );
+
+        }
+
+        else if(
+            currentPickerType === 'state'
+        ){
+
+            renderStateModal(
+                query
+            );
+
+        }
+
+        else if(
+            currentPickerType === 'city'
+        ){
+
+            renderCityModal(
+                query
+            );
+
+        }
+
+        else if(
+            currentPickerType === 'language'
+        ){
+
+            renderLanguageModal(
+                query
+            );
+
+        }
+
+    }
+);
+
+
+/* =========================================================
+   LOCATION PICKER DISPLAY
+========================================================= */
+
+function updateLocationPickers(){
+
+    const countryValue =
+        document.getElementById(
+            'country-picker-value'
+        );
+
+    const countryIcon =
+        document.getElementById(
+            'country-picker-icon'
+        );
+
+    if(userProfile.countryName){
+
+        countryValue.textContent =
+            userProfile.countryName;
+
+        countryValue.classList.remove(
+            'picker-placeholder'
+        );
+
+        countryIcon.textContent =
+            userProfile.countryFlag ||
+            '🌍';
+
+    }else{
+
+        countryValue.textContent =
+            t('selectCountry');
+
+        countryValue.classList.add(
+            'picker-placeholder'
+        );
+
+        countryIcon.textContent =
+            '🌍';
+
+    }
+
+
+    const stateValue =
+        document.getElementById(
+            'state-picker-value'
+        );
+
+    const statePicker =
+        document.getElementById(
+            'state-picker'
+        );
+
+    if(userProfile.state){
+
+        stateValue.textContent =
+            userProfile.state;
+
+        stateValue.classList.remove(
+            'picker-placeholder'
+        );
+
+        statePicker.classList.remove(
+            'disabled'
+        );
+
+    }else{
+
+        stateValue.textContent =
+            t('selectState');
+
+        stateValue.classList.add(
+            'picker-placeholder'
+        );
+
+        if(
+            states.length
+        ){
+
+            statePicker.classList.remove(
+                'disabled'
+            );
+
+        }else{
+
+            statePicker.classList.add(
+                'disabled'
+            );
+
+        }
+
+    }
+
+
+    const cityValue =
+        document.getElementById(
+            'city-picker-value'
+        );
+
+    const cityPicker =
+        document.getElementById(
+            'city-picker'
+        );
+
+    if(userProfile.city){
+
+        cityValue.textContent =
+            userProfile.city;
+
+        cityValue.classList.remove(
+            'picker-placeholder'
+        );
+
+        cityPicker.classList.remove(
+            'disabled'
+        );
+
+    }else{
+
+        cityValue.textContent =
+            t('selectCity');
+
+        cityValue.classList.add(
+            'picker-placeholder'
+        );
+
+        if(
+            cities.length &&
+            userProfile.state
+        ){
+
+            cityPicker.classList.remove(
+                'disabled'
+            );
+
+        }else{
+
+            cityPicker.classList.add(
+                'disabled'
+            );
+
+        }
+
+    }
+
+}
+
+
+/* =========================================================
+   COUNTRIES
+========================================================= */
+
+async function loadCountries(){
+
+    try{
+
+        const response =
+            await fetch(
+                `${COUNTRIES_API}/countries`
+            );
+
+        if(!response.ok){
+            throw new Error(
+                'Country API error'
+            );
+        }
+
+        const result =
+            await response.json();
+
+        if(
+            !result ||
+            !Array.isArray(
+                result.data
+            )
+        ){
+
+            throw new Error(
+                'Invalid countries response'
+            );
+
+        }
+
+        countries =
+            result.data
+            .map(
+                item => {
+
+                    if(
+                        typeof item ===
+                        'string'
+                    ){
+
+                        return {
+                            name:item,
+                            iso2:''
+                        };
+
+                    }
+
+                    return {
+
+                        name:
+                            item.name ||
+                            item.country ||
+                            '',
+
+                        iso2:
+                            item.iso2 ||
+                            item.isoCode ||
+                            ''
+
+                    };
+
+                }
+            )
+            .filter(
+                item =>
+                item.name
+            )
+            .sort(
+                (a,b) =>
+                a.name.localeCompare(
+                    b.name
+                )
+            );
+
+
+        if(
+            userProfile.countryName
+        ){
+
+            const saved =
+                countries.find(
+                    country =>
+                    country.name
+                    .toLowerCase() ===
+                    String(
+                        userProfile.countryName
+                    ).toLowerCase()
+                );
+
+            if(saved){
+
+                userProfile.countryName =
+                    saved.name;
+
+                userProfile.countryCode =
+                    saved.iso2 ||
+                    userProfile.countryCode;
+
+                userProfile.countryFlag =
+                    isoToFlag(
+                        userProfile.countryCode
+                    );
+
+                updateLocationPickers();
+
+                await loadCountryData(
+                    saved.name,
+                    saved.iso2,
+                    false
+                );
+
+            }
+
+        }
+
+    }catch(error){
+
+        console.error(
+            'Countries loading error:',
+            error
+        );
+
+        showStatus(
+            t('countriesError'),
+            'error'
+        );
+
+    }
+
+}
+
+
+/* =========================================================
+   COUNTRY DATA
+========================================================= */
+
+async function loadCountryData(
+    countryName,
+    iso2='',
+    clearLocation=true
+){
+
+    const loading =
+        document.getElementById(
+            'location-loading'
+        );
+
+    loading.textContent =
+        t('loadingCountry');
+
+    loading.classList.add(
+        'show'
+    );
+
+
+    if(clearLocation){
+
+        userProfile.state =
+            '';
+
+        userProfile.city =
+            '';
+
+        states =
+            [];
+
+        cities =
+            [];
+
+    }
+
+
+    userProfile.countryName =
+        countryName;
+
+    userProfile.countryCode =
+        iso2 ||
+        userProfile.countryCode ||
+        '';
+
+    userProfile.countryFlag =
+        isoToFlag(
+            userProfile.countryCode
+        );
+
+    updateLocationPickers();
+    updateCurrencyPreview();
+
+
+    try{
+
+        const currencyPromise =
+            loadCurrency(
+                countryName
+            );
+
+        const statesPromise =
+            loadStates(
+                countryName
+            );
+
+        await Promise.all([
+            currencyPromise,
+            statesPromise
+        ]);
+
+    }catch(error){
+
+        console.error(
+            'Country data error:',
+            error
+        );
+
+    }finally{
+
+        loading.classList.remove(
+            'show'
+        );
+
+    }
+
+}
+
+
+/* =========================================================
+   CURRENCY
+========================================================= */
+
+async function loadCurrency(
+    countryName
+){
+
+    try{
+
+        const response =
+            await fetch(
+                `${COUNTRIES_API}/countries/currency`,
+                {
+
+                    method:'POST',
+
+                    headers:{
+                        'Content-Type':
+                            'application/json'
+                    },
+
+                    body:JSON.stringify({
+                        country:
+                            countryName
+                    })
+
+                }
+            );
+
+        if(!response.ok){
+            throw new Error(
+                'Currency API error'
+            );
+        }
+
+        const result =
+            await response.json();
+
+        let currencyData =
+            result?.data;
+
+
+        if(
+            typeof currencyData ===
+            'string'
+        ){
+
+            userProfile.currencyCode =
+                currencyData;
+
+        }
+
+        else if(currencyData){
+
+            userProfile.currencyCode =
+                currencyData.currency ||
+                currencyData.code ||
+                currencyData.currencyCode ||
+                userProfile.currencyCode;
+
+            userProfile.currencyName =
+                currencyData.name ||
+                currencyData.currencyName ||
+                userProfile.currencyName;
+
+            userProfile.currencySymbol =
+                currencyData.symbol ||
+                currencyData.currencySymbol ||
+                userProfile.currencySymbol;
+
+        }
+
+
+        if(
+            result?.currency &&
+            typeof result.currency ===
+            'string'
+        ){
+
+            userProfile.currencyCode =
+                result.currency;
+
+        }
+
+
+        userProfile.currencyCode =
+            String(
+                userProfile.currencyCode ||
+                ''
+            ).toUpperCase();
+
+
+        userProfile.currencySymbol =
+            getCurrencySymbol(
+                userProfile.currencyCode
+            );
+
+
+        if(
+            !userProfile.currencyName
+        ){
+
+            userProfile.currencyName =
+                userProfile.currencyCode;
+
+        }
+
+
+        updateCurrencyPreview();
+
+        saveGlobalSettings();
+
+    }catch(error){
+
+        console.error(
+            'Currency loading error:',
+            error
+        );
+
+        updateCurrencyPreview();
+
+    }
+
+}
+
+
+function getCurrencySymbol(
+    code
+){
+
+    const symbols = {
+
+        AFN:'؋',
+
+        USD:'$',
+        EUR:'€',
+        GBP:'£',
+
+        TRY:'₺',
+
+        SAR:'﷼',
+        AED:'د.إ',
+        QAR:'﷼',
+        KWD:'د.ك',
+        BHD:'.د.ب',
+        OMR:'﷼',
+        JOD:'د.ا',
+
+        PKR:'₨',
+        INR:'₹',
+        BDT:'৳',
+
+        CNY:'¥',
+        JPY:'¥',
+        KRW:'₩',
+
+        RUB:'₽',
+
+        CAD:'C$',
+        AUD:'A$',
+        NZD:'NZ$',
+
+        CHF:'CHF',
+
+        SEK:'kr',
+        NOK:'kr',
+        DKK:'kr',
+
+        PLN:'zł',
+        CZK:'Kč',
+        HUF:'Ft',
+
+        BRL:'R$',
+        MXN:'$',
+        ARS:'$',
+
+        ZAR:'R',
+        NGN:'₦',
+        GHS:'₵',
+        KES:'KSh',
+        UGX:'USh',
+
+        THB:'฿',
+        VND:'₫',
+        IDR:'Rp',
+        MYR:'RM',
+        SGD:'S$',
+
+        ILS:'₪',
+
+        GEL:'₾',
+        UAH:'₴',
+
+        AZN:'₼',
+        KZT:'₸',
+        UZS:'лв'
+
+    };
+
+    return (
+        symbols[code] ||
+        code ||
+        '¤'
+    );
+
+}
+
+
+/* =========================================================
+   STATES
+========================================================= */
+
+async function loadStates(
+    countryName
+){
+
+    states =
+        [];
+
+    cities =
+        [];
+
+    updateLocationPickers();
+
+    try{
+
+        const response =
+            await fetch(
+                `${COUNTRIES_API}/countries/states`,
+                {
+
+                    method:'POST',
+
+                    headers:{
+                        'Content-Type':
+                            'application/json'
+                    },
+
+                    body:JSON.stringify({
+                        country:
+                            countryName
+                    })
+
+                }
+            );
+
+        if(!response.ok){
+            throw new Error(
+                'States API error'
+            );
+        }
+
+        const result =
+            await response.json();
+
+        const rawStates =
+            result?.data?.states ||
+            result?.states ||
+            [];
+
+
+        states =
+            rawStates
+            .map(
+                state =>
+                typeof state ===
+                'string'
+                ? state
+                : (
+                    state.name ||
+                    state.state ||
+                    ''
+                )
+            )
+            .filter(Boolean);
+
+
+        if(
+            !states.length
+        ){
+
+            updateLocationPickers();
+
+            return;
+
+        }
+
+
+        if(userProfile.state){
+
+            const found =
+                states.find(
+                    state =>
+                    state.toLowerCase() ===
+                    String(
+                        userProfile.state
+                    ).toLowerCase()
+                );
+
+            if(found){
+
+                userProfile.state =
+                    found;
+
+                updateLocationPickers();
+
+                await loadCities(
+                    countryName,
+                    found,
+                    false
+                );
+
+                return;
+
+            }
+
+        }
+
+
+        updateLocationPickers();
+
+    }catch(error){
+
+        console.error(
+            'States loading error:',
+            error
+        );
+
+        states =
+            [];
+
+        updateLocationPickers();
+
+    }
+
+}
+
+
+/* =========================================================
+   CITIES
+========================================================= */
+
+async function loadCities(
+    country,
+    state,
+    clearCity=true
+){
+
+    cities =
+        [];
+
+    if(clearCity){
+
+        userProfile.city =
+            '';
+
+    }
+
+    updateLocationPickers();
+
+
+    try{
+
+        const response =
+            await fetch(
+                `${COUNTRIES_API}/countries/state/cities`,
+                {
+
+                    method:'POST',
+
+                    headers:{
+                        'Content-Type':
+                            'application/json'
+                    },
+
+                    body:JSON.stringify({
+
+                        country:
+                            country,
+
+                        state:
+                            state
+
+                    })
+
+                }
+            );
+
+        if(!response.ok){
+            throw new Error(
+                'Cities API error'
+            );
+        }
+
+        const result =
+            await response.json();
+
+        const rawCities =
+            result?.data ||
+            result?.cities ||
+            [];
+
+
+        cities =
+            rawCities
+            .map(
+                city =>
+                typeof city ===
+                'string'
+                ? city
+                : (
+                    city.name ||
+                    city.city ||
+                    ''
+                )
+            )
+            .filter(Boolean);
+
+
+        if(userProfile.city){
+
+            const found =
+                cities.find(
+                    city =>
+                    city.toLowerCase() ===
+                    String(
+                        userProfile.city
+                    ).toLowerCase()
+                );
+
+            if(found){
+
+                userProfile.city =
+                    found;
+
+            }else{
+
+                userProfile.city =
+                    '';
+
+            }
+
+        }
+
+
+        updateLocationPickers();
+
+    }catch(error){
+
+        console.error(
+            'Cities loading error:',
+            error
+        );
+
+        cities =
+            [];
+
+        updateLocationPickers();
+
+    }
+
+}
+
+
+/* =========================================================
+   CURRENCY PREVIEW
+========================================================= */
+
+function updateCurrencyPreview(){
+
+    document.getElementById(
+        'currency-flag'
+    ).textContent =
+        userProfile.countryFlag ||
+        '🌍';
+
+    document.getElementById(
+        'currency-name'
+    ).textContent =
+        userProfile.currencyName ||
+        userProfile.currencyCode ||
+        t('currency');
+
+    document.getElementById(
+        'currency-code'
+    ).textContent =
+        userProfile.currencyCode ||
+        '—';
+
+    document.getElementById(
+        'currency-symbol'
+    ).textContent =
+        userProfile.currencySymbol ||
+        '¤';
+
+}
+
+
+/* =========================================================
+   PROFILE PREVIEW
+========================================================= */
+
+function updateProfilePreview(){
+
+    const preview =
+        document.getElementById(
+            'profile-preview'
+        );
+
+    const name =
+        document.getElementById(
+            'profile-name'
+        )?.value.trim() ||
+        userProfile.name ||
+        '';
+
+    if(userProfile.avatar){
+
+        preview.innerHTML =
+            `<img src="${escapeHTML(userProfile.avatar)}" alt="Profile">`;
+
+    }else{
+
+        const letter =
+            name
+            ? name.charAt(0).toUpperCase()
+            : 'U';
+
+        preview.textContent =
+            letter;
+
+    }
+
+    document.getElementById(
+        'profile-name-preview'
+    ).textContent =
+        name ||
+        t('user');
+
+    document.getElementById(
+        'profile-email-preview'
+    ).textContent =
+        currentUser?.email ||
+        '—';
+
+}
+
+
+/* =========================================================
+   IMAGE UPLOAD
+========================================================= */
+
+async function handleImageUpload(
+    event
+){
+
+    const file =
+        event.target.files?.[0];
+
+    if(
+        !file ||
+        !currentUser
+    ){
+
+        return;
+
+    }
+
+
+    if(
+        !file.type.startsWith(
+            'image/'
+        )
+    ){
+
+        showStatus(
+            t('uploadError'),
+            'error'
+        );
+
+        return;
+
+    }
+
+
+    try{
+
+        showStatus(
+            t('uploading'),
+            'info'
+        );
+
+
+        const extension =
+            file.name
+            .split('.')
+            .pop()
+            ?.toLowerCase() ||
+            'jpg';
+
+
+        const path =
+            `${currentUser.id}/avatar.${extension}`;
+
+
+        const {
+            error:uploadError
+        } =
+            await supabaseClient
+            .storage
+            .from('user-uploads')
+            .upload(
+                path,
+                file,
+                {
+
+                    upsert:true,
+
+                    contentType:
+                        file.type
+
+                }
+            );
+
+
+        if(uploadError){
+            throw uploadError;
+        }
+
+
+        const {
+            data
+        } =
+            supabaseClient
+            .storage
+            .from('user-uploads')
+            .getPublicUrl(
+                path
+            );
+
+
+        if(
+            !data?.publicUrl
+        ){
+
+            throw new Error(
+                'Public URL unavailable'
+            );
+
+        }
+
+
+        userProfile.avatar =
+            data.publicUrl +
+            '?v=' +
+            Date.now();
+
+
+        updateProfilePreview();
+
+        saveGlobalSettings();
+
+
+        showStatus(
+            t('uploadSuccess'),
+            'success'
+        );
+
+
+    }catch(error){
+
+        console.error(
+            'Avatar upload error:',
+            error
+        );
+
+        showStatus(
+            t('uploadError'),
+            'error'
+        );
+
+    }
+
+}
+
+
+/* =========================================================
+   LOAD PROFILE
+========================================================= */
 
 async function loadProfile(){
- const {data:{session}} = await supabaseClient.auth.getSession();
- if(!session){ window.location.href='index.html'; return; }
- currentUser = session.user;
- const {data} = await supabaseClient.from('exchange_users').select('*').eq('user_id', currentUser.id).maybeSingle();
- if(data && data.profile){
-  userProfile = data.profile;
-  document.getElementById('profile-name').value = userProfile.name || '';
-  document.getElementById('profile-phone').value = userProfile.phone || '';
-  if(userProfile.avatar){
-   document.getElementById('profile-preview').innerHTML = `<img src="${userProfile.avatar}" style="width:100%;height:100%;object-fit:cover">`;
-  }
- }
+
+    try{
+
+        const {
+            data:{
+                session
+            }
+        } =
+            await supabaseClient
+            .auth
+            .getSession();
+
+
+        if(!session){
+
+            window.location.href =
+                'index.html';
+
+            return;
+
+        }
+
+
+        currentUser =
+            session.user;
+
+
+        const {
+            data,
+            error
+        } =
+            await supabaseClient
+            .from('exchange_users')
+            .select('*')
+            .eq(
+                'user_id',
+                currentUser.id
+            )
+            .maybeSingle();
+
+
+        if(error){
+
+            console.error(
+                'Profile loading error:',
+                error
+            );
+
+        }
+
+
+        userProfile = {
+
+            ...DEFAULT_PROFILE,
+
+            ...(data?.profile || {})
+
+        };
+
+
+        /*
+         * Backward compatibility.
+         */
+
+        if(
+            !userProfile.countryName
+        ){
+
+            userProfile.countryName =
+                'Afghanistan';
+
+        }
+
+        if(
+            !userProfile.countryCode
+        ){
+
+            userProfile.countryCode =
+                'AF';
+
+        }
+
+        if(
+            !userProfile.countryFlag
+        ){
+
+            userProfile.countryFlag =
+                '🇦🇫';
+
+        }
+
+        if(
+            !userProfile.currencyCode
+        ){
+
+            userProfile.currencyCode =
+                'AFN';
+
+        }
+
+        if(
+            !userProfile.currencyName
+        ){
+
+            userProfile.currencyName =
+                'Afghan Afghani';
+
+        }
+
+        if(
+            !userProfile.currencySymbol
+        ){
+
+            userProfile.currencySymbol =
+                '؋';
+
+        }
+
+
+        if(
+            !userProfile.state &&
+            userProfile.location
+        ){
+
+            userProfile.state =
+                userProfile.location;
+
+        }
+
+
+        selectedTheme =
+            userProfile.themeColor ||
+            DEFAULT_PROFILE.themeColor;
+
+
+        document.getElementById(
+            'profile-name'
+        ).value =
+            userProfile.name ||
+            '';
+
+
+        document.getElementById(
+            'profile-phone'
+        ).value =
+            userProfile.phone ||
+            '';
+
+
+        setThemeColor(
+            userProfile.themeColor
+        );
+
+
+        updateProfilePreview();
+
+        updateCurrencyPreview();
+
+        updateLocationPickers();
+
+        updateLanguagePicker();
+
+        updateThemePicker();
+
+        applyLanguage();
+
+        renderThemes();
+
+
+        /*
+         * Immediately make the current profile
+         * available to the other pages.
+         */
+
+        saveGlobalSettings();
+
+
+        /*
+         * Load real country list.
+         */
+
+        await loadCountries();
+
+
+    }catch(error){
+
+        console.error(
+            'Profile initialization error:',
+            error
+        );
+
+        showStatus(
+            t('saveError'),
+            'error'
+        );
+
+    }
+
 }
 
-async function handleImageUpload(event){
- const file = event.target.files?.[0];
- if(!file || !currentUser) return;
- const path = `${currentUser.id}/avatar.jpg`;
- await supabaseClient.storage.from('user-uploads').upload(path, file, {upsert:true});
- const {data} = supabaseClient.storage.from('user-uploads').getPublicUrl(path);
- userProfile.avatar = data.publicUrl + '?v=' + Date.now();
- document.getElementById('profile-preview').innerHTML = `<img src="${userProfile.avatar}" style="width:100%;height:100%;object-fit:cover">`;
-}
+
+/* =========================================================
+   SAVE PROFILE
+========================================================= */
 
 async function saveProfileSettings(){
- userProfile.name = document.getElementById('profile-name').value.trim();
- userProfile.phone = document.getElementById('profile-phone').value.trim();
- await supabaseClient.from('exchange_users').upsert({ user_id: currentUser.id, email: currentUser.email, profile: userProfile }, { onConflict: 'user_id' });
- window.location.href = 'transactions.html';
+
+    if(!currentUser){
+
+        return;
+
+    }
+
+
+    const saveButton =
+        document.getElementById(
+            'save-button'
+        );
+
+
+    try{
+
+        saveButton.disabled =
+            true;
+
+        hideStatus();
+
+
+        userProfile.name =
+            document.getElementById(
+                'profile-name'
+            ).value.trim();
+
+
+        userProfile.phone =
+            document.getElementById(
+                'profile-phone'
+            ).value.trim();
+
+
+        if(
+            userProfile.city
+        ){
+
+            userProfile.location =
+                userProfile.city;
+
+        }else if(
+            userProfile.state
+        ){
+
+            userProfile.location =
+                userProfile.state;
+
+        }else if(
+            userProfile.countryName
+        ){
+
+            userProfile.location =
+                userProfile.countryName;
+
+        }
+
+
+        userProfile.themeColor =
+            selectedTheme ||
+            userProfile.themeColor ||
+            DEFAULT_PROFILE.themeColor;
+
+
+        /*
+         * Save to Supabase.
+         */
+
+        const {
+            error
+        } =
+            await supabaseClient
+            .from('exchange_users')
+            .upsert(
+                {
+
+                    user_id:
+                        currentUser.id,
+
+                    email:
+                        currentUser.email,
+
+                    profile:
+                        userProfile
+
+                },
+                {
+
+                    onConflict:
+                        'user_id'
+
+                }
+            );
+
+
+        if(error){
+            throw error;
+        }
+
+
+        /*
+         * Save the same real profile data
+         * locally for every other page.
+         */
+
+        saveGlobalSettings();
+
+
+        try{
+
+            localStorage.setItem(
+                'dailyAccountingUpdate',
+                String(
+                    Date.now()
+                )
+            );
+
+        }catch(_){}
+
+
+        showStatus(
+            t('saved'),
+            'success'
+        );
+
+
+        updateProfilePreview();
+
+
+        setTimeout(
+            () => {
+
+                window.location.href =
+                    'transactions.html';
+
+            },
+            700
+        );
+
+
+    }catch(error){
+
+        console.error(
+            'Save profile error:',
+            error
+        );
+
+        showStatus(
+            t('saveError') +
+            (
+                error?.message
+                ? ' ' +
+                  error.message
+                : ''
+            ),
+            'error'
+        );
+
+
+    }finally{
+
+        saveButton.disabled =
+            false;
+
+    }
+
 }
 
-window.addEventListener('DOMContentLoaded', loadProfile);
+
+/* =========================================================
+   LIVE NAME PREVIEW
+========================================================= */
+
+document.addEventListener(
+    'input',
+    event => {
+
+        if(
+            event.target?.id ===
+            'profile-name'
+        ){
+
+            updateProfilePreview();
+
+        }
+
+    }
+);
+
+
+/* =========================================================
+   INITIALIZATION
+========================================================= */
+
+window.addEventListener(
+    'DOMContentLoaded',
+    loadProfile
+);
+
 </script>
+
 </body>
 </html>
