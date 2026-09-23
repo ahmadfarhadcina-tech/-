@@ -1,9 +1,9 @@
 <!DOCTYPE html>
-<html lang="fa" dir="rtl" id="html-root">
+<html lang="fa" dir="rtl">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-  <title>معاملات | Daily Accounting</title>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+  <title>Transactions | Daily Accounting</title>
 
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
   <script src="translator.js"></script>
@@ -12,290 +12,281 @@
   <style>
     :root{
       --primary:#7c3aed;
-      --primary-soft:#f5f3ff;
-      --primary-strong:#6d28d9;
-      --primary-fade:#efe7ff;
-
+      --primary-dark:#6d28d9;
       --bg:#f7f7f9;
       --card:#ffffff;
-      --card-soft:#faf8ff;
+      --card2:#f5f3ff;
       --text:#1f2937;
       --muted:#6b7280;
       --border:#e5e7eb;
-
       --green:#10b981;
-      --green-soft:#ecfdf5;
       --red:#ef4444;
-      --red-soft:#fef2f2;
-      --blue:#2563eb;
-      --blue-soft:#eff6ff;
-
-      --shadow-soft:0 8px 22px rgba(124,58,237,0.08);
-      --shadow-card:0 10px 24px rgba(17,24,39,0.06);
-      --shadow-modal:0 20px 45px rgba(15,23,42,0.18);
-      --radius:18px;
+      --blue:#3b82f6;
+      --gold:#f59e0b;
+      --radius:13px;
     }
 
     *{
       box-sizing:border-box;
       margin:0;
       padding:0;
+      font-family:Tahoma,sans-serif;
       -webkit-tap-highlight-color:transparent;
-      font-family:Tahoma, sans-serif;
     }
 
-    html, body{
+    html,body{
       width:100%;
       min-height:100%;
-      background:var(--bg);
+      background:#f7f7f9;
       color:var(--text);
     }
 
     body{
       min-height:100vh;
       overflow-x:hidden;
-      padding-bottom:60px;
     }
 
-    button, input, select, textarea{
+    button,input,select,textarea{
       font:inherit;
     }
 
     button{
       border:0;
-      background:none;
       cursor:pointer;
+      width:100%;
+      transition:transform .15s ease, filter .15s ease, box-shadow .15s ease;
     }
 
-    a{
-      text-decoration:none;
-      color:inherit;
-    }
-
-    .app-shell{
-      max-width:480px;
-      margin:0 auto;
-      min-height:100vh;
-      background:var(--bg);
-      position:relative;
-    }
-
-    /* ===========================================
-       HEADER
-    =========================================== */
-
-    .topbar{
-      position:sticky;
-      top:0;
-      z-index:40;
-      background:rgba(255,255,255,0.86);
-      backdrop-filter:blur(12px);
-      -webkit-backdrop-filter:blur(12px);
-      border-bottom:1px solid rgba(229,231,235,0.9);
-      box-shadow:0 1px 4px rgba(0,0,0,0.04);
-    }
-
-    .topbar-inner{
-      max-width:480px;
-      margin:0 auto;
-      padding:12px 14px;
-      display:flex;
-      align-items:center;
-      justify-content:space-between;
-      gap:10px;
-    }
-
-    .brand-wrap{
-      display:flex;
-      align-items:center;
-      gap:10px;
-      min-width:0;
-    }
-
-    .brand-icon{
-      width:38px;
-      height:38px;
-      border-radius:12px;
-      display:flex;
-      align-items:center;
-      justify-content:center;
-      background:linear-gradient(135deg, var(--primary), var(--primary-strong));
-      color:#fff;
-      font-size:18px;
-      box-shadow:0 8px 18px rgba(124,58,237,0.25);
-      flex-shrink:0;
-    }
-
-    .brand-text{
-      min-width:0;
-    }
-
-    .brand-text h1{
-      margin:0;
-      font-size:15px;
-      color:var(--primary);
-      font-weight:800;
-      line-height:1.2;
-      white-space:nowrap;
-      overflow:hidden;
-      text-overflow:ellipsis;
-    }
-
-    .brand-text p{
-      margin:3px 0 0;
-      color:var(--muted);
-      font-size:9px;
-      white-space:nowrap;
-      overflow:hidden;
-      text-overflow:ellipsis;
-    }
-
-    .header-action{
-      width:36px;
-      height:36px;
-      border-radius:11px;
-      background:var(--primary-soft);
-      color:var(--primary);
-      display:flex;
-      align-items:center;
-      justify-content:center;
-      font-size:18px;
-      box-shadow:inset 0 0 0 1px rgba(124,58,237,0.08);
-      transition:all .2s ease;
-    }
-
-    .header-action:active{
+    button:active{
       transform:scale(.96);
     }
 
-    /* ===========================================
-       PAGE
-    =========================================== */
-
-    .page{
-      max-width:480px;
-      margin:0 auto;
-      padding:16px 14px 80px;
+    .app{
+      width:100%;
+      min-height:100vh;
+      display:flex;
+      flex-direction:column;
+      background:#f7f7f9;
     }
 
-    .page-head{
+    header{
+      background:#fff;
+      padding:10px 16px;
+      border-bottom:1px solid #e5e7eb;
+      display:flex;
+      justify-content:space-between;
+      align-items:center;
+      gap:8px;
+      z-index:20;
+      position:sticky;
+      top:0;
+      box-shadow:0 1px 5px rgba(0,0,0,.04);
+    }
+
+    header h1{
+      font-size:16px;
+      color:var(--primary);
+      font-weight:700;
+    }
+
+    .header-controls{
+      display:flex;
+      align-items:center;
+      gap:6px;
+    }
+
+    .header-icon-btn{
+      width:36px;
+      height:36px;
+      border-radius:10px;
+      background:#f5f3ff;
+      color:var(--primary);
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      font-size:17px;
+    }
+
+    .rates{
+      background:#fff;
+      padding:8px 16px;
+      font-size:10px;
+      color:#2563eb;
+      border-bottom:1px solid #e5e7eb;
+      display:flex;
+      align-items:center;
+      gap:17px;
+      overflow-x:auto;
+      white-space:nowrap;
+      scrollbar-width:none;
+      min-height:38px;
+    }
+
+    .rates::-webkit-scrollbar{
+      display:none;
+    }
+
+    .rate-item{
+      display:flex;
+      align-items:center;
+      gap:5px;
+      flex-shrink:0;
+    }
+
+    .rate-flag{
+      font-size:14px;
+      line-height:1;
+      display:inline-flex;
+      align-items:center;
+      justify-content:center;
+    }
+
+    .rate-code{
+      color:#374151;
+      font-weight:bold;
+    }
+
+    .rate-value{
+      color:#2563eb;
+    }
+
+    .rate-updated{
+      color:#9ca3af;
+      font-size:8px;
+    }
+
+    .rate-ok{
+      color:#10b981;
+      font-size:8px;
+    }
+
+    .rate-error{
+      color:#f59e0b;
+      font-size:9px;
+    }
+
+    main{
+      position:relative;
+      flex:1;
+      min-height:calc(100vh - 140px);
+      padding-bottom:68px;
+    }
+
+    .page{
+      width:100%;
+      min-height:100%;
+      padding:16px 16px 27px;
+      background:#f7f7f9;
+      overflow-y:auto;
+    }
+
+    .container{
+      max-width:470px;
+      margin:0 auto;
+      width:100%;
+    }
+
+    .top-bar{
+      display:flex;
+      justify-content:space-between;
+      align-items:center;
+      gap:9px;
+      margin-bottom:14px;
+    }
+
+    .top-bar h2{
+      font-size:18px;
+      color:#1f2937;
+      margin:0;
+    }
+
+    .client-counter{
+      font-size:10px;
+      color:#6b7280;
+    }
+
+    .status-box{
+      background:#fff;
+      border:1px solid #e5e7eb;
+      border-radius:13px;
+      padding:9px 12px;
+      margin-bottom:12px;
       display:flex;
       align-items:center;
       justify-content:space-between;
       gap:10px;
-      margin-bottom:14px;
+      box-shadow:0 2px 8px rgba(0,0,0,.045);
     }
 
-    .page-head h2{
-      margin:0;
-      font-size:18px;
-      color:var(--text);
-      font-weight:800;
-    }
-
-    .page-head span{
-      font-size:10px;
-      color:var(--muted);
-      background:#fff;
-      border:1px solid var(--border);
-      padding:5px 8px;
-      border-radius:999px;
-      box-shadow:0 4px 12px rgba(17,24,39,0.04);
-    }
-
-    .rate-panel{
-      background:#fff;
-      border:1px solid var(--border);
-      border-radius:16px;
-      box-shadow:var(--shadow-soft);
-      padding:10px 12px;
+    .status-left{
       display:flex;
       align-items:center;
-      justify-content:space-between;
-      gap:12px;
-      margin-bottom:12px;
-    }
-
-    .rate-left{
-      display:flex;
-      align-items:center;
-      gap:9px;
+      gap:8px;
       min-width:0;
     }
 
-    .rate-dot{
+    .status-dot{
       width:9px;
       height:9px;
       border-radius:50%;
-      background:#d1d5db;
-      box-shadow:0 0 0 4px rgba(148,163,184,0.08);
+      background:#9ca3af;
       flex-shrink:0;
     }
 
-    .rate-dot.online{
+    .status-dot.online{
       background:var(--green);
-      box-shadow:0 0 0 4px rgba(16,185,129,0.12);
+      box-shadow:0 0 0 3px rgba(16,185,129,.15);
     }
 
-    .rate-dot.error{
+    .status-dot.error{
       background:var(--red);
-      box-shadow:0 0 0 4px rgba(239,68,68,0.12);
+      box-shadow:0 0 0 3px rgba(239,68,68,.12);
     }
 
-    .rate-text{
+    .status-text{
       font-size:10px;
-      color:var(--muted);
+      color:#374151;
       white-space:nowrap;
       overflow:hidden;
       text-overflow:ellipsis;
     }
 
     .mini-btn{
-      padding:8px 10px;
-      border-radius:10px;
-      background:var(--primary-soft);
+      background:#f5f3ff;
       color:var(--primary);
+      border-radius:9px;
+      padding:7px 9px;
+      width:auto;
       font-size:10px;
-      font-weight:700;
-      box-shadow:inset 0 0 0 1px rgba(124,58,237,0.08);
-      transition:all .2s ease;
+      font-weight:600;
     }
 
-    .mini-btn:active{
-      transform:scale(.96);
-    }
-
-    /* ===========================================
-       CLIENT CARD
-    =========================================== */
-
-    .account-list{
+    .accounts{
       display:flex;
       flex-direction:column;
-      gap:12px;
+      gap:10px;
     }
 
     .client-card{
       background:#fff;
-      border:1px solid var(--border);
-      border-radius:20px;
-      box-shadow:var(--shadow-card);
-      padding:12px;
-      animation:cardIn .25s ease both;
-      transition:transform .2s ease, box-shadow .2s ease, border-color .2s ease;
+      border:1px solid #e5e7eb;
+      border-radius:15px;
+      overflow:hidden;
+      box-shadow:0 2px 9px rgba(0,0,0,.045);
+      animation:cardIn .25s ease;
     }
 
-    .client-card:hover{
-      transform:translateY(-2px);
-      box-shadow:0 12px 26px rgba(17,24,39,0.07);
-      border-color:rgba(124,58,237,0.18);
+    @keyframes cardIn{
+      from{opacity:0; transform:translateY(8px) scale(.99);}
+      to{opacity:1; transform:none;}
     }
 
-    .client-top{
+    .client-head{
       display:flex;
       align-items:center;
       justify-content:space-between;
-      gap:10px;
+      padding:12px 14px;
+      border-bottom:1px solid #f0f0f0;
     }
 
     .client-info{
@@ -303,888 +294,792 @@
       align-items:center;
       gap:10px;
       min-width:0;
-      flex:1;
     }
 
     .client-avatar{
-      width:40px;
-      height:40px;
-      border-radius:12px;
-      background:linear-gradient(135deg, var(--primary), var(--primary-strong));
+      width:38px;
+      height:38px;
+      border-radius:10px;
+      background:var(--primary);
       color:#fff;
       display:flex;
       align-items:center;
       justify-content:center;
-      font-size:15px;
-      font-weight:800;
-      box-shadow:0 8px 18px rgba(124,58,237,0.2);
+      font-weight:bold;
+      font-size:14px;
       flex-shrink:0;
-    }
-
-    .client-meta{
-      min-width:0;
-      flex:1;
     }
 
     .client-name{
       font-size:14px;
-      font-weight:800;
-      color:var(--text);
-      white-space:nowrap;
+      font-weight:bold;
+      color:#1f2937;
       overflow:hidden;
       text-overflow:ellipsis;
+      white-space:nowrap;
     }
 
-    .client-summary{
+    .transaction-count{
       font-size:9px;
-      color:var(--muted);
-      margin-top:4px;
+      color:#9ca3af;
+      margin-top:3px;
     }
 
-    .client-tools{
+    .card-actions{
       display:flex;
       align-items:center;
-      gap:6px;
+      gap:4px;
       flex-shrink:0;
     }
 
-    .round-btn{
-      width:32px;
-      height:32px;
-      border-radius:10px;
+    .icon-action{
+      width:31px;
+      height:31px;
+      border-radius:9px;
+      background:#f5f3ff;
+      color:var(--primary);
       display:flex;
       align-items:center;
       justify-content:center;
-      font-size:16px;
-      transition:all .2s ease;
-      box-shadow:inset 0 0 0 1px rgba(124,58,237,0.08);
+      font-size:14px;
+      padding:0;
+      width:31px;
     }
 
-    .round-btn.primary{
-      background:var(--primary-soft);
-      color:var(--primary);
-    }
-
-    .round-btn.danger{
-      background:var(--red-soft);
+    .icon-action.delete{
+      background:#fef2f2;
       color:var(--red);
     }
 
-    .round-btn:active{
-      transform:scale(.96);
-    }
-
-    .balance-pill{
-      margin-top:12px;
-      border-radius:12px;
-      padding:10px 12px;
+    .client-balance{
       display:flex;
       align-items:center;
       justify-content:space-between;
       gap:8px;
+      margin:10px 11px 0;
+      padding:9px 10px;
+      border-radius:10px;
       font-size:10px;
-      font-weight:700;
-      border:1px solid transparent;
     }
 
-    .balance-pill.positive{
-      background:var(--green-soft);
-      border-color:rgba(16,185,129,0.12);
-      color:#047857;
+    .client-balance.positive{
+      background:#ecfdf5;
+      color:#059669;
     }
 
-    .balance-pill.negative{
-      background:var(--red-soft);
-      border-color:rgba(239,68,68,0.12);
-      color:#b91c1c;
+    .client-balance.negative{
+      background:#fef2f2;
+      color:#dc2626;
     }
 
-    .balance-pill.zero{
+    .client-balance.zero{
       background:#f8fafc;
-      border-color:#edf2f7;
-      color:#475569;
+      color:#6b7280;
     }
 
     .balance-value{
-      direction:ltr;
-      font-weight:800;
       text-align:left;
+      direction:ltr;
+      font-weight:bold;
       font-size:10px;
       white-space:nowrap;
     }
 
-    .transactions-box{
+    .transactions{
+      border-top:1px solid #f0f0f0;
       margin-top:10px;
-      display:flex;
-      flex-direction:column;
-      gap:8px;
     }
 
     .tx-row{
-      background:linear-gradient(180deg,#fafafa,#f7f7f9);
-      border:1px solid #f1f1f1;
-      border-radius:14px;
-      padding:10px;
-      transition:all .2s ease;
-      animation:cardIn .2s ease both;
+      padding:10px 13px;
+      border-bottom:1px solid #f1f1f1;
+      display:flex;
+      flex-direction:column;
+      gap:6px;
     }
 
-    .tx-row:active{
-      transform:scale(.99);
+    .tx-row:last-child{
+      border-bottom:0;
     }
 
     .tx-main{
       display:flex;
       align-items:center;
       justify-content:space-between;
-      gap:10px;
+      gap:8px;
     }
 
-    .tx-left{
+    .tx-direction{
       display:flex;
       align-items:center;
-      gap:8px;
+      gap:7px;
       min-width:0;
-      flex:1;
     }
 
     .tx-icon{
-      width:30px;
-      height:30px;
-      border-radius:9px;
-      display:flex;
-      align-items:center;
-      justify-content:center;
-      font-size:13px;
-      flex-shrink:0;
-    }
-
-    .tx-icon.in{
-      background:var(--green-soft);
-      color:var(--green);
-    }
-
-    .tx-icon.out{
-      background:var(--red-soft);
-      color:var(--red);
-    }
-
-    .tx-meta{
-      min-width:0;
-      flex:1;
-    }
-
-    .tx-label{
-      font-size:10px;
-      font-weight:800;
-      color:#374151;
-      white-space:nowrap;
-      overflow:hidden;
-      text-overflow:ellipsis;
-    }
-
-    .tx-date{
-      font-size:8px;
-      color:var(--muted);
-      margin-top:3px;
-    }
-
-    .tx-amount{
-      direction:ltr;
-      font-size:11px;
-      font-weight:900;
-      white-space:nowrap;
-      text-align:left;
-    }
-
-    .tx-amount.in{
-      color:var(--green);
-    }
-
-    .tx-amount.out{
-      color:var(--red);
-    }
-
-    .tx-foot{
-      margin-top:8px;
-      padding-top:8px;
-      border-top:1px dashed #e5e7eb;
-      display:flex;
-      align-items:flex-end;
-      justify-content:space-between;
-      gap:10px;
-    }
-
-    .tx-detail{
-      color:var(--muted);
-      font-size:8px;
-      line-height:1.7;
-      min-width:0;
-      flex:1;
-    }
-
-    .tx-action-wrap{
-      display:flex;
-      align-items:center;
-      gap:5px;
-      flex-shrink:0;
-    }
-
-    .tx-action{
       width:28px;
       height:28px;
       border-radius:8px;
       display:flex;
       align-items:center;
       justify-content:center;
-      font-size:11px;
-      transition:all .2s ease;
+      font-size:12px;
+      flex-shrink:0;
     }
 
-    .tx-action.edit{
-      background:var(--blue-soft);
-      color:var(--blue);
+    .tx-icon.credit{
+      background:#ecfdf5;
+      color:var(--green);
     }
 
-    .tx-action.delete{
-      background:var(--red-soft);
+    .tx-icon.debit{
+      background:#fef2f2;
       color:var(--red);
     }
 
-    .tx-action:active{
-      transform:scale(.96);
+    .tx-type{
+      font-size:10px;
+      color:#374151;
     }
 
-    .empty-box{
-      text-align:center;
-      padding:28px 18px;
-      border:1px dashed #d7d8dc;
+    .tx-date{
+      font-size:8px;
+      color:#9ca3af;
+      margin-top:3px;
+    }
+
+    .tx-amount{
+      font-size:10px;
+      font-weight:bold;
+      direction:ltr;
+      white-space:nowrap;
+    }
+
+    .tx-amount.credit{
+      color:var(--green);
+    }
+
+    .tx-amount.debit{
+      color:var(--red);
+    }
+
+    .tx-bottom{
+      margin-top:3px;
+      padding-top:7px;
+      border-top:1px dashed #e5e7eb;
+      display:flex;
+      align-items:center;
+      justify-content:space-between;
+      gap:7px;
+    }
+
+    .tx-meta{
+      color:#9ca3af;
+      font-size:8px;
+      line-height:1.7;
+      min-width:0;
+    }
+
+    .tx-meta strong{
+      font-weight:600;
+    }
+
+    .tx-actions{
+      display:flex;
+      gap:5px;
+      flex-shrink:0;
+    }
+
+    .tx-action{
+      width:27px;
+      height:27px;
+      border-radius:8px;
+      padding:0;
+      background:#eff6ff;
+      color:#2563eb;
+      font-size:11px;
+      display:flex;
+      align-items:center;
+      justify-content:center;
+    }
+
+    .tx-action.delete{
+      background:#fef2f2;
+      color:var(--red);
+    }
+
+    .empty-state{
       background:#fff;
-      border-radius:16px;
-      color:var(--muted);
+      border:1px dashed #d9d6e2;
+      border-radius:14px;
+      padding:40px 20px;
+      text-align:center;
+      color:#6b7280;
     }
 
-    .empty-box .empty-icon{
-      font-size:34px;
-      margin-bottom:8px;
+    .empty-icon{
+      font-size:38px;
+      margin-bottom:9px;
     }
 
-    .empty-box h3{
+    .empty-title{
       margin:0 0 6px;
       font-size:15px;
       color:#374151;
-      font-weight:800;
+      font-weight:bold;
     }
 
-    .empty-box p{
+    .empty-text{
       margin:0;
       font-size:10px;
       line-height:1.8;
     }
 
-    /* ===========================================
-       FAB
-    =========================================== */
-
     .fab{
       position:fixed;
-      right:18px;
-      bottom:78px;
-      width:54px;
-      height:54px;
+      right:16px;
+      left:auto;
+      bottom:74px;
+      width:46px;
+      height:46px;
       border-radius:50%;
-      background:linear-gradient(135deg, var(--primary), var(--primary-strong));
+      background:var(--primary);
       color:#fff;
+      font-size:25px;
+      box-shadow:0 6px 18px rgba(0,0,0,.16);
+      z-index:40;
       display:flex;
       align-items:center;
       justify-content:center;
-      font-size:26px;
-      font-weight:700;
-      box-shadow:0 10px 24px rgba(124,58,237,0.28);
-      z-index:50;
-      transition:all .2s ease;
+      padding:0;
     }
 
-    .fab:active{
-      transform:scale(.96);
+    [dir=rtl] .fab{
+      right:auto;
+      left:16px;
     }
-
-    /* ===========================================
-       MODAL
-    =========================================== */
-
-    .modal-backdrop{
-      position:fixed;
-      inset:0;
-      z-index:90;
-      background:rgba(15,23,42,0.32);
-      backdrop-filter:blur(4px);
-      -webkit-backdrop-filter:blur(4px);
-      display:none;
-      align-items:flex-end;
-      justify-content:center;
-      padding:10px;
-    }
-
-    .modal-backdrop.show{
-      display:flex;
-      animation:modalIn .18s ease;
-    }
-
-    .modal{
-      width:100%;
-      max-width:450px;
-      background:#fff;
-      border:1px solid var(--border);
-      border-radius:22px 22px 16px 16px;
-      box-shadow:var(--shadow-modal);
-      padding:16px 16px 18px;
-      max-height:92vh;
-      overflow:auto;
-      animation:slideUp .22s ease;
-    }
-
-    .modal-head{
-      display:flex;
-      align-items:center;
-      justify-content:space-between;
-      gap:12px;
-      margin-bottom:14px;
-    }
-
-    .modal-head h3{
-      margin:0;
-      color:var(--primary);
-      font-size:16px;
-      font-weight:800;
-    }
-
-    .close-btn{
-      width:32px;
-      height:32px;
-      border-radius:10px;
-      background:#f3f4f6;
-      color:#475569;
-      font-size:18px;
-      display:flex;
-      align-items:center;
-      justify-content:center;
-      transition:all .2s ease;
-    }
-
-    .close-btn:active{
-      transform:scale(.96);
-    }
-
-    .field{
-      margin-bottom:12px;
-    }
-
-    .field label{
-      display:block;
-      font-size:10px;
-      font-weight:800;
-      color:var(--muted);
-      margin-bottom:6px;
-    }
-
-    .input, .select, .textarea{
-      width:100%;
-      background:#fff;
-      border:1px solid #dfe3e8;
-      border-radius:12px;
-      padding:12px 12px;
-      color:var(--text);
-      font-size:12px;
-      outline:none;
-      transition:all .2s ease;
-    }
-
-    .input:focus, .select:focus, .textarea:focus{
-      border-color:var(--primary);
-      box-shadow:0 0 0 3px rgba(124,58,237,0.12);
-      background:#fff;
-    }
-
-    .textarea{
-      min-height:78px;
-      resize:vertical;
-    }
-
-    .two-col{
-      display:grid;
-      grid-template-columns:1fr 1fr;
-      gap:9px;
-    }
-
-    .direction-box{
-      display:grid;
-      grid-template-columns:1fr 1fr;
-      gap:8px;
-    }
-
-    .direction-option{
-      background:#fff;
-      border:1px solid #dfe3e8;
-      border-radius:12px;
-      padding:10px 8px;
-      text-align:center;
-      color:#374151;
-      font-size:10px;
-      font-weight:700;
-      transition:all .2s ease;
-      cursor:pointer;
-    }
-
-    .direction-option input{
-      display:none;
-    }
-
-    .direction-option.selected.in{
-      background:var(--green-soft);
-      border-color:rgba(16,185,129,0.3);
-      color:#047857;
-    }
-
-    .direction-option.selected.out{
-      background:var(--red-soft);
-      border-color:rgba(239,68,68,0.3);
-      color:#b91c1c;
-    }
-
-    .summary-box{
-      background:linear-gradient(180deg, var(--primary-soft), #f8f5ff);
-      border:1px solid rgba(124,58,237,0.14);
-      border-radius:14px;
-      padding:12px;
-      margin-top:8px;
-    }
-
-    .summary-row{
-      display:flex;
-      align-items:center;
-      justify-content:space-between;
-      gap:8px;
-      padding-top:6px;
-      margin-top:6px;
-      border-top:1px dashed rgba(124,58,237,0.16);
-    }
-
-    .summary-row:first-child{
-      border-top:0;
-      margin-top:0;
-      padding-top:0;
-    }
-
-    .summary-label{
-      font-size:9px;
-      color:var(--muted);
-    }
-
-    .summary-value{
-      font-size:12px;
-      color:var(--primary-strong);
-      font-weight:900;
-      direction:ltr;
-      text-align:left;
-    }
-
-    .modal-actions{
-      display:flex;
-      gap:8px;
-      margin-top:14px;
-    }
-
-    .primary-btn, .secondary-btn, .danger-btn{
-      flex:1;
-      padding:12px 10px;
-      border-radius:12px;
-      font-size:11px;
-      font-weight:800;
-      transition:all .2s ease;
-    }
-
-    .primary-btn{
-      background:linear-gradient(135deg, var(--primary), var(--primary-strong));
-      color:#fff;
-      box-shadow:0 8px 18px rgba(124,58,237,0.2);
-    }
-
-    .secondary-btn{
-      background:#f3f4f6;
-      color:#374151;
-    }
-
-    .danger-btn{
-      background:var(--red-soft);
-      color:var(--red);
-    }
-
-    .primary-btn:disabled{
-      opacity:.5;
-      cursor:not-allowed;
-      box-shadow:none;
-    }
-
-    .primary-btn:active, .secondary-btn:active, .danger-btn:active{
-      transform:scale(.98);
-    }
-
-    /* ===========================================
-       TOAST
-    =========================================== */
-
-    .toast-container{
-      position:fixed;
-      left:12px;
-      right:12px;
-      bottom:78px;
-      display:flex;
-      flex-direction:column;
-      align-items:center;
-      gap:8px;
-      z-index:120;
-      pointer-events:none;
-    }
-
-    .toast{
-      max-width:420px;
-      width:100%;
-      border-radius:12px;
-      padding:11px 14px;
-      background:#1f2937;
-      color:#fff;
-      font-size:10px;
-      text-align:center;
-      box-shadow:0 12px 26px rgba(17,24,39,0.18);
-      border:1px solid rgba(55,65,81,0.9);
-      animation:toastIn .2s ease;
-      transition:all .2s ease;
-    }
-
-    .toast.success{
-      background:linear-gradient(135deg, var(--primary), var(--primary-strong));
-    }
-
-    .toast.error{
-      background:linear-gradient(135deg, #ef4444, #dc2626);
-    }
-
-    /* ===========================================
-       BOTTOM NAV
-    =========================================== */
 
     .bottom-nav{
       position:fixed;
       left:0;
       right:0;
       bottom:0;
-      height:62px;
-      background:rgba(255,255,255,0.96);
+      height:60px;
+      background:rgba(255,255,255,.97);
       backdrop-filter:blur(12px);
-      -webkit-backdrop-filter:blur(12px);
-      border-top:1px solid var(--border);
-      z-index:60;
-      box-shadow:0 -5px 20px rgba(15,23,42,0.06);
+      border-top:1px solid #e5e7eb;
+      display:flex;
+      justify-content:space-around;
+      align-items:center;
+      z-index:40;
+      box-shadow:0 -2px 10px rgba(0,0,0,.05);
     }
 
-    .bottom-nav-inner{
-      max-width:480px;
-      margin:0 auto;
-      height:100%;
+    .nav-inner{
+      width:100%;
       display:flex;
-      align-items:center;
-      justify-content:space-around;
+      height:100%;
     }
 
     .nav-item{
       width:50%;
       height:100%;
+      background:transparent;
+      border-radius:0;
+      padding:6px 4px;
       display:flex;
       flex-direction:column;
       align-items:center;
       justify-content:center;
       gap:2px;
       color:#9ca3af;
-      transition:all .2s ease;
-      padding:6px 4px;
-    }
-
-    .nav-item .nav-ico{
-      font-size:18px;
-      line-height:1;
-    }
-
-    .nav-item span:last-child{
+      text-decoration:none;
       font-size:8px;
-      font-weight:700;
+      transition:.18s;
+    }
+
+    .nav-item .nav-icon{
+      font-size:19px;
+      line-height:19px;
     }
 
     .nav-item.active{
       color:var(--primary);
-      background:linear-gradient(180deg, rgba(124,58,237,0.04), rgba(124,58,237,0.01));
     }
 
-    .nav-item:active{
-      transform:scale(.98);
+    .modal-overlay{
+      position:fixed;
+      inset:0;
+      background:rgba(0,0,0,.35);
+      backdrop-filter:blur(4px);
+      display:none;
+      align-items:flex-end;
+      justify-content:center;
+      z-index:1000;
+      padding:10px;
     }
 
-    /* ===========================================
-       ANIMATIONS
-    =========================================== */
-
-    @keyframes cardIn{
-      from{
-        opacity:0;
-        transform:translateY(8px);
-      }
-      to{
-        opacity:1;
-        transform:translateY(0);
-      }
+    .modal-overlay.show{
+      display:flex;
+      animation:fadeIn .18s ease;
     }
 
-    @keyframes slideUp{
-      from{
-        opacity:0;
-        transform:translateY(30px) scale(.98);
-      }
-      to{
-        opacity:1;
-        transform:translateY(0) scale(1);
-      }
+    @keyframes fadeIn{
+      from{opacity:0;}
+      to{opacity:1;}
     }
 
-    @keyframes modalIn{
-      from{
-        opacity:0;
-      }
-      to{
-        opacity:1;
-      }
+    .modal{
+      width:100%;
+      max-width:450px;
+      background:#fff;
+      border:1px solid #e5e7eb;
+      border-radius:18px 18px 12px 12px;
+      padding:18px;
+      box-shadow:0 -10px 35px rgba(0,0,0,.15);
+      animation:modalUp .25s ease;
+      max-height:92vh;
+      overflow:auto;
+    }
+
+    @keyframes modalUp{
+      from{opacity:0; transform:translateY(35px) scale(.97);}
+      to{opacity:1; transform:none;}
+    }
+
+    .modal-header{
+      display:flex;
+      align-items:center;
+      justify-content:space-between;
+      gap:10px;
+      margin-bottom:14px;
+    }
+
+    .modal-header h3{
+      margin:0;
+      font-size:16px;
+      color:var(--primary);
+    }
+
+    .close-btn{
+      width:31px;
+      height:31px;
+      border-radius:8px;
+      background:#f3f4f6;
+      color:#6b7280;
+      font-size:17px;
+      padding:0;
+      width:31px;
+    }
+
+    .form-group{
+      margin-bottom:11px;
+    }
+
+    .form-group label{
+      display:block;
+      font-size:10px;
+      color:#6b7280;
+      font-weight:bold;
+      margin-bottom:7px;
+    }
+
+    .input,.select,.textarea{
+      width:100%;
+      padding:12px 14px;
+      background:#fff;
+      border:1px solid #dfe3e8;
+      border-radius:12px;
+      color:#1f2937;
+      font-size:13px;
+      outline:none;
+      transition:.2s;
+    }
+
+    .input:focus,.select:focus,.textarea:focus{
+      border-color:var(--primary);
+      box-shadow:0 0 0 3px rgba(124,58,237,.08);
+    }
+
+    .textarea{
+      min-height:70px;
+      resize:vertical;
+    }
+
+    .direction-box{
+      display:grid;
+      grid-template-columns:1fr 1fr;
+      gap:7px;
+    }
+
+    .direction-option{
+      border:1px solid #dfe3e8;
+      background:#fff;
+      border-radius:11px;
+      padding:10px 7px;
+      text-align:center;
+      font-size:10px;
+      transition:.18s;
+      cursor:pointer;
+    }
+
+    .direction-option.selected.in{
+      border-color:var(--green);
+      background:#ecfdf5;
+      color:#059669;
+    }
+
+    .direction-option.selected.out{
+      border-color:var(--red);
+      background:#fef2f2;
+      color:#dc2626;
+    }
+
+    .direction-option input{
+      display:none;
+    }
+
+    .two-cols{
+      display:grid;
+      grid-template-columns:1fr 1fr;
+      gap:9px;
+    }
+
+    .rate-result{
+      background:#f5f3ff;
+      border:1px solid #e9d5ff;
+      border-radius:11px;
+      padding:10px;
+      margin-top:8px;
+      margin-bottom:4px;
+    }
+
+    .rate-result-top{
+      display:flex;
+      align-items:center;
+      justify-content:space-between;
+      gap:8px;
+    }
+
+    .rate-label{
+      font-size:9px;
+      color:#6b7280;
+    }
+
+    .rate-number{
+      direction:ltr;
+      font-weight:bold;
+      font-size:12px;
+      color:var(--primary);
+      text-align:left;
+    }
+
+    .base-equivalent,
+    .afn-total{
+      margin-top:6px;
+      padding-top:6px;
+      border-top:1px dashed #ddd2f0;
+      display:flex;
+      align-items:center;
+      justify-content:space-between;
+      gap:8px;
+    }
+
+    .base-equivalent span,
+    .afn-total span{
+      font-size:9px;
+      color:#6b7280;
+    }
+
+    .base-equivalent strong,
+    .afn-total strong{
+      direction:ltr;
+      font-size:14px;
+      color:var(--primary-dark);
+      text-align:left;
+    }
+
+    .modal-actions{
+      display:flex;
+      gap:7px;
+      margin-top:13px;
+    }
+
+    .primary-btn,
+    .secondary-btn,
+    .danger-btn{
+      flex:1;
+      border-radius:11px;
+      padding:11px;
+      font-size:11px;
+      font-weight:600;
+      width:auto;
+    }
+
+    .primary-btn{
+      background:var(--primary);
+      color:#fff;
+      box-shadow:0 4px 12px rgba(124,58,237,.28);
+    }
+
+    .secondary-btn{
+      background:#f3f4f6;
+      color:#4b5563;
+    }
+
+    .danger-btn{
+      background:#fef2f2;
+      color:#dc2626;
+    }
+
+    .primary-btn:disabled{
+      opacity:.5;
+      cursor:not-allowed;
+    }
+
+    .toast-container{
+      position:fixed;
+      bottom:75px;
+      left:12px;
+      right:12px;
+      z-index:200;
+      pointer-events:none;
+      display:flex;
+      flex-direction:column;
+      align-items:center;
+      gap:7px;
+    }
+
+    .toast{
+      max-width:450px;
+      width:100%;
+      background:#1f2937;
+      color:#fff;
+      border-radius:10px;
+      padding:10px 13px;
+      font-size:10px;
+      box-shadow:0 8px 25px rgba(0,0,0,.18);
+      animation:toastIn .22s ease;
+      text-align:center;
+      border:1px solid #374151;
+    }
+
+    .toast.success{
+      background:var(--primary);
+    }
+
+    .toast.error{
+      background:#dc2626;
     }
 
     @keyframes toastIn{
-      from{
-        opacity:0;
-        transform:translateY(12px);
-      }
-      to{
-        opacity:1;
-        transform:translateY(0);
-      }
+      from{opacity:0; transform:translateY(10px);}
+      to{opacity:1; transform:translateY(0);}
     }
 
-    @media (max-width:390px){
-      .page{
-        padding-left:12px;
-        padding-right:12px;
-      }
+    .loading{
+      text-align:center;
+      padding:30px;
+      color:#9ca3af;
+      font-size:10px;
+    }
 
-      .brand-text p{
-        display:none;
-      }
-
-      .client-card{
-        border-radius:16px;
-      }
-
-      .tx-row{
-        padding:9px;
-      }
-
-      .fab{
-        width:52px;
-        height:52px;
-      }
+    @media(max-width:380px){
+      .page{padding-left:13px; padding-right:13px;}
+      .client-card{border-radius:13px;}
+      .tx-row{padding:9px 10px;}
+      header{padding-left:13px; padding-right:13px;}
+      .top-bar{gap:6px;}
+      .client-name{font-size:13px;}
+      .balance-value{font-size:9px;}
     }
   </style>
 </head>
 <body>
 
-  <div class="app-shell">
+  <div class="app">
 
-    <header class="topbar">
-      <div class="topbar-inner">
-        <div class="brand-wrap">
-          <div class="brand-icon">💱</div>
-          <div class="brand-text">
-            <h1 data-i18n="dailyAccounting">Daily Accounting</h1>
-            <p data-i18n="transactionManagement">مدیریت معاملات و حساب مشتریان</p>
-          </div>
-        </div>
+    <header>
+      <h1>Daily Accounting</h1>
 
-        <button class="header-action" onclick="refreshRates()" title="بروزرسانی نرخ" data-i18n-title="refreshRates">↻</button>
+      <div class="header-controls">
+        <button class="header-icon-btn" type="button" onclick="refreshRates()">↻</button>
       </div>
     </header>
 
-    <main class="page">
+    <div class="rates" id="rates">
+      <span class="rate-item">
+        <span class="rate-dot status-dot" id="rateDot"></span>
+        <span class="status-text" id="rateStatus">🔄 Loading rates...</span>
+      </span>
+    </div>
 
-      <div class="page-head">
-        <h2 data-i18n="transactions">معاملات</h2>
-        <span id="clientCount">0 مشتری</span>
-      </div>
+    <main>
+      <section class="page">
+        <div class="container">
+          <div class="top-bar">
+            <h2>Transactions</h2>
+            <span class="client-counter" id="clientCount">0 customers</span>
+          </div>
 
-      <div class="rate-panel">
-        <div class="rate-left">
-          <span class="rate-dot" id="rateDot"></span>
-          <span class="rate-text" id="rateStatus" data-i18n="loadingRates">در حال دریافت نرخ اسعار...</span>
+          <div class="status-box">
+            <div class="status-left">
+              <span class="status-dot" id="rateDotMain"></span>
+              <span class="status-text" id="statusText">🔄 Loading rates...</span>
+            </div>
+
+            <button class="mini-btn" type="button" onclick="refreshRates()">Update</button>
+          </div>
+
+          <div id="accounts-list">
+            <div class="loading">Loading accounts...</div>
+          </div>
         </div>
-
-        <button class="mini-btn" onclick="refreshRates()" data-i18n="refresh">بروزرسانی</button>
-      </div>
-
-      <div id="accountsList" class="account-list">
-        <div class="empty-box">
-          <div class="empty-icon">⏳</div>
-          <h3 data-i18n="loadingAccounts">در حال بارگذاری حساب‌ها...</h3>
-        </div>
-      </div>
-
+      </section>
     </main>
 
-    <button class="fab" onclick="openAddClientModal()" title="افزودن مشتری" data-i18n-title="addClient">+</button>
-
-    <div class="modal-backdrop" id="clientModal">
-      <div class="modal">
-        <div class="modal-head">
-          <h3 data-i18n="addClient">افزودن مشتری</h3>
-          <button class="close-btn" onclick="closeModal('clientModal')">×</button>
-        </div>
-
-        <div class="field">
-          <label data-i18n="clientName">نام مشتری</label>
-          <input id="clientNameInput" class="input" type="text" placeholder="مثلاً احمد" data-i18n-placeholder="exampleAhmad" autocomplete="off">
-        </div>
-
-        <div class="modal-actions">
-          <button class="secondary-btn" onclick="closeModal('clientModal')" data-i18n="cancel">لغو</button>
-          <button class="primary-btn" onclick="saveClient()" data-i18n="saveClient">ذخیره مشتری</button>
-        </div>
-      </div>
-    </div>
-
-    <div class="modal-backdrop" id="transactionModal">
-      <div class="modal">
-        <div class="modal-head">
-          <h3 id="transactionModalTitle" data-i18n="newTransaction">معامله جدید</h3>
-          <button class="close-btn" onclick="closeModal('transactionModal')">×</button>
-        </div>
-
-        <div class="field">
-          <label data-i18n="client">مشتری</label>
-          <select id="transactionClient" class="select"></select>
-        </div>
-
-        <div class="field">
-          <label data-i18n="transactionType">نوع معامله</label>
-          <div class="direction-box">
-            <label class="direction-option selected in" id="directionInBox">
-              <input type="radio" name="direction" value="in" checked onchange="setDirection('in')">
-              <span data-i18n="clientGivesMe">↓ مشتری به من می‌دهد</span>
-            </label>
-
-            <label class="direction-option out" id="directionOutBox">
-              <input type="radio" name="direction" value="out" onchange="setDirection('out')">
-              <span data-i18n="iGiveClient">↑ من به مشتری می‌دهم</span>
-            </label>
-          </div>
-        </div>
-
-        <div class="two-col">
-          <div class="field">
-            <label data-i18n="currency">پول / ارز</label>
-            <select id="transactionCurrency" class="select" onchange="calculateTransaction()">
-              <option value="AFN">🇦🇫 افغانی (AFN)</option>
-              <option value="USD">🇺🇸 دلار (USD)</option>
-              <option value="EUR">🇪🇺 یورو (EUR)</option>
-              <option value="IRR">🇮🇷 ریال ایران (IRR)</option>
-              <option value="TOMAN">🇮🇷 تومان (TOMAN)</option>
-              <option value="JPY">🇯🇵 ین (JPY)</option>
-              <option value="TRY">🇹🇷 لیر ترکیه (TRY)</option>
-              <option value="SAR">🇸🇦 ریال سعودی (SAR)</option>
-              <option value="AED">🇦🇪 درهم (AED)</option>
-              <option value="GBP">🇬🇧 پوند (GBP)</option>
-              <option value="CAD">🇨🇦 دلار کانادا (CAD)</option>
-              <option value="AUD">🇦🇺 دلار استرالیا (AUD)</option>
-              <option value="CHF">🇨🇭 فرانک سوئیس (CHF)</option>
-              <option value="INR">🇮🇳 روپیه هند (INR)</option>
-              <option value="PKR">🇵🇰 روپیه پاکستان (PKR)</option>
-              <option value="CNY">🇨🇳 یوان چین (CNY)</option>
-              <option value="RUB">🇷🇺 روبل روسیه (RUB)</option>
-            </select>
-          </div>
-
-          <div class="field">
-            <label data-i18n="amount">مقدار</label>
-            <input id="transactionAmount" class="input" type="number" inputmode="decimal" step="any" min="0" placeholder="0.00" oninput="calculateTransaction()">
-          </div>
-        </div>
-
-        <div class="field">
-          <label data-i18n="transactionDate">تاریخ معامله</label>
-          <input id="transactionDate" class="input" type="date">
-        </div>
-
-        <div class="field">
-          <label data-i18n="note">یادداشت</label>
-          <textarea id="transactionNote" class="textarea" placeholder="توضیحات اختیاری..." data-i18n-placeholder="optionalDescription"></textarea>
-        </div>
-
-        <div class="summary-box">
-          <div class="summary-row">
-            <span class="summary-label" id="rateLabel">نرخ امروز</span>
-            <strong class="summary-value" id="rateDisplay">—</strong>
-          </div>
-
-          <div class="summary-row">
-            <span class="summary-label" id="baseEquivalentLabel">معادل ارز کشور</span>
-            <strong class="summary-value" id="baseTotal">—</strong>
-          </div>
-
-          <div class="summary-row">
-            <span class="summary-label" id="afnTotalLabel">ارزش ثبت‌شده به افغانی</span>
-            <strong class="summary-value" id="afnTotal">0 AFN</strong>
-          </div>
-        </div>
-
-        <div class="modal-actions">
-          <button class="secondary-btn" onclick="closeModal('transactionModal')" data-i18n="cancel">لغو</button>
-          <button class="primary-btn" id="saveTransactionBtn" onclick="saveTransaction()" data-i18n="saveTransaction">ذخیره معامله</button>
-        </div>
-      </div>
-    </div>
-
-    <div class="modal-backdrop" id="confirmModal">
-      <div class="modal">
-        <div class="modal-head">
-          <h3 id="confirmTitle" data-i18n="confirmation">تأیید</h3>
-          <button class="close-btn" onclick="closeModal('confirmModal')">×</button>
-        </div>
-
-        <p id="confirmMessage" style="font-size:10px; line-height:2; color:#6b7280; margin:0;"></p>
-
-        <div class="modal-actions">
-          <button class="secondary-btn" onclick="closeModal('confirmModal')" data-i18n="cancel">لغو</button>
-          <button class="danger-btn" id="confirmButton" data-i18n="delete">حذف</button>
-        </div>
-      </div>
-    </div>
+    <button class="fab" type="button" onclick="openAddClientModal()" aria-label="Add client">+</button>
 
     <nav class="bottom-nav">
-      <div class="bottom-nav-inner">
-        <a class="nav-item" href="index.html">
-          <span class="nav-ico">⌂</span>
-          <span data-i18n="home">خانه</span>
+      <div class="nav-inner">
+        <a href="index.html" class="nav-item">
+          <span class="nav-icon">⌂</span>
+          <span>Home</span>
         </a>
-
-        <a class="nav-item active" href="transactions.html">
-          <span class="nav-ico">⇄</span>
-          <span data-i18n="transactions">معاملات</span>
+        <a href="transactions.html" class="nav-item active">
+          <span class="nav-icon">⇄</span>
+          <span>Transactions</span>
         </a>
       </div>
     </nav>
 
+  </div>
+
+  <div class="modal-overlay" id="clientModal">
+    <div class="modal">
+      <div class="modal-header">
+        <h3>Add Client</h3>
+        <button class="close-btn" type="button" onclick="closeModal('clientModal')">×</button>
+      </div>
+
+      <div class="form-group">
+        <label>Client Name</label>
+        <input id="clientNameInput" class="input" type="text" placeholder="e.g. Ahmad" autocomplete="off" />
+      </div>
+
+      <div class="modal-actions">
+        <button class="secondary-btn" type="button" onclick="closeModal('clientModal')">Cancel</button>
+        <button class="primary-btn" type="button" onclick="saveClient()">Save Client</button>
+      </div>
+    </div>
+  </div>
+
+  <div class="modal-overlay" id="transactionModal">
+    <div class="modal">
+      <div class="modal-header">
+        <h3 id="transactionModalTitle">New Transaction</h3>
+        <button class="close-btn" type="button" onclick="closeModal('transactionModal')">×</button>
+      </div>
+
+      <div class="form-group">
+        <label>Client</label>
+        <select id="transactionClient" class="select"></select>
+      </div>
+
+      <div class="form-group">
+        <label>Direction</label>
+
+        <div class="direction-box">
+          <label class="direction-option selected in" id="directionInBox">
+            <input type="radio" name="direction" value="in" checked onchange="setDirection('in')" />
+            <span>↓ Client pays me</span>
+          </label>
+
+          <label class="direction-option out" id="directionOutBox">
+            <input type="radio" name="direction" value="out" onchange="setDirection('out')" />
+            <span>↑ I pay client</span>
+          </label>
+        </div>
+      </div>
+
+      <div class="two-cols">
+        <div class="form-group">
+          <label>Currency</label>
+          <select id="transactionCurrency" class="select" onchange="calculateTransaction()">
+            <option value="AFN">🇦🇫 Afghani (AFN)</option>
+            <option value="USD">🇺🇸 Dollar (USD)</option>
+            <option value="EUR">🇪🇺 Euro (EUR)</option>
+            <option value="IRR">🇮🇷 Iranian Rial (IRR)</option>
+            <option value="TOMAN">🇮🇷 Toman (TOMAN)</option>
+            <option value="JPY">🇯🇵 Yen (JPY)</option>
+            <option value="TRY">🇹🇷 Turkish Lira (TRY)</option>
+            <option value="SAR">🇸🇦 Saudi Riyal (SAR)</option>
+            <option value="AED">🇦🇪 Dirham (AED)</option>
+            <option value="GBP">🇬🇧 Pound (GBP)</option>
+            <option value="CAD">🇨🇦 Canadian Dollar (CAD)</option>
+            <option value="AUD">🇦🇺 Australian Dollar (AUD)</option>
+            <option value="CHF">🇨🇭 Swiss Franc (CHF)</option>
+            <option value="INR">🇮🇳 Indian Rupee (INR)</option>
+            <option value="PKR">🇵🇰 Pakistani Rupee (PKR)</option>
+            <option value="CNY">🇨🇳 Chinese Yuan (CNY)</option>
+            <option value="RUB">🇷🇺 Russian Ruble (RUB)</option>
+          </select>
+        </div>
+
+        <div class="form-group">
+          <label>Amount</label>
+          <input id="transactionAmount" class="input" type="number" inputmode="decimal" step="any" min="0" placeholder="0.00" oninput="calculateTransaction()" />
+        </div>
+      </div>
+
+      <div class="form-group">
+        <label>Transaction Date</label>
+        <input id="transactionDate" class="input" type="date" />
+      </div>
+
+      <div class="form-group">
+        <label>Note</label>
+        <textarea id="transactionNote" class="textarea" placeholder="Optional notes..."></textarea>
+      </div>
+
+      <div class="rate-result">
+        <div class="rate-result-top">
+          <span class="rate-label" id="rateLabel">Today's rate</span>
+          <strong class="rate-number" id="rateDisplay">—</strong>
+        </div>
+
+        <div class="base-equivalent">
+          <span id="baseEquivalentLabel">Equivalent in base currency</span>
+          <strong id="baseTotal">—</strong>
+        </div>
+
+        <div class="afn-total">
+          <span id="afnTotalLabel">Value in AFN</span>
+          <strong id="afnTotal">0 AFN</strong>
+        </div>
+      </div>
+
+      <div class="modal-actions">
+        <button class="secondary-btn" type="button" onclick="closeModal('transactionModal')">Cancel</button>
+        <button class="primary-btn" type="button" id="saveTransactionBtn" onclick="saveTransaction()">Save Transaction</button>
+      </div>
+    </div>
+  </div>
+
+  <div class="modal-overlay" id="confirmModal">
+    <div class="modal">
+      <div class="modal-header">
+        <h3 id="confirmTitle">Confirm</h3>
+        <button class="close-btn" type="button" onclick="closeModal('confirmModal')">×</button>
+      </div>
+
+      <p id="confirmMessage" style="font-size:10px; line-height:2; color:#6b7280; margin:0;"></p>
+
+      <div class="modal-actions">
+        <button class="secondary-btn" type="button" onclick="closeModal('confirmModal')">Cancel</button>
+        <button class="danger-btn" type="button" id="confirmButton">Delete</button>
+      </div>
+    </div>
   </div>
 
   <div class="toast-container" id="toastContainer"></div>
@@ -1202,200 +1097,419 @@
     let selectedDirection = "in";
     let confirmCallback = null;
 
-    function pageT(key, fallback){
-      try{
-        if(window.DailyTranslator && typeof window.DailyTranslator.t === "function"){
-          const value = window.DailyTranslator.t(key);
-          if(value && value !== key) return value;
-        }
-      }catch(e){}
-      return fallback || key;
+    function withTimeout(promise, ms = 10000) {
+      return Promise.race([
+        promise,
+        new Promise((_, reject) => setTimeout(() => reject(new Error("Request timeout")), ms))
+      ]);
     }
 
-    function applyPageLanguage(){
-      try{
-        if(window.DailyTranslator && typeof window.DailyTranslator.applyGlobalSettings === "function"){
-          window.DailyTranslator.applyGlobalSettings();
-        }
-        if(window.DailyTranslator && typeof window.DailyTranslator.translatePage === "function"){
-          window.DailyTranslator.translatePage();
-        }
-      }catch(e){}
+    function showToast(message, type = "") {
+      const container = document.getElementById("toastContainer");
+      const toast = document.createElement("div");
+      toast.className = "toast " + type;
+      toast.textContent = message;
+      container.appendChild(toast);
+
+      setTimeout(() => {
+        toast.style.opacity = "0";
+        toast.style.transform = "translateY(-8px)";
+        setTimeout(() => toast.remove(), 200);
+      }, 2800);
     }
 
-    function getSelectedBaseCurrency(){
-      try{
-        if(window.DailyTranslator && typeof window.DailyTranslator.getBaseCurrency === "function"){
+    function escapeHtml(value) {
+      return String(value ?? "").replace(/[&<>"']/g, function (m) {
+        return {
+          '&': '&amp;',
+          '<': '&lt;',
+          '>': '&gt;',
+          '"': '&quot;',
+          "'": '&#039;'
+        }[m];
+      });
+    }
+
+    function createId() {
+      return (Date.now().toString(36) + Math.random().toString(36).substring(2, 10));
+    }
+
+    function formatNumber(number) {
+      if (number === null || number === undefined || !Number.isFinite(Number(number))) {
+        return "0";
+      }
+      return Number(number).toLocaleString("en-US", { maximumFractionDigits: 8 });
+    }
+
+    function setToday() {
+      const input = document.getElementById("transactionDate");
+      if (!input) return;
+      if (!input.value) {
+        const now = new Date();
+        const year = now.getFullYear();
+        const month = String(now.getMonth() + 1).padStart(2, "0");
+        const day = String(now.getDate()).padStart(2, "0");
+        input.value = `${year}-${month}-${day}`;
+      }
+    }
+
+    function openModal(id) {
+      const modal = document.getElementById(id);
+      if (!modal) return;
+      modal.classList.add("show");
+      document.body.style.overflow = "hidden";
+    }
+
+    function closeModal(id) {
+      const modal = document.getElementById(id);
+      if (!modal) return;
+      modal.classList.remove("show");
+      if (!document.querySelector(".modal-overlay.show")) {
+        document.body.style.overflow = "";
+      }
+    }
+
+    document.querySelectorAll(".modal-overlay").forEach((overlay) => {
+      overlay.addEventListener("click", (event) => {
+        if (event.target === overlay) closeModal(overlay.id);
+      });
+    });
+
+    function openConfirm(title, message, callback) {
+      document.getElementById("confirmTitle").textContent = title;
+      document.getElementById("confirmMessage").innerHTML = message;
+      confirmCallback = callback;
+
+      document.getElementById("confirmButton").onclick = async () => {
+        closeModal("confirmModal");
+        if (confirmCallback) {
+          const cb = confirmCallback;
+          confirmCallback = null;
+          await cb();
+        }
+      };
+
+      openModal("confirmModal");
+    }
+
+    function getSelectedBaseCurrency() {
+      try {
+        if (window.DailyTranslator && typeof window.DailyTranslator.getBaseCurrency === "function") {
           const value = window.DailyTranslator.getBaseCurrency();
-          if(typeof value === "string" && value.trim()) return value.trim().toUpperCase();
-          if(value && typeof value === "object"){
+          if (typeof value === "string" && value.trim()) return value.trim().toUpperCase();
+          if (value && typeof value === "object") {
             const code = value.code || value.currency || value.currencyCode;
-            if(code) return String(code).trim().toUpperCase();
+            if (code) return String(code).trim().toUpperCase();
           }
         }
-      }catch(e){}
+      } catch (e) {}
 
-      try{
-        if(window.DailyTranslator && typeof window.DailyTranslator.getCurrencyCode === "function"){
+      try {
+        if (window.DailyTranslator && typeof window.DailyTranslator.getCurrencyCode === "function") {
           const code = window.DailyTranslator.getCurrencyCode();
-          if(code) return String(code).trim().toUpperCase();
+          if (code) return String(code).trim().toUpperCase();
         }
-      }catch(e){}
+      } catch (e) {}
 
       return "AFN";
     }
 
-    function getSelectedBaseCurrencyName(){
+    function getSelectedBaseCurrencyName() {
       const code = getSelectedBaseCurrency();
       const names = {
-        AFN:"افغانی",
-        USD:"دلار",
-        EUR:"یورو",
-        IRR:"ریال ایران",
-        TRY:"لیر ترکیه",
-        SAR:"ریال سعودی",
-        AED:"درهم امارات",
-        GBP:"پوند",
-        CAD:"دلار کانادا",
-        AUD:"دلار استرالیا",
-        CHF:"فرانک سوئیس",
-        INR:"روپیه هند",
-        PKR:"روپیه پاکستان",
-        CNY:"یوان چین",
-        RUB:"روبل روسیه",
-        JPY:"ین ژاپن",
-        TOMAN:"تومان"
+        AFN: "Afghani",
+        USD: "Dollar",
+        EUR: "Euro",
+        IRR: "Iranian Rial",
+        TRY: "Turkish Lira",
+        SAR: "Saudi Riyal",
+        AED: "UAE Dirham",
+        GBP: "Pound",
+        CAD: "Canadian Dollar",
+        AUD: "Australian Dollar",
+        CHF: "Swiss Franc",
+        INR: "Indian Rupee",
+        PKR: "Pakistani Rupee",
+        CNY: "Chinese Yuan",
+        RUB: "Russian Ruble",
+        JPY: "Japanese Yen",
+        TOMAN: "Toman"
       };
       return names[code] || code;
     }
 
-    function getLiveRate(fromCurrency, toCurrency){
+    function normalizeKey(key) {
+      return String(key).trim().toLowerCase().replace(/[\s_-]/g, "");
+    }
+
+    function extractNumber(value) {
+      if (typeof value === "number") return Number.isFinite(value) ? value : null;
+      if (typeof value === "string") {
+        const cleaned = value.replace(/,/g, "").replace(/[^\d.-]/g, "");
+        if (!cleaned) return null;
+        const n = Number(cleaned);
+        return Number.isFinite(n) ? n : null;
+      }
+      if (value && typeof value === "object") {
+        const possibleKeys = ["rate", "value", "price", "sell", "buy", "afn", "AFN", "rateAfn", "afnRate"];
+        for (const key of possibleKeys) {
+          if (value[key] !== undefined) {
+            const n = extractNumber(value[key]);
+            if (n !== null) return n;
+          }
+        }
+      }
+      return null;
+    }
+
+    function findCurrencyValue(object, aliases) {
+      if (object === null || object === undefined) return null;
+      if (typeof object !== "object") return null;
+
+      for (const key of Object.keys(object)) {
+        const value = object[key];
+        const normalizedKey = normalizeKey(key);
+
+        for (const alias of aliases) {
+          const normalizedAlias = normalizeKey(alias);
+          if (normalizedKey === normalizedAlias) {
+            const num = extractNumber(value);
+            if (num !== null) return num;
+          }
+        }
+      }
+
+      for (const key of Object.keys(object)) {
+        const value = object[key];
+        if (value && typeof value === "object") {
+          const result = findCurrencyValue(value, aliases);
+          if (result !== null) return result;
+        }
+      }
+
+      return null;
+    }
+
+    function getRateForCurrency(currency) {
+      currency = String(currency || "AFN").trim().toUpperCase();
+      if (currency === "AFN") return 1;
+      if (!liveRates) return null;
+
+      const aliases = {
+        USD: ["USD", "usd", "dollar", "dollars", "دلار"],
+        EUR: ["EUR", "eur", "euro", "euros", "یورو"],
+        IRR: ["IRR", "irr", "rial", "iranRial", "ریال"],
+        TOMAN: ["TOMAN", "toman", "IRAN_TOMAN", "تومان"],
+        JPY: ["JPY", "jpy", "yen", "ین"],
+        TRY: ["TRY", "try", "lira", "turkishLira", "لیر"],
+        SAR: ["SAR", "sar", "saudiRiyal", "ریال سعودی"],
+        AED: ["AED", "aed", "dirham", "درهم"],
+        GBP: ["GBP", "gbp", "pound", "پوند"],
+        CAD: ["CAD", "cad"],
+        AUD: ["AUD", "aud"],
+        CHF: ["CHF", "chf"],
+        INR: ["INR", "inr", "rupee", "روپیه"],
+        PKR: ["PKR", "pkr"],
+        CNY: ["CNY", "cny", "yuan", "یوان"],
+        RUB: ["RUB", "rub", "ruble", "روبل"]
+      };
+
+      const found = findCurrencyValue(liveRates, aliases[currency] || [currency]);
+      if (found === null) return null;
+      const n = Number(found);
+      return Number.isFinite(n) && n > 0 ? n : null;
+    }
+
+    function getLiveRate(fromCurrency, toCurrency) {
       const from = String(fromCurrency || "AFN").trim().toUpperCase();
       const to = String(toCurrency || getSelectedBaseCurrency()).trim().toUpperCase();
 
-      if(from === to) return 1;
+      if (from === to) return 1;
 
-      if(window.CinaSarafi && typeof window.CinaSarafi.getSarafiRate === "function"){
-        try{
+      if (window.CinaSarafi && typeof window.CinaSarafi.getSarafiRate === "function") {
+        try {
           const rate = window.CinaSarafi.getSarafiRate(from, to);
-          if(rate !== null && Number.isFinite(Number(rate)) && Number(rate) > 0){
-            return Number(rate);
-          }
-        }catch(e){}
+          if (rate !== null && Number.isFinite(Number(rate)) && Number(rate) > 0) return Number(rate);
+        } catch (e) {}
       }
 
-      if(!liveRates) return null;
+      if (!liveRates) return null;
 
       const fromRate = from === "AFN" ? 1 : getRateForCurrency(from);
       const toRate = to === "AFN" ? 1 : getRateForCurrency(to);
 
-      if(fromRate === null || toRate === null || !Number.isFinite(Number(fromRate)) || !Number.isFinite(Number(toRate)) || Number(fromRate) <= 0 || Number(toRate) <= 0){
+      if (
+        fromRate === null ||
+        toRate === null ||
+        !Number.isFinite(Number(fromRate)) ||
+        !Number.isFinite(Number(toRate)) ||
+        Number(fromRate) <= 0 ||
+        Number(toRate) <= 0
+      ) {
         return null;
       }
 
       return Number(fromRate) / Number(toRate);
     }
 
-    function convertLiveCurrency(amount, fromCurrency, toCurrency){
+    function convertLiveCurrency(amount, fromCurrency, toCurrency) {
       const number = Number(amount);
-      if(!Number.isFinite(number)) return null;
+      if (!Number.isFinite(number)) return null;
       const rate = getLiveRate(fromCurrency, toCurrency);
-      if(rate === null || !Number.isFinite(rate)) return null;
+      if (rate === null || !Number.isFinite(rate)) return null;
       return number * rate;
     }
 
-    function updateCurrencyInterface(){
+    function calculateAFN(amount, rate, currency) {
+      if (currency === "AFN") return amount;
+      return amount * rate;
+    }
+
+    function updateCurrencyInterface() {
       const base = getSelectedBaseCurrency();
       const baseName = getSelectedBaseCurrencyName();
 
       const rateLabel = document.getElementById("rateLabel");
-      if(rateLabel) rateLabel.textContent = `${pageT("todayRate","نرخ امروز")} به ${base}`;
+      if (rateLabel) rateLabel.textContent = "Today's rate to " + base;
 
       const equivalentLabel = document.getElementById("baseEquivalentLabel");
-      if(equivalentLabel) equivalentLabel.textContent = `${pageT("equivalent","معادل")} ${baseName} (${base})`;
+      if (equivalentLabel) equivalentLabel.textContent = "Equivalent " + baseName + " (" + base + ")";
 
       const afnLabel = document.getElementById("afnTotalLabel");
-      if(afnLabel) afnLabel.textContent = pageT("transactionValueAFN","ارزش ثبت‌شده به افغانی");
+      if (afnLabel) afnLabel.textContent = "Value in AFN";
 
-      const status = document.getElementById("rateStatus");
-      if(status && liveRates){
-        status.textContent = `${pageT("ratesOnline","نرخ اسعار آنلاین است")} • ${base}`;
+      const status = document.getElementById("statusText");
+      if (status && liveRates) status.textContent = "Rates are online • " + base;
+
+      const rateStatus = document.getElementById("rateStatus");
+      if (rateStatus && liveRates) rateStatus.textContent = "Rates are online • " + base;
+    }
+
+    async function refreshRates() {
+      const dot = document.getElementById("rateDotMain") || document.getElementById("rateDot");
+      const status = document.getElementById("statusText") || document.getElementById("rateStatus");
+      if (!dot || !status) return null;
+
+      dot.classList.remove("online", "error");
+      status.textContent = "Loading rates...";
+
+      try {
+        let rates = null;
+
+        if (window.CinaSarafi && typeof window.CinaSarafi.refreshSarafiRates === "function") {
+          rates = await window.CinaSarafi.refreshSarafiRates();
+        } else if (typeof getSarafiRates === "function") {
+          rates = await getSarafiRates();
+        } else {
+          throw new Error("Sarafi API function not found");
+        }
+
+        if (!rates) throw new Error("API returned empty data");
+
+        liveRates = rates;
+        dot.classList.add("online");
+
+        const base = getSelectedBaseCurrency();
+        status.textContent = "Rates are online • " + base;
+        updateCurrencyInterface();
+
+        if (document.getElementById("transactionModal") && document.getElementById("transactionModal").classList.contains("show")) {
+          calculateTransaction();
+        }
+
+        renderClients();
+        return rates;
+      } catch (error) {
+        console.error("Rate loading error:", error);
+        dot.classList.add("error");
+        status.textContent = "Rate fetch failed";
+        liveRates = null;
+        renderClients();
+        return null;
       }
     }
 
-    window.addEventListener("storage", async (event) => {
-      if(event.key === "dailyAccountingSettings"){
-        applyPageLanguage();
-        updateCurrencyInterface();
-        await refreshRates();
-        renderClients();
+    function calculateTransaction() {
+      const currencyElement = document.getElementById("transactionCurrency");
+      const amountElement = document.getElementById("transactionAmount");
+      const rateDisplay = document.getElementById("rateDisplay");
+      const baseTotal = document.getElementById("baseTotal");
+      const totalDisplay = document.getElementById("afnTotal");
+      const saveButton = document.getElementById("saveTransactionBtn");
+
+      if (!currencyElement || !amountElement) return;
+
+      const currency = currencyElement.value.trim().toUpperCase();
+      const amount = Number(amountElement.value) || 0;
+      const baseCurrency = getSelectedBaseCurrency();
+
+      const afnRate = getRateForCurrency(currency);
+      const baseRate = getLiveRate(currency, baseCurrency);
+
+      if (baseRate === null) {
+        rateDisplay.textContent = "Not received";
+        baseTotal.textContent = "— " + baseCurrency;
+      } else {
+        rateDisplay.textContent = "1 " + currency + " = " + formatNumber(baseRate) + " " + baseCurrency;
+        const equivalent = amount * baseRate;
+        baseTotal.textContent = formatNumber(equivalent) + " " + baseCurrency;
       }
-    });
 
-    window.addEventListener("dailyAccountingSettingsChanged", async () => {
-      applyPageLanguage();
-      updateCurrencyInterface();
-      await refreshRates();
-      renderClients();
-    });
+      if (afnRate === null) {
+        totalDisplay.textContent = "— AFN";
+        saveButton.disabled = true;
+        return;
+      }
 
-    window.addEventListener("dailyAccountingCurrencyChanged", async () => {
-      applyPageLanguage();
-      updateCurrencyInterface();
-      await refreshRates();
-      renderClients();
-      calculateTransaction();
-    });
+      const total = calculateAFN(amount, afnRate, currency);
+      totalDisplay.textContent = formatNumber(total) + " AFN";
+      saveButton.disabled = false;
+    }
 
-    window.addEventListener("dailyAccountingCountryChanged", async () => {
-      applyPageLanguage();
-      updateCurrencyInterface();
-      await refreshRates();
-      renderClients();
-      calculateTransaction();
-    });
+    function normalizeExistingData() {
+      appData.clients.forEach((client) => {
+        if (!client.id) client.id = createId();
+        if (!Array.isArray(client.transactions)) client.transactions = [];
 
-    const currencyNames = {
-      AFN:"افغانی",
-      USD:"دلار",
-      EUR:"یورو",
-      IRR:"ریال ایران",
-      TOMAN:"تومان",
-      JPY:"ین",
-      TRY:"لیر",
-      SAR:"ریال سعودی",
-      AED:"درهم",
-      GBP:"پوند",
-      CAD:"دلار کانادا",
-      AUD:"دلار استرالیا",
-      CHF:"فرانک سوئیس",
-      INR:"روپیه هند",
-      PKR:"روپیه پاکستان",
-      CNY:"یوان چین",
-      RUB:"روبل روسیه"
-    };
+        client.transactions.forEach((tx) => {
+          if (!tx.id) tx.id = createId();
+          if (!tx.currency) tx.currency = "AFN";
+          if (!tx.type) tx.type = tx.direction || "in";
+          if (tx.amount === undefined) tx.amount = tx.rawAmount || 0;
+          if (tx.rawAmount === undefined) tx.rawAmount = tx.amount || 0;
+          if (!tx.rawDate) tx.rawDate = tx.date || new Date().toISOString().slice(0, 10);
+          if (tx.totalAFN === undefined) {
+            tx.totalAFN = tx.amountInBase !== undefined ? Number(tx.amountInBase) || 0 : 0;
+          }
+        });
+      });
+    }
 
-    document.addEventListener("DOMContentLoaded", async () => {
-      applyPageLanguage();
-      updateCurrencyInterface();
-      setToday();
-      await checkAuth();
-      await refreshRates();
-      updateCurrencyInterface();
-      renderClients();
-    });
+    async function saveData() {
+      const { error } = await supabaseClient
+        .from("exchange_users")
+        .upsert(
+          {
+            user_id: currentUser.id,
+            email: currentUser.email,
+            content: appData
+          },
+          { onConflict: "user_id" }
+        );
 
-    async function checkAuth(){
+      if (error) throw error;
+    }
+
+    async function checkAuth() {
       const { data, error } = await supabaseClient.auth.getSession();
-      if(error){
+      if (error) {
         console.error(error);
-        showToast(pageT("authCheckError","خطا در بررسی حساب"), "error");
+        showToast("Auth check error", "error");
         return;
       }
 
       currentUser = data.session?.user || null;
-
-      if(!currentUser){
+      if (!currentUser) {
         window.location.href = "index.html";
         return;
       }
@@ -1403,104 +1517,70 @@
       await loadData();
     }
 
-    async function loadData(){
-      try{
+    async function loadData() {
+      try {
         const { data, error } = await supabaseClient
           .from("exchange_users")
           .select("*")
           .eq("user_id", currentUser.id)
           .maybeSingle();
 
-        if(error) throw error;
+        if (error) throw error;
 
-        if(data && data.content){
-          if(typeof data.content === "string"){
-            try{
+        if (data && data.content) {
+          if (typeof data.content === "string") {
+            try {
               appData = JSON.parse(data.content);
-            }catch(e){
+            } catch (e) {
               appData = { clients: [] };
             }
-          }else{
+          } else {
             appData = data.content;
           }
         }
 
-        if(!appData || typeof appData !== "object") appData = {};
-        if(!Array.isArray(appData.clients)) appData.clients = [];
+        if (!appData || typeof appData !== "object") appData = {};
+        if (!Array.isArray(appData.clients)) appData.clients = [];
 
         normalizeExistingData();
         renderClients();
-
-      }catch(error){
+      } catch (error) {
         console.error(error);
-        showToast(pageT("loadDataError","خطا در بارگذاری اطلاعات"), "error");
+        showToast("Data load failed", "error");
       }
     }
 
-    function normalizeExistingData(){
-      appData.clients.forEach(client => {
-        if(!client.id) client.id = createId();
-        if(!Array.isArray(client.transactions)) client.transactions = [];
-        client.transactions.forEach(tx => {
-          if(!tx.id) tx.id = createId();
-          if(!tx.currency) tx.currency = "AFN";
-          if(!tx.type) tx.type = tx.direction || "in";
-          if(tx.amount === undefined) tx.amount = tx.rawAmount || 0;
-          if(tx.rawAmount === undefined) tx.rawAmount = tx.amount || 0;
-          if(!tx.rawDate) tx.rawDate = tx.date || new Date().toISOString().slice(0,10);
-          if(tx.totalAFN === undefined){
-            if(tx.amountInBase !== undefined){
-              tx.totalAFN = Number(tx.amountInBase) || 0;
-            }else{
-              tx.totalAFN = 0;
-            }
-          }
-        });
-      });
-    }
-
-    async function saveData(){
-      const { error } = await supabaseClient
-        .from("exchange_users")
-        .upsert({
-          user_id: currentUser.id,
-          email: currentUser.email,
-          content: appData
-        }, { onConflict: "user_id" });
-
-      if(error) throw error;
-    }
-
-    function renderClients(){
-      const container = document.getElementById("accountsList");
+    function renderClients() {
+      const container = document.getElementById("accounts-list");
       const count = document.getElementById("clientCount");
-      if(!container || !count) return;
 
-      count.textContent = `${appData.clients.length} ${pageT("clients","مشتری")}`;
+      if (!container || !count) return;
 
-      if(!appData.clients.length){
+      count.textContent = `${appData.clients.length} customers`;
+
+      if (!appData.clients.length) {
         container.innerHTML = `
-          <div class="empty-box">
+          <div class="empty-state">
             <div class="empty-icon">👥</div>
-            <h3>${pageT("noClients","هنوز مشتری ندارید")}</h3>
-            <p>${pageT("addClientHint","از دکمه + برای اضافه کردن مشتری استفاده کنید.")}</p>
+            <h3 class="empty-title">No clients yet</h3>
+            <p class="empty-text">Use the + button to add a client and begin recording transactions.</p>
           </div>
         `;
         return;
       }
 
-      container.innerHTML = appData.clients.map(client => renderClient(client)).join("");
+      container.innerHTML = appData.clients.map((client) => renderClient(client)).join("");
     }
 
-    function renderClient(client){
+    function renderClient(client) {
       const transactions = Array.isArray(client.transactions) ? client.transactions : [];
-      let balanceAFN = 0;
 
-      transactions.forEach(tx => {
+      let balanceAFN = 0;
+      transactions.forEach((tx) => {
         const value = Number(tx.totalAFN) || 0;
-        if(tx.type === "in" || tx.direction === "in"){
+        if (tx.type === "in" || tx.direction === "in") {
           balanceAFN += value;
-        }else{
+        } else {
           balanceAFN -= value;
         }
       });
@@ -1509,190 +1589,143 @@
       const balanceBase = convertLiveCurrency(balanceAFN, "AFN", baseCurrency);
 
       let balanceClass = "zero";
-      let balanceText = pageT("settled","تسویه شده");
+      let balanceText = "Settled";
 
-      if(balanceAFN > 0.000001){
+      if (balanceAFN > 0.000001) {
         balanceClass = "positive";
-        balanceText = pageT("clientOwesMe","مشتری به شما باقی دارد");
-      }else if(balanceAFN < -0.000001){
+        balanceText = "Client owes me";
+      } else if (balanceAFN < -0.000001) {
         balanceClass = "negative";
-        balanceText = pageT("iOweClient","شما به مشتری باقی دارید");
+        balanceText = "I owe client";
       }
 
       const avatar = escapeHtml(String(client.name || "?").trim().charAt(0));
-      const balanceDisplay = balanceBase === null ? `— ${escapeHtml(baseCurrency)}` : `${formatNumber(Math.abs(balanceBase))} ${escapeHtml(baseCurrency)}`;
+      const balanceDisplay =
+        balanceBase === null
+          ? `— ${escapeHtml(baseCurrency)}`
+          : `${formatNumber(Math.abs(balanceBase))} ${escapeHtml(baseCurrency)}`;
 
-      const transactionsHTML = transactions.slice()
-        .sort((a,b) => String(b.rawDate || "").localeCompare(String(a.rawDate || "")))
-        .map(tx => renderTransaction(client, tx))
+      const transactionsHTML = transactions
+        .slice()
+        .sort((a, b) => String(b.rawDate || "").localeCompare(String(a.rawDate || "")))
+        .map((tx) => renderTransaction(client, tx))
         .join("");
 
       return `
         <section class="client-card">
-          <div class="client-top">
+          <div class="client-head">
             <div class="client-info">
               <div class="client-avatar">${avatar}</div>
-              <div class="client-meta">
+              <div>
                 <div class="client-name">${escapeHtml(client.name)}</div>
-                <div class="client-summary">${transactions.length} ${pageT("transactionsCountWord","معامله")}</div>
+                <div class="transaction-count">${transactions.length} transactions</div>
               </div>
             </div>
 
-            <div class="client-tools">
-              <button class="round-btn primary" onclick="openTransactionModal('${escapeAttribute(client.id)}')" title="${pageT("newTransaction","معامله جدید")}">＋</button>
-              <button class="round-btn danger" onclick="askDeleteClient('${escapeAttribute(client.id)}')" title="${pageT("deleteClient","حذف مشتری")}">🗑</button>
+            <div class="card-actions">
+              <button class="icon-action" type="button" title="New transaction" onclick="openTransactionModal('${escapeHtml(client.id)}')">＋</button>
+              <button class="icon-action delete" type="button" title="Delete client" onclick="askDeleteClient('${escapeHtml(client.id)}')">🗑</button>
             </div>
           </div>
 
-          <div class="balance-pill ${balanceClass}">
+          <div class="client-balance ${balanceClass}">
             <span>${balanceText}</span>
             <span class="balance-value">${balanceDisplay}</span>
           </div>
 
-          <div class="transactions-box">
-            ${transactionsHTML || `
-              <div class="empty-box" style="padding:18px 12px;">
-                <div class="empty-icon" style="font-size:22px; margin-bottom:6px;">📝</div>
-                <p style="margin:0; font-size:9px;">${pageT("noTransactions","هنوز معامله‌ای ثبت نشده است.")}</p>
-              </div>
-            `}
+          <div class="transactions">
+            ${
+              transactionsHTML || `
+                <div class="tx-row">
+                  <div class="tx-main">
+                    <div class="tx-direction">
+                      <div class="tx-icon credit">✓</div>
+                      <div>
+                        <div class="tx-type">No transactions yet</div>
+                        <div class="tx-date">Add a new transaction</div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              `
+            }
           </div>
         </section>
       `;
     }
 
-    function renderTransaction(client, tx){
+    function renderTransaction(client, tx) {
       const isIn = tx.type === "in" || tx.direction === "in";
       const sign = isIn ? "+" : "-";
       const icon = isIn ? "↓" : "↑";
       const currency = String(tx.currency || "AFN").toUpperCase();
       const amount = Number(tx.rawAmount ?? tx.amount ?? 0);
       const date = tx.rawDate || tx.date || "";
-      const afnRate = Number(tx.rateAtTransaction) || 0;
       const baseCurrency = getSelectedBaseCurrency();
       const equivalent = convertLiveCurrency(amount, currency, baseCurrency);
       const note = tx.note ? escapeHtml(tx.note) : "";
+      const afnRate = Number(tx.rateAtTransaction) || 0;
 
-      let equivalentText = equivalent === null
-        ? `${pageT("equivalent","معادل")}: — ${escapeHtml(baseCurrency)}`
-        : `${pageT("equivalent","معادل")}: ${formatNumber(equivalent)} ${escapeHtml(baseCurrency)}`;
+      let equivalentText = "";
+      if (equivalent === null) {
+        equivalentText = `Equivalent: — ${escapeHtml(baseCurrency)}`;
+      } else {
+        equivalentText = `Equivalent: ${formatNumber(equivalent)} ${escapeHtml(baseCurrency)}`;
+      }
 
       return `
         <div class="tx-row">
           <div class="tx-main">
-            <div class="tx-left">
-              <div class="tx-icon ${isIn ? "in" : "out"}">${icon}</div>
-              <div class="tx-meta">
-                <div class="tx-label">${isIn ? pageT("clientGaveMe","مشتری به من داد") : pageT("iGaveClient","من به مشتری دادم")}</div>
+            <div class="tx-direction">
+              <div class="tx-icon ${isIn ? "credit" : "debit"}">${icon}</div>
+              <div>
+                <div class="tx-type">${isIn ? "Client paid me" : "I paid client"}</div>
                 <div class="tx-date">${formatDate(date)}</div>
               </div>
             </div>
 
-            <div class="tx-amount ${isIn ? "in" : "out"}">
+            <div class="tx-amount ${isIn ? "credit" : "debit"}">
               ${sign}${formatNumber(amount)} ${escapeHtml(currency)}
             </div>
           </div>
 
-          <div class="tx-foot">
-            <div class="tx-detail">
+          <div class="tx-bottom">
+            <div class="tx-meta">
               <strong>${equivalentText}</strong>
-              ${afnRate ? ` • ${pageT("rate","نرخ")} ${formatNumber(afnRate)} AFN` : ""}
+              ${afnRate ? ` • Rate ${formatNumber(afnRate)} AFN` : ""}
               ${note ? ` • ${note}` : ""}
             </div>
 
-            <div class="tx-action-wrap">
-              <button class="tx-action edit" onclick="editTransaction('${escapeAttribute(client.id)}','${escapeAttribute(tx.id)}')" title="${pageT("edit","ویرایش")}">✎</button>
-              <button class="tx-action delete" onclick="askDeleteTransaction('${escapeAttribute(client.id)}','${escapeAttribute(tx.id)}')" title="${pageT("delete","حذف")}">×</button>
+            <div class="tx-actions">
+              <button class="tx-action" type="button" title="Edit" onclick="editTransaction('${escapeHtml(client.id)}','${escapeHtml(tx.id)}')">✎</button>
+              <button class="tx-action delete" type="button" title="Delete" onclick="askDeleteTransaction('${escapeHtml(client.id)}','${escapeHtml(tx.id)}')">×</button>
             </div>
           </div>
         </div>
       `;
     }
 
-    function openAddClientModal(){
-      document.getElementById("clientNameInput").value = "";
-      openModal("clientModal");
-      setTimeout(() => document.getElementById("clientNameInput").focus(), 100);
-    }
-
-    async function saveClient(){
-      const input = document.getElementById("clientNameInput");
-      const name = input.value.trim();
-
-      if(!name){
-        showToast(pageT("enterClientName","نام مشتری را وارد کنید"), "error");
-        input.focus();
-        return;
-      }
-
-      appData.clients.push({
-        id: createId(),
-        name,
-        transactions:[]
-      });
-
-      try{
-        await saveData();
-        closeModal("clientModal");
-        renderClients();
-        showToast(pageT("clientAdded","مشتری با موفقیت اضافه شد"), "success");
-      }catch(error){
-        console.error(error);
-        appData.clients.pop();
-        showToast(pageT("clientSaveFailed","ذخیره مشتری انجام نشد"), "error");
+    function formatDate(dateString) {
+      if (!dateString) return "No date";
+      try {
+        const date = new Date(dateString + "T00:00:00");
+        const settings = window.DailyTranslator && typeof window.DailyTranslator.getSettings === "function" ? window.DailyTranslator.getSettings() : null;
+        const language = settings?.language || "fa";
+        const localeMap = { en: "en-US", fa: "fa-AF", ar: "ar", ps: "ps-AF", tr: "tr-TR" };
+        return new Intl.DateTimeFormat(localeMap[language] || "fa-AF", { year: "numeric", month: "2-digit", day: "2-digit" }).format(date);
+      } catch (e) {
+        return dateString;
       }
     }
 
-    function askDeleteClient(clientId){
-      const client = appData.clients.find(c => c.id === clientId);
-      if(!client) return;
-
-      openConfirm(
-        pageT("deleteClient","حذف مشتری"),
-        `${pageT("deleteClientQuestion","آیا مطمئن هستید که")} «${escapeHtml(client.name)}» ${pageT("deleteClientQuestionEnd","و تمام معاملات او حذف شود؟")}`,
-        async () => {
-          const old = appData.clients;
-          appData.clients = old.filter(c => c.id !== clientId);
-
-          try{
-            await saveData();
-            renderClients();
-            showToast(pageT("clientDeleted","مشتری حذف شد"), "success");
-          }catch(error){
-            console.error(error);
-            appData.clients = old;
-            renderClients();
-            showToast(pageT("deleteFailed","حذف انجام نشد"), "error");
-          }
-        }
-      );
-    }
-
-    async function openTransactionModal(clientId){
-      editingTransaction = null;
-      document.getElementById("transactionModalTitle").textContent = pageT("newTransaction","معامله جدید");
-      fillClientSelect(clientId);
-      document.getElementById("transactionAmount").value = "";
-      document.getElementById("transactionCurrency").value = "AFN";
-      document.getElementById("transactionNote").value = "";
-      setToday();
-      setDirection("in");
-      updateCurrencyInterface();
-      openModal("transactionModal");
-      await refreshRates();
-      calculateTransaction();
-    }
-
-    function fillClientSelect(selectedId){
+    function fillClientSelect(selectedId) {
       const select = document.getElementById("transactionClient");
-      select.innerHTML = appData.clients.map(client => `
-        <option value="${escapeAttribute(client.id)}" ${client.id === selectedId ? "selected" : ""}>
-          ${escapeHtml(client.name)}
-        </option>
+      select.innerHTML = appData.clients.map((client) => `
+        <option value="${escapeHtml(client.id)}" ${client.id === selectedId ? "selected" : ""}>${escapeHtml(client.name)}</option>
       `).join("");
     }
 
-    function setDirection(direction){
+    function setDirection(direction) {
       selectedDirection = direction;
 
       const inBox = document.getElementById("directionInBox");
@@ -1702,65 +1735,136 @@
       outBox.classList.toggle("selected", direction === "out");
 
       const input = document.querySelector(`input[name="direction"][value="${direction}"]`);
-      if(input) input.checked = true;
+      if (input) input.checked = true;
     }
 
-    async function editTransaction(clientId, transactionId){
-      const client = appData.clients.find(c => c.id === clientId);
-      if(!client) return;
+    function openAddClientModal() {
+      document.getElementById("clientNameInput").value = "";
+      openModal("clientModal");
+      setTimeout(() => document.getElementById("clientNameInput").focus(), 100);
+    }
 
-      const tx = client.transactions.find(t => t.id === transactionId);
-      if(!tx) return;
+    async function saveClient() {
+      const input = document.getElementById("clientNameInput");
+      const name = input.value.trim();
 
-      editingTransaction = { clientId, transactionId };
+      if (!name) {
+        showToast("Please enter client name", "error");
+        input.focus();
+        return;
+      }
 
-      document.getElementById("transactionModalTitle").textContent = pageT("editTransaction","ویرایش معامله");
+      appData.clients.push({
+        id: createId(),
+        name,
+        transactions: []
+      });
+
+      try {
+        await saveData();
+        closeModal("clientModal");
+        renderClients();
+        showToast("Client added successfully", "success");
+      } catch (error) {
+        console.error(error);
+        appData.clients.pop();
+        showToast("Client save failed", "error");
+      }
+    }
+
+    function askDeleteClient(clientId) {
+      const client = appData.clients.find((c) => c.id === clientId);
+      if (!client) return;
+
+      openConfirm(
+        "Delete Client",
+        `Are you sure you want to delete <strong>${escapeHtml(client.name)}</strong> and all of their transactions?`,
+        async () => {
+          const old = appData.clients;
+          appData.clients = old.filter((c) => c.id !== clientId);
+
+          try {
+            await saveData();
+            renderClients();
+            showToast("Client deleted", "success");
+          } catch (error) {
+            console.error(error);
+            appData.clients = old;
+            renderClients();
+            showToast("Delete failed", "error");
+          }
+        }
+      );
+    }
+
+    async function openTransactionModal(clientId) {
+      editingTransaction = null;
+
+      document.getElementById("transactionModalTitle").textContent = "New Transaction";
       fillClientSelect(clientId);
 
-      document.getElementById("transactionCurrency").value = tx.currency || "AFN";
-      document.getElementById("transactionAmount").value = tx.rawAmount ?? tx.amount ?? "";
-      document.getElementById("transactionDate").value = tx.rawDate || tx.date || "";
-      document.getElementById("transactionNote").value = tx.note || "";
-
-      setDirection(tx.type || tx.direction || "in");
-      updateCurrencyInterface();
+      document.getElementById("transactionAmount").value = "";
+      document.getElementById("transactionCurrency").value = "AFN";
+      document.getElementById("transactionNote").value = "";
+      setToday();
+      setDirection("in");
 
       openModal("transactionModal");
       await refreshRates();
       calculateTransaction();
     }
 
-    async function saveTransaction(){
+    async function editTransaction(clientId, transactionId) {
+      const client = appData.clients.find((c) => c.id === clientId);
+      if (!client) return;
+
+      const tx = client.transactions.find((t) => t.id === transactionId);
+      if (!tx) return;
+
+      editingTransaction = { clientId, transactionId };
+
+      document.getElementById("transactionModalTitle").textContent = "Edit Transaction";
+      fillClientSelect(clientId);
+      document.getElementById("transactionCurrency").value = tx.currency || "AFN";
+      document.getElementById("transactionAmount").value = tx.rawAmount ?? tx.amount ?? "";
+      document.getElementById("transactionDate").value = tx.rawDate || tx.date || "";
+      document.getElementById("transactionNote").value = tx.note || "";
+      setDirection(tx.type || tx.direction || "in");
+
+      openModal("transactionModal");
+      await refreshRates();
+      calculateTransaction();
+    }
+
+    async function saveTransaction() {
       const clientId = document.getElementById("transactionClient").value;
       const currency = document.getElementById("transactionCurrency").value.trim().toUpperCase();
       const amount = Number(document.getElementById("transactionAmount").value);
       const date = document.getElementById("transactionDate").value;
       const note = document.getElementById("transactionNote").value.trim();
 
-      if(!clientId){
-        showToast(pageT("selectClient","مشتری را انتخاب کنید"), "error");
+      if (!clientId) {
+        showToast("Please select a client", "error");
         return;
       }
-
-      if(!amount || amount <= 0){
-        showToast(pageT("enterAmount","مقدار معامله را وارد کنید"), "error");
+      if (!amount || amount <= 0) {
+        showToast("Please enter amount", "error");
         return;
       }
-
-      if(!date){
-        showToast(pageT("enterTransactionDate","تاریخ معامله را وارد کنید"), "error");
+      if (!date) {
+        showToast("Please choose transaction date", "error");
         return;
       }
 
       const rate = getRateForCurrency(currency);
-      if(rate === null){
-        showToast(pageT("rateNotAvailable","نرخ این ارز از API دریافت نشد"), "error");
+      if (rate === null) {
+        showToast("Currency rate was not received", "error");
         return;
       }
 
       const totalAFN = calculateAFN(amount, rate, currency);
-      if(!Number.isFinite(totalAFN)){
-        showToast(pageT("rateCalculationFailed","محاسبه نرخ انجام نشد"), "error");
+      if (!Number.isFinite(totalAFN)) {
+        showToast("Rate calculation failed", "error");
         return;
       }
 
@@ -1790,19 +1894,19 @@
 
       const wasEditing = !!editingTransaction;
 
-      try{
-        if(wasEditing){
-          const client = appData.clients.find(c => c.id === editingTransaction.clientId);
-          if(!client) throw new Error("Client not found");
+      try {
+        if (wasEditing) {
+          const client = appData.clients.find((c) => c.id === editingTransaction.clientId);
+          if (!client) throw new Error("Client not found");
 
-          const index = client.transactions.findIndex(t => t.id === editingTransaction.transactionId);
-          if(index === -1) throw new Error("Transaction not found");
+          const index = client.transactions.findIndex((t) => t.id === editingTransaction.transactionId);
+          if (index === -1) throw new Error("Transaction not found");
 
           client.transactions[index] = tx;
-        }else{
-          const client = appData.clients.find(c => c.id === clientId);
-          if(!client) throw new Error("Client not found");
-          if(!Array.isArray(client.transactions)) client.transactions = [];
+        } else {
+          const client = appData.clients.find((c) => c.id === clientId);
+          if (!client) throw new Error("Client not found");
+          if (!Array.isArray(client.transactions)) client.transactions = [];
           client.transactions.push(tx);
         }
 
@@ -1810,329 +1914,60 @@
         editingTransaction = null;
         closeModal("transactionModal");
         renderClients();
-        showToast(wasEditing ? pageT("transactionEdited","معامله ویرایش شد") : pageT("transactionSaved","معامله با موفقیت ثبت شد"), "success");
-
-      }catch(error){
+        showToast(wasEditing ? "Transaction updated" : "Transaction saved successfully", "success");
+      } catch (error) {
         console.error(error);
-        showToast(pageT("transactionSaveFailed","ذخیره معامله انجام نشد"), "error");
+        showToast("Save failed", "error");
       }
     }
 
-    function askDeleteTransaction(clientId, transactionId){
+    function askDeleteTransaction(clientId, transactionId) {
       openConfirm(
-        pageT("deleteTransaction","حذف معامله"),
-        pageT("deleteTransactionQuestion","آیا مطمئن هستید که این معامله حذف شود؟"),
+        "Delete Transaction",
+        "Are you sure you want to delete this transaction?",
         async () => {
-          const client = appData.clients.find(c => c.id === clientId);
-          if(!client) return;
+          const client = appData.clients.find((c) => c.id === clientId);
+          if (!client) return;
 
           const old = [...client.transactions];
-          client.transactions = client.transactions.filter(tx => tx.id !== transactionId);
+          client.transactions = client.transactions.filter((tx) => tx.id !== transactionId);
 
-          try{
+          try {
             await saveData();
             renderClients();
-            showToast(pageT("transactionDeleted","معامله حذف شد"), "success");
-          }catch(error){
+            showToast("Transaction deleted", "success");
+          } catch (error) {
             console.error(error);
             client.transactions = old;
             renderClients();
-            showToast(pageT("transactionDeleteFailed","حذف معامله انجام نشد"), "error");
+            showToast("Delete failed", "error");
           }
         }
       );
     }
 
-    async function refreshRates(){
-      const dot = document.getElementById("rateDot");
-      const status = document.getElementById("rateStatus");
-      if(!dot || !status) return null;
-
-      dot.classList.remove("online", "error");
-      status.textContent = pageT("loadingRates","در حال دریافت نرخ اسعار...");
-
-      try{
-        let rates = null;
-
-        if(window.CinaSarafi && typeof window.CinaSarafi.refreshSarafiRates === "function"){
-          rates = await window.CinaSarafi.refreshSarafiRates();
-        }else if(typeof getSarafiRates === "function"){
-          rates = await getSarafiRates();
-        }else{
-          throw new Error("Sarafi API function not found");
-        }
-
-        if(!rates) throw new Error("API returned empty data");
-
-        liveRates = rates;
-        dot.classList.add("online");
-        const base = getSelectedBaseCurrency();
-        status.textContent = `${pageT("ratesOnline","نرخ اسعار آنلاین است")} • ${base}`;
-        updateCurrencyInterface();
-
-        const transactionModal = document.getElementById("transactionModal");
-        if(transactionModal && transactionModal.classList.contains("show")){
-          calculateTransaction();
-        }
-
-        renderClients();
-        return rates;
-
-      }catch(error){
-        console.error("Rate loading error:", error);
-        dot.classList.add("error");
-        status.textContent = pageT("ratesFailed","دریافت نرخ اسعار ناموفق بود");
-        liveRates = null;
-        renderClients();
-        return null;
-      }
-    }
-
-    function getRateForCurrency(currency){
-      currency = String(currency || "AFN").trim().toUpperCase();
-      if(currency === "AFN") return 1;
-      if(!liveRates) return null;
-
-      const aliases = {
-        USD:["USD","usd","dollar","dollars","دلار"],
-        EUR:["EUR","eur","euro","euros","یورو"],
-        IRR:["IRR","irr","rial","iranRial","ریال"],
-        TOMAN:["TOMAN","toman","IRAN_TOMAN","تومان"],
-        JPY:["JPY","jpy","yen","ین"],
-        TRY:["TRY","try","lira","turkishLira","لیر"],
-        SAR:["SAR","sar","saudiRiyal","ریال سعودی"],
-        AED:["AED","aed","dirham","درهم"],
-        GBP:["GBP","gbp","pound","پوند"],
-        CAD:["CAD","cad"],
-        AUD:["AUD","aud"],
-        CHF:["CHF","chf"],
-        INR:["INR","inr","rupee","روپیه"],
-        PKR:["PKR","pkr"],
-        CNY:["CNY","cny","yuan","یوان"],
-        RUB:["RUB","rub","ruble","روبل"]
-      };
-
-      const found = findCurrencyValue(liveRates, aliases[currency] || [currency]);
-      if(found === null) return null;
-
-      const number = Number(found);
-      if(!Number.isFinite(number) || number <= 0) return null;
-
-      return number;
-    }
-
-    function findCurrencyValue(object, aliases){
-      if(object === null || object === undefined) return null;
-      if(typeof object !== "object") return null;
-
-      for(const key of Object.keys(object)){
-        const value = object[key];
-        const normalizedKey = normalizeKey(key);
-
-        for(const alias of aliases){
-          const normalizedAlias = normalizeKey(alias);
-          if(normalizedKey === normalizedAlias){
-            const number = extractNumber(value);
-            if(number !== null) return number;
-          }
-        }
-      }
-
-      for(const key of Object.keys(object)){
-        const value = object[key];
-        if(value && typeof value === "object"){
-          const result = findCurrencyValue(value, aliases);
-          if(result !== null) return result;
-        }
-      }
-
-      return null;
-    }
-
-    function extractNumber(value){
-      if(typeof value === "number") return Number.isFinite(value) ? value : null;
-      if(typeof value === "string"){
-        const cleaned = value.replace(/,/g,"").replace(/[^\d.-]/g, "");
-        if(!cleaned) return null;
-        const n = Number(cleaned);
-        return Number.isFinite(n) ? n : null;
-      }
-
-      if(value && typeof value === "object"){
-        const possibleKeys = ["rate","value","price","sell","buy","afn","AFN","rateAfn","afnRate"];
-        for(const key of possibleKeys){
-          if(value[key] !== undefined){
-            const n = extractNumber(value[key]);
-            if(n !== null) return n;
-          }
-        }
-      }
-
-      return null;
-    }
-
-    function normalizeKey(key){
-      return String(key).trim().toLowerCase().replace(/[\s_-]/g, "");
-    }
-
-    function calculateTransaction(){
-      const currencyElement = document.getElementById("transactionCurrency");
-      const amountElement = document.getElementById("transactionAmount");
-      if(!currencyElement || !amountElement) return;
-
-      const currency = currencyElement.value.trim().toUpperCase();
-      const amount = Number(amountElement.value) || 0;
-      const baseCurrency = getSelectedBaseCurrency();
-      const afnRate = getRateForCurrency(currency);
-      const baseRate = getLiveRate(currency, baseCurrency);
-
-      const rateDisplay = document.getElementById("rateDisplay");
-      const baseTotal = document.getElementById("baseTotal");
-      const totalDisplay = document.getElementById("afnTotal");
-      const saveButton = document.getElementById("saveTransactionBtn");
-
-      if(baseRate === null){
-        rateDisplay.textContent = pageT("notReceived","دریافت نشد");
-        baseTotal.textContent = `— ${baseCurrency}`;
-      }else{
-        rateDisplay.textContent = `1 ${currency} = ${formatNumber(baseRate)} ${baseCurrency}`;
-        const equivalent = amount * baseRate;
-        baseTotal.textContent = `${formatNumber(equivalent)} ${baseCurrency}`;
-      }
-
-      if(afnRate === null){
-        totalDisplay.textContent = "— AFN";
-        saveButton.disabled = true;
-        return;
-      }
-
-      const total = calculateAFN(amount, afnRate, currency);
-      totalDisplay.textContent = `${formatNumber(total)} AFN`;
-      saveButton.disabled = false;
-    }
-
-    function calculateAFN(amount, rate, currency){
-      if(currency === "AFN") return amount;
-      return amount * rate;
-    }
-
-    function openModal(id){
-      const modal = document.getElementById(id);
-      if(!modal) return;
-      modal.classList.add("show");
-      document.body.style.overflow = "hidden";
-    }
-
-    function closeModal(id){
-      const modal = document.getElementById(id);
-      if(!modal) return;
-      modal.classList.remove("show");
-      if(!document.querySelector(".modal-backdrop.show")){
-        document.body.style.overflow = "";
-      }
-    }
-
-    function openConfirm(title, message, callback){
-      document.getElementById("confirmTitle").textContent = title;
-      document.getElementById("confirmMessage").innerHTML = message;
-      confirmCallback = callback;
-
-      document.getElementById("confirmButton").onclick = async () => {
-        closeModal("confirmModal");
-        if(confirmCallback){
-          const cb = confirmCallback;
-          confirmCallback = null;
-          await cb();
-        }
-      };
-
-      openModal("confirmModal");
-    }
-
-    document.querySelectorAll(".modal-backdrop").forEach(overlay => {
-      overlay.addEventListener("click", (event) => {
-        if(event.target === overlay){
-          closeModal(overlay.id);
-        }
-      });
+    document.addEventListener("DOMContentLoaded", async () => {
+      updateCurrencyInterface();
+      setToday();
+      await checkAuth();
+      await refreshRates();
+      renderClients();
     });
-
-    function setToday(){
-      const input = document.getElementById("transactionDate");
-      if(!input) return;
-
-      if(!input.value){
-        const now = new Date();
-        const year = now.getFullYear();
-        const month = String(now.getMonth() + 1).padStart(2, "0");
-        const day = String(now.getDate()).padStart(2, "0");
-        input.value = `${year}-${month}-${day}`;
-      }
-    }
-
-    function formatDate(dateString){
-      if(!dateString) return pageT("noDate","بدون تاریخ");
-
-      try{
-        const date = new Date(dateString + "T00:00:00");
-        const settings = window.DailyTranslator && typeof window.DailyTranslator.getSettings === "function" ? window.DailyTranslator.getSettings() : null;
-        const language = settings?.language || "fa";
-        const localeMap = { en:"en-US", fa:"fa-AF", ar:"ar", ps:"ps-AF", tr:"tr-TR" };
-        return new Intl.DateTimeFormat(localeMap[language] || "fa-AF", { year:"numeric", month:"2-digit", day:"2-digit" }).format(date);
-      }catch(e){
-        return dateString;
-      }
-    }
-
-    function showToast(message, type = ""){
-      const container = document.getElementById("toastContainer");
-      const toast = document.createElement("div");
-      toast.className = `toast ${type}`;
-      toast.textContent = message;
-      container.appendChild(toast);
-
-      setTimeout(() => {
-        toast.style.opacity = "0";
-        toast.style.transform = "translateY(-8px)";
-        setTimeout(() => toast.remove(), 200);
-      }, 2800);
-    }
-
-    function createId(){
-      return Date.now().toString(36) + Math.random().toString(36).substring(2,10);
-    }
-
-    function formatNumber(number){
-      if(number === null || number === undefined || !Number.isFinite(Number(number))){
-        return "0";
-      }
-      return Number(number).toLocaleString("en-US", { maximumFractionDigits:8 });
-    }
-
-    function escapeHtml(value){
-      return String(value ?? "").replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/"/g, "&quot;").replace(/'/g, "&#039;");
-    }
-
-    function escapeAttribute(value){
-      return escapeHtml(value);
-    }
 
     setInterval(async () => {
       await refreshRates();
     }, 60000);
 
     document.addEventListener("keydown", (event) => {
-      if(event.key === "Escape"){
-        document.querySelectorAll(".modal-backdrop.show").forEach(modal => closeModal(modal.id));
+      if (event.key === "Escape") {
+        document.querySelectorAll(".modal-overlay.show").forEach((modal) => closeModal(modal.id));
       }
     });
 
     setTimeout(() => {
-      applyPageLanguage();
       updateCurrencyInterface();
       renderClients();
     }, 100);
   </script>
-
 </body>
 </html>
