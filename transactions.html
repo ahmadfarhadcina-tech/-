@@ -2,7 +2,7 @@
 <html lang="fa" dir="rtl">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+  <meta name="viewport" content="width=device-width,initial-scale=1.0,maximum-scale=1.0,user-scalable=no" />
   <title>Transactions | Daily Accounting</title>
 
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
@@ -30,7 +30,7 @@
       box-sizing:border-box;
       margin:0;
       padding:0;
-      font-family:Tahoma,sans-serif;
+      font-family:Tahoma, sans-serif;
       -webkit-tap-highlight-color:transparent;
     }
 
@@ -44,6 +44,8 @@
     body{
       min-height:100vh;
       overflow-x:hidden;
+      -webkit-font-smoothing:antialiased;
+      text-rendering:optimizeLegibility;
     }
 
     button,input,select,textarea{
@@ -53,197 +55,168 @@
     button{
       border:0;
       cursor:pointer;
-      width:100%;
-      transition:transform .15s ease, filter .15s ease, box-shadow .15s ease;
+      background:none;
     }
 
-    button:active{
+    button:active,
+    .nav-item:active,
+    .client-card:active,
+    .transaction-row:active,
+    .fab:active{
       transform:scale(.96);
     }
 
-    .app{
-      width:100%;
-      min-height:100vh;
-      display:flex;
-      flex-direction:column;
-      background:#f7f7f9;
-    }
-
-    header{
-      background:#fff;
-      padding:10px 16px;
-      border-bottom:1px solid #e5e7eb;
-      display:flex;
-      justify-content:space-between;
-      align-items:center;
-      gap:8px;
-      z-index:20;
+    .top-header{
       position:sticky;
       top:0;
+      z-index:30;
+      background:#fff;
+      border-bottom:1px solid #e5e7eb;
+      padding:10px 16px;
       box-shadow:0 1px 5px rgba(0,0,0,.04);
     }
 
-    header h1{
-      font-size:16px;
-      color:var(--primary);
-      font-weight:700;
-    }
-
-    .header-controls{
-      display:flex;
-      align-items:center;
-      gap:6px;
-    }
-
-    .header-icon-btn{
-      width:36px;
-      height:36px;
-      border-radius:10px;
-      background:#f5f3ff;
-      color:var(--primary);
-      display:flex;
-      align-items:center;
-      justify-content:center;
-      font-size:17px;
-    }
-
-    .rates{
-      background:#fff;
-      padding:8px 16px;
-      font-size:10px;
-      color:#2563eb;
-      border-bottom:1px solid #e5e7eb;
-      display:flex;
-      align-items:center;
-      gap:17px;
-      overflow-x:auto;
-      white-space:nowrap;
-      scrollbar-width:none;
-      min-height:38px;
-    }
-
-    .rates::-webkit-scrollbar{
-      display:none;
-    }
-
-    .rate-item{
-      display:flex;
-      align-items:center;
-      gap:5px;
-      flex-shrink:0;
-    }
-
-    .rate-flag{
-      font-size:14px;
-      line-height:1;
-      display:inline-flex;
-      align-items:center;
-      justify-content:center;
-    }
-
-    .rate-code{
-      color:#374151;
-      font-weight:bold;
-    }
-
-    .rate-value{
-      color:#2563eb;
-    }
-
-    .rate-updated{
-      color:#9ca3af;
-      font-size:8px;
-    }
-
-    .rate-ok{
-      color:#10b981;
-      font-size:8px;
-    }
-
-    .rate-error{
-      color:#f59e0b;
-      font-size:9px;
-    }
-
-    main{
-      position:relative;
-      flex:1;
-      min-height:calc(100vh - 140px);
-      padding-bottom:68px;
-    }
-
-    .page{
+    .header-inner{
       width:100%;
-      min-height:100%;
-      padding:16px 16px 27px;
-      background:#f7f7f9;
-      overflow-y:auto;
-    }
-
-    .container{
       max-width:470px;
       margin:0 auto;
-      width:100%;
-    }
-
-    .top-bar{
-      display:flex;
-      justify-content:space-between;
-      align-items:center;
-      gap:9px;
-      margin-bottom:14px;
-    }
-
-    .top-bar h2{
-      font-size:18px;
-      color:#1f2937;
-      margin:0;
-    }
-
-    .client-counter{
-      font-size:10px;
-      color:#6b7280;
-    }
-
-    .status-box{
-      background:#fff;
-      border:1px solid #e5e7eb;
-      border-radius:13px;
-      padding:9px 12px;
-      margin-bottom:12px;
       display:flex;
       align-items:center;
       justify-content:space-between;
-      gap:10px;
-      box-shadow:0 2px 8px rgba(0,0,0,.045);
+      gap:8px;
     }
 
-    .status-left{
+    .brand{
       display:flex;
       align-items:center;
       gap:8px;
       min-width:0;
     }
 
-    .status-dot{
-      width:9px;
-      height:9px;
-      border-radius:50%;
-      background:#9ca3af;
+    .brand-icon{
+      width:35px;
+      height:35px;
+      border-radius:10px;
+      background:var(--primary);
+      color:#fff;
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      font-size:18px;
+      box-shadow:0 4px 12px rgba(124,58,237,.30);
       flex-shrink:0;
     }
 
-    .status-dot.online{
+    .brand-text{
+      min-width:0;
+    }
+
+    .brand-text h1{
+      font-size:15px;
+      color:var(--primary);
+      font-weight:700;
+      margin:0;
+    }
+
+    .brand-text p{
+      margin-top:2px;
+      font-size:9px;
+      color:var(--muted);
+      overflow:hidden;
+      text-overflow:ellipsis;
+      white-space:nowrap;
+    }
+
+    .header-actions{
+      display:flex;
+      align-items:center;
+      gap:6px;
+      flex-shrink:0;
+    }
+
+    .icon-btn{
+      width:32px;
+      height:32px;
+      border-radius:9px;
+      background:#f5f3ff;
+      color:var(--primary);
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      font-size:16px;
+      transition:.18s ease;
+    }
+
+    .icon-btn:hover{
+      background:#ede9fe;
+    }
+
+    .container{
+      width:100%;
+      max-width:470px;
+      margin:0 auto;
+      padding:16px 16px 80px;
+    }
+
+    .page-title{
+      display:flex;
+      align-items:center;
+      justify-content:space-between;
+      gap:10px;
+      margin:2px 0 14px;
+    }
+
+    .page-title h2{
+      margin:0;
+      font-size:18px;
+      color:#1f2937;
+    }
+
+    .page-title span{
+      font-size:10px;
+      color:var(--muted);
+    }
+
+    .rate-status{
+      background:#fff;
+      border:1px solid var(--border);
+      border-radius:14px;
+      padding:10px 12px;
+      margin-bottom:12px;
+      box-shadow:0 2px 8px rgba(0,0,0,.045);
+      display:flex;
+      align-items:center;
+      justify-content:space-between;
+      gap:9px;
+    }
+
+    .rate-status-left{
+      display:flex;
+      align-items:center;
+      gap:8px;
+      min-width:0;
+      flex:1;
+    }
+
+    .rate-dot{
+      width:9px;
+      height:9px;
+      border-radius:50%;
+      background:#aaa;
+      flex-shrink:0;
+    }
+
+    .rate-dot.online{
       background:var(--green);
       box-shadow:0 0 0 3px rgba(16,185,129,.15);
     }
 
-    .status-dot.error{
+    .rate-dot.error{
       background:var(--red);
-      box-shadow:0 0 0 3px rgba(239,68,68,.12);
+      box-shadow:0 0 0 3px rgba(239,68,68,.15);
     }
 
-    .status-text{
+    .rate-status-text{
       font-size:10px;
       color:#374151;
       white-space:nowrap;
@@ -251,17 +224,17 @@
       text-overflow:ellipsis;
     }
 
-    .mini-btn{
+    .refresh-rate{
       background:#f5f3ff;
       color:var(--primary);
-      border-radius:9px;
       padding:7px 9px;
-      width:auto;
+      border-radius:9px;
       font-size:10px;
       font-weight:600;
+      flex-shrink:0;
     }
 
-    .accounts{
+    #accounts-list{
       display:flex;
       flex-direction:column;
       gap:10px;
@@ -269,7 +242,7 @@
 
     .client-card{
       background:#fff;
-      border:1px solid #e5e7eb;
+      border:1px solid var(--border);
       border-radius:15px;
       overflow:hidden;
       box-shadow:0 2px 9px rgba(0,0,0,.045);
@@ -277,14 +250,21 @@
     }
 
     @keyframes cardIn{
-      from{opacity:0; transform:translateY(8px) scale(.99);}
-      to{opacity:1; transform:none;}
+      from{
+        opacity:0;
+        transform:translateY(8px) scale(.99);
+      }
+      to{
+        opacity:1;
+        transform:none;
+      }
     }
 
-    .client-head{
+    .client-top{
       display:flex;
       align-items:center;
       justify-content:space-between;
+      gap:10px;
       padding:12px 14px;
       border-bottom:1px solid #f0f0f0;
     }
@@ -292,8 +272,9 @@
     .client-info{
       display:flex;
       align-items:center;
-      gap:10px;
+      gap:9px;
       min-width:0;
+      flex:1;
     }
 
     .client-avatar{
@@ -319,46 +300,44 @@
       white-space:nowrap;
     }
 
-    .transaction-count{
+    .client-summary{
+      margin-top:3px;
       font-size:9px;
       color:#9ca3af;
-      margin-top:3px;
     }
 
-    .card-actions{
+    .client-actions{
       display:flex;
-      align-items:center;
-      gap:4px;
+      gap:5px;
       flex-shrink:0;
     }
 
-    .icon-action{
+    .small-btn{
       width:31px;
       height:31px;
       border-radius:9px;
-      background:#f5f3ff;
-      color:var(--primary);
       display:flex;
       align-items:center;
       justify-content:center;
+      background:#f5f3ff;
+      color:var(--primary);
       font-size:14px;
-      padding:0;
-      width:31px;
+      transition:.18s ease;
     }
 
-    .icon-action.delete{
+    .small-btn.delete{
       background:#fef2f2;
       color:var(--red);
     }
 
     .client-balance{
+      margin:10px 11px 0;
+      border-radius:10px;
+      padding:9px 10px;
       display:flex;
       align-items:center;
       justify-content:space-between;
       gap:8px;
-      margin:10px 11px 0;
-      padding:9px 10px;
-      border-radius:10px;
       font-size:10px;
     }
 
@@ -378,47 +357,50 @@
     }
 
     .balance-value{
-      text-align:left;
-      direction:ltr;
       font-weight:bold;
+      direction:ltr;
       font-size:10px;
-      white-space:nowrap;
+      text-align:left;
     }
 
-    .transactions{
+    .transactions-list{
       border-top:1px solid #f0f0f0;
       margin-top:10px;
+      padding:0 0 2px;
     }
 
-    .tx-row{
+    .transaction-row{
       padding:10px 13px;
       border-bottom:1px solid #f1f1f1;
       display:flex;
       flex-direction:column;
       gap:6px;
+      background:#fff;
+      transition:.16s ease;
     }
 
-    .tx-row:last-child{
+    .transaction-row:last-child{
       border-bottom:0;
     }
 
-    .tx-main{
+    .transaction-main{
       display:flex;
       align-items:center;
       justify-content:space-between;
       gap:8px;
     }
 
-    .tx-direction{
+    .transaction-left{
       display:flex;
       align-items:center;
-      gap:7px;
+      gap:8px;
       min-width:0;
+      flex:1;
     }
 
-    .tx-icon{
-      width:28px;
-      height:28px;
+    .transaction-icon{
+      width:29px;
+      height:29px;
       border-radius:8px;
       display:flex;
       align-items:center;
@@ -427,83 +409,81 @@
       flex-shrink:0;
     }
 
-    .tx-icon.credit{
+    .transaction-icon.in{
       background:#ecfdf5;
       color:var(--green);
     }
 
-    .tx-icon.debit{
+    .transaction-icon.out{
       background:#fef2f2;
       color:var(--red);
     }
 
-    .tx-type{
+    .transaction-name{
       font-size:10px;
+      font-weight:bold;
       color:#374151;
     }
 
-    .tx-date{
+    .transaction-date{
+      margin-top:3px;
       font-size:8px;
       color:#9ca3af;
-      margin-top:3px;
     }
 
-    .tx-amount{
-      font-size:10px;
+    .transaction-amount{
+      font-size:11px;
       font-weight:bold;
       direction:ltr;
+      text-align:left;
       white-space:nowrap;
     }
 
-    .tx-amount.credit{
+    .transaction-amount.in{
       color:var(--green);
     }
 
-    .tx-amount.debit{
+    .transaction-amount.out{
       color:var(--red);
     }
 
-    .tx-bottom{
-      margin-top:3px;
+    .transaction-bottom{
+      margin-top:2px;
       padding-top:7px;
       border-top:1px dashed #e5e7eb;
       display:flex;
-      align-items:center;
       justify-content:space-between;
+      align-items:center;
       gap:7px;
     }
 
-    .tx-meta{
+    .transaction-meta{
       color:#9ca3af;
       font-size:8px;
       line-height:1.7;
       min-width:0;
+      word-break:break-word;
     }
 
-    .tx-meta strong{
-      font-weight:600;
-    }
-
-    .tx-actions{
+    .transaction-buttons{
       display:flex;
       gap:5px;
       flex-shrink:0;
     }
 
-    .tx-action{
+    .transaction-mini-btn{
       width:27px;
       height:27px;
       border-radius:8px;
-      padding:0;
       background:#eff6ff;
       color:#2563eb;
-      font-size:11px;
       display:flex;
       align-items:center;
       justify-content:center;
+      font-size:11px;
     }
 
-    .tx-action.delete{
+    .transaction-mini-btn.delete{
       background:#fef2f2;
       color:var(--red);
     }
@@ -514,7 +494,7 @@
       border-radius:14px;
       padding:40px 20px;
       text-align:center;
-      color:#6b7280;
+      color:var(--muted);
     }
 
     .empty-icon{
@@ -522,23 +502,28 @@
       margin-bottom:9px;
     }
 
-    .empty-title{
+    .empty-state h3{
       margin:0 0 6px;
       font-size:15px;
       color:#374151;
-      font-weight:bold;
     }
 
-    .empty-text{
+    .empty-state p{
       margin:0;
       font-size:10px;
       line-height:1.8;
     }
 
+    .empty-transactions{
+      padding:13px;
+      text-align:center;
+      color:#9ca3af;
+      font-size:9px;
+    }
+
     .fab{
       position:fixed;
       right:16px;
-      left:auto;
       bottom:74px;
       width:46px;
       height:46px;
@@ -551,60 +536,11 @@
       display:flex;
       align-items:center;
       justify-content:center;
-      padding:0;
     }
 
     [dir=rtl] .fab{
       right:auto;
       left:16px;
-    }
-
-    .bottom-nav{
-      position:fixed;
-      left:0;
-      right:0;
-      bottom:0;
-      height:60px;
-      background:rgba(255,255,255,.97);
-      backdrop-filter:blur(12px);
-      border-top:1px solid #e5e7eb;
-      display:flex;
-      justify-content:space-around;
-      align-items:center;
-      z-index:40;
-      box-shadow:0 -2px 10px rgba(0,0,0,.05);
-    }
-
-    .nav-inner{
-      width:100%;
-      display:flex;
-      height:100%;
-    }
-
-    .nav-item{
-      width:50%;
-      height:100%;
-      background:transparent;
-      border-radius:0;
-      padding:6px 4px;
-      display:flex;
-      flex-direction:column;
-      align-items:center;
-      justify-content:center;
-      gap:2px;
-      color:#9ca3af;
-      text-decoration:none;
-      font-size:8px;
-      transition:.18s;
-    }
-
-    .nav-item .nav-icon{
-      font-size:19px;
-      line-height:19px;
-    }
-
-    .nav-item.active{
-      color:var(--primary);
     }
 
     .modal-overlay{
@@ -625,26 +561,32 @@
     }
 
     @keyframes fadeIn{
-      from{opacity:0;}
-      to{opacity:1;}
+      from{opacity:0}
+      to{opacity:1}
     }
 
     .modal{
       width:100%;
       max-width:450px;
+      max-height:92vh;
+      overflow:auto;
       background:#fff;
       border:1px solid #e5e7eb;
       border-radius:18px 18px 12px 12px;
-      padding:18px;
+      padding:17px;
       box-shadow:0 -10px 35px rgba(0,0,0,.15);
-      animation:modalUp .25s ease;
-      max-height:92vh;
-      overflow:auto;
+      animation:modalUp .22s ease;
     }
 
     @keyframes modalUp{
-      from{opacity:0; transform:translateY(35px) scale(.97);}
-      to{opacity:1; transform:none;}
+      from{
+        opacity:0;
+        transform:translateY(35px) scale(.97);
+      }
+      to{
+        opacity:1;
+        transform:translateY(0) scale(1);
+      }
     }
 
     .modal-header{
@@ -656,9 +598,9 @@
     }
 
     .modal-header h3{
-      margin:0;
-      font-size:16px;
+      font-size:15px;
       color:var(--primary);
+      margin:0;
     }
 
     .close-btn{
@@ -668,8 +610,9 @@
       background:#f3f4f6;
       color:#6b7280;
       font-size:17px;
-      padding:0;
-      width:31px;
+      display:flex;
+      align-items:center;
+      justify-content:center;
     }
 
     .form-group{
@@ -679,31 +622,42 @@
     .form-group label{
       display:block;
       font-size:10px;
-      color:#6b7280;
       font-weight:bold;
-      margin-bottom:7px;
+      color:#6b7280;
+      margin-bottom:5px;
     }
 
-    .input,.select,.textarea{
+    .input,
+    .select,
+    .textarea{
       width:100%;
-      padding:12px 14px;
-      background:#fff;
       border:1px solid #dfe3e8;
-      border-radius:12px;
-      color:#1f2937;
-      font-size:13px;
+      background:#fff;
+      border-radius:11px;
+      padding:11px 12px;
       outline:none;
-      transition:.2s;
+      transition:.18s ease;
+      color:#1f2937;
+      font-size:12px;
     }
 
-    .input:focus,.select:focus,.textarea:focus{
+    .input:focus,
+    .select:focus,
+    .textarea:focus{
       border-color:var(--primary);
-      box-shadow:0 0 0 3px rgba(124,58,237,.08);
+      box-shadow:0 0 0 3px rgba(124,58,237,.10);
+      background:#fff;
     }
 
     .textarea{
       min-height:70px;
       resize:vertical;
+    }
+
+    .two-cols{
+      display:grid;
+      grid-template-columns:1fr 1fr;
+      gap:9px;
     }
 
     .direction-box{
@@ -719,18 +673,21 @@
       padding:10px 7px;
       text-align:center;
       font-size:10px;
-      transition:.18s;
-      cursor:pointer;
+      transition:.18s ease;
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      min-height:42px;
     }
 
     .direction-option.selected.in{
-      border-color:var(--green);
+      border-color:#10b981;
       background:#ecfdf5;
       color:#059669;
     }
 
     .direction-option.selected.out{
-      border-color:var(--red);
+      border-color:#ef4444;
       background:#fef2f2;
       color:#dc2626;
     }
@@ -739,19 +696,12 @@
       display:none;
     }
 
-    .two-cols{
-      display:grid;
-      grid-template-columns:1fr 1fr;
-      gap:9px;
-    }
-
     .rate-result{
       background:#f5f3ff;
       border:1px solid #e9d5ff;
       border-radius:11px;
       padding:10px;
       margin-top:8px;
-      margin-bottom:4px;
     }
 
     .rate-result-top{
@@ -768,8 +718,8 @@
 
     .rate-number{
       direction:ltr;
-      font-weight:bold;
       font-size:12px;
+      font-weight:bold;
       color:var(--primary);
       text-align:left;
     }
@@ -813,13 +763,13 @@
       padding:11px;
       font-size:11px;
       font-weight:600;
-      width:auto;
+      transition:.18s ease;
     }
 
     .primary-btn{
       background:var(--primary);
       color:#fff;
-      box-shadow:0 4px 12px rgba(124,58,237,.28);
+      box-shadow:0 4px 12px rgba(124,58,237,.30);
     }
 
     .secondary-btn{
@@ -835,6 +785,13 @@
     .primary-btn:disabled{
       opacity:.5;
       cursor:not-allowed;
+    }
+
+    .loading{
+      text-align:center;
+      padding:30px;
+      color:#9ca3af;
+      font-size:10px;
     }
 
     .toast-container{
@@ -858,10 +815,10 @@
       border-radius:10px;
       padding:10px 13px;
       font-size:10px;
+      border:1px solid #374151;
       box-shadow:0 8px 25px rgba(0,0,0,.18);
       animation:toastIn .22s ease;
       text-align:center;
-      border:1px solid #374151;
     }
 
     .toast.success{
@@ -873,103 +830,144 @@
     }
 
     @keyframes toastIn{
-      from{opacity:0; transform:translateY(10px);}
-      to{opacity:1; transform:translateY(0);}
+      from{
+        opacity:0;
+        transform:translateY(10px);
+      }
+      to{
+        opacity:1;
+        transform:translateY(0);
+      }
     }
 
-    .loading{
-      text-align:center;
-      padding:30px;
+    .bottom-nav{
+      position:fixed;
+      left:0;
+      right:0;
+      bottom:0;
+      height:60px;
+      background:rgba(255,255,255,.97);
+      backdrop-filter:blur(12px);
+      border-top:1px solid #e5e7eb;
+      display:flex;
+      justify-content:space-around;
+      align-items:center;
+      z-index:50;
+      box-shadow:0 -2px 10px rgba(0,0,0,.05);
+      padding:0;
+    }
+
+    .nav-inner{
+      width:100%;
+      display:flex;
+      height:100%;
+    }
+
+    .nav-item{
+      width:50%;
+      height:100%;
+      background:transparent;
+      border-radius:0;
+      display:flex;
+      flex-direction:column;
+      align-items:center;
+      justify-content:center;
+      gap:2px;
       color:#9ca3af;
-      font-size:10px;
+      text-decoration:none;
+      font-size:8px;
+      padding:6px 4px;
+      transition:.18s ease;
+    }
+
+    .nav-item .nav-icon{
+      font-size:19px;
+      line-height:19px;
+    }
+
+    .nav-item.active{
+      color:var(--primary);
     }
 
     @media(max-width:380px){
-      .page{padding-left:13px; padding-right:13px;}
-      .client-card{border-radius:13px;}
-      .tx-row{padding:9px 10px;}
-      header{padding-left:13px; padding-right:13px;}
-      .top-bar{gap:6px;}
-      .client-name{font-size:13px;}
-      .balance-value{font-size:9px;}
+      .container{
+        padding-left:12px;
+        padding-right:12px;
+      }
+
+      .client-card{
+        border-radius:12px;
+      }
+
+      .transaction-row{
+        padding:9px 10px;
+      }
+
+      .header-inner{
+        padding:0;
+      }
+
+      .brand-text p{
+        display:none;
+      }
     }
   </style>
 </head>
 <body>
 
-  <div class="app">
-
-    <header>
-      <h1>Daily Accounting</h1>
-
-      <div class="header-controls">
-        <button class="header-icon-btn" type="button" onclick="refreshRates()">↻</button>
+  <header class="top-header">
+    <div class="header-inner">
+      <div class="brand">
+        <div class="brand-icon">💱</div>
+        <div class="brand-text">
+          <h1 data-i18n="dailyAccounting">Daily Accounting</h1>
+          <p data-i18n="transactionManagement">مدیریت معاملات و حساب مشتریان</p>
+        </div>
       </div>
-    </header>
 
-    <div class="rates" id="rates">
-      <span class="rate-item">
-        <span class="rate-dot status-dot" id="rateDot"></span>
-        <span class="status-text" id="rateStatus">🔄 Loading rates...</span>
-      </span>
+      <div class="header-actions">
+        <button class="icon-btn" onclick="refreshRates()" title="بروزرسانی نرخ" data-i18n-title="refreshRates">↻</button>
+      </div>
+    </div>
+  </header>
+
+  <main class="container">
+    <div class="page-title">
+      <h2 data-i18n="transactions">معاملات</h2>
+      <span id="clientCount">0 مشتری</span>
     </div>
 
-    <main>
-      <section class="page">
-        <div class="container">
-          <div class="top-bar">
-            <h2>Transactions</h2>
-            <span class="client-counter" id="clientCount">0 customers</span>
-          </div>
-
-          <div class="status-box">
-            <div class="status-left">
-              <span class="status-dot" id="rateDotMain"></span>
-              <span class="status-text" id="statusText">🔄 Loading rates...</span>
-            </div>
-
-            <button class="mini-btn" type="button" onclick="refreshRates()">Update</button>
-          </div>
-
-          <div id="accounts-list">
-            <div class="loading">Loading accounts...</div>
-          </div>
-        </div>
-      </section>
-    </main>
-
-    <button class="fab" type="button" onclick="openAddClientModal()" aria-label="Add client">+</button>
-
-    <nav class="bottom-nav">
-      <div class="nav-inner">
-        <a href="index.html" class="nav-item">
-          <span class="nav-icon">⌂</span>
-          <span>Home</span>
-        </a>
-        <a href="transactions.html" class="nav-item active">
-          <span class="nav-icon">⇄</span>
-          <span>Transactions</span>
-        </a>
+    <div class="rate-status">
+      <div class="rate-status-left">
+        <span class="rate-dot" id="rateDot"></span>
+        <span class="rate-status-text" id="rateStatus" data-i18n="loadingRates">در حال دریافت نرخ اسعار...</span>
       </div>
-    </nav>
 
-  </div>
+      <button class="refresh-rate" onclick="refreshRates()" data-i18n="refresh">بروزرسانی</button>
+    </div>
+
+    <div id="accounts-list">
+      <div class="loading" data-i18n="loadingAccounts">در حال بارگذاری حساب‌ها...</div>
+    </div>
+  </main>
+
+  <button class="fab" onclick="openAddClientModal()" title="افزودن مشتری" data-i18n-title="addClient">+</button>
 
   <div class="modal-overlay" id="clientModal">
     <div class="modal">
       <div class="modal-header">
-        <h3>Add Client</h3>
-        <button class="close-btn" type="button" onclick="closeModal('clientModal')">×</button>
+        <h3 data-i18n="addClient">افزودن مشتری</h3>
+        <button class="close-btn" onclick="closeModal('clientModal')">×</button>
       </div>
 
       <div class="form-group">
-        <label>Client Name</label>
-        <input id="clientNameInput" class="input" type="text" placeholder="e.g. Ahmad" autocomplete="off" />
+        <label data-i18n="clientName">نام مشتری</label>
+        <input id="clientNameInput" class="input" type="text" placeholder="مثلاً احمد" data-i18n-placeholder="exampleAhmad" autocomplete="off" />
       </div>
 
       <div class="modal-actions">
-        <button class="secondary-btn" type="button" onclick="closeModal('clientModal')">Cancel</button>
-        <button class="primary-btn" type="button" onclick="saveClient()">Save Client</button>
+        <button class="secondary-btn" onclick="closeModal('clientModal')" data-i18n="cancel">لغو</button>
+        <button class="primary-btn" onclick="saveClient()" data-i18n="saveClient">ذخیره مشتری</button>
       </div>
     </div>
   </div>
@@ -977,91 +975,90 @@
   <div class="modal-overlay" id="transactionModal">
     <div class="modal">
       <div class="modal-header">
-        <h3 id="transactionModalTitle">New Transaction</h3>
-        <button class="close-btn" type="button" onclick="closeModal('transactionModal')">×</button>
+        <h3 id="transactionModalTitle" data-i18n="newTransaction">معامله جدید</h3>
+        <button class="close-btn" onclick="closeModal('transactionModal')">×</button>
       </div>
 
       <div class="form-group">
-        <label>Client</label>
+        <label data-i18n="client">مشتری</label>
         <select id="transactionClient" class="select"></select>
       </div>
 
       <div class="form-group">
-        <label>Direction</label>
-
+        <label data-i18n="transactionType">نوع معامله</label>
         <div class="direction-box">
           <label class="direction-option selected in" id="directionInBox">
             <input type="radio" name="direction" value="in" checked onchange="setDirection('in')" />
-            <span>↓ Client pays me</span>
+            <span data-i18n="clientGivesMe">↓ مشتری به من می‌دهد</span>
           </label>
 
           <label class="direction-option out" id="directionOutBox">
             <input type="radio" name="direction" value="out" onchange="setDirection('out')" />
-            <span>↑ I pay client</span>
+            <span data-i18n="iGiveClient">↑ من به مشتری می‌دهم</span>
           </label>
         </div>
       </div>
 
       <div class="two-cols">
         <div class="form-group">
-          <label>Currency</label>
+          <label data-i18n="currency">پول / ارز</label>
           <select id="transactionCurrency" class="select" onchange="calculateTransaction()">
-            <option value="AFN">🇦🇫 Afghani (AFN)</option>
-            <option value="USD">🇺🇸 Dollar (USD)</option>
-            <option value="EUR">🇪🇺 Euro (EUR)</option>
-            <option value="IRR">🇮🇷 Iranian Rial (IRR)</option>
-            <option value="TOMAN">🇮🇷 Toman (TOMAN)</option>
-            <option value="JPY">🇯🇵 Yen (JPY)</option>
-            <option value="TRY">🇹🇷 Turkish Lira (TRY)</option>
-            <option value="SAR">🇸🇦 Saudi Riyal (SAR)</option>
-            <option value="AED">🇦🇪 Dirham (AED)</option>
-            <option value="GBP">🇬🇧 Pound (GBP)</option>
-            <option value="CAD">🇨🇦 Canadian Dollar (CAD)</option>
-            <option value="AUD">🇦🇺 Australian Dollar (AUD)</option>
-            <option value="CHF">🇨🇭 Swiss Franc (CHF)</option>
-            <option value="INR">🇮🇳 Indian Rupee (INR)</option>
-            <option value="PKR">🇵🇰 Pakistani Rupee (PKR)</option>
-            <option value="CNY">🇨🇳 Chinese Yuan (CNY)</option>
-            <option value="RUB">🇷🇺 Russian Ruble (RUB)</option>
+            <option value="AFN">🇦🇫 افغانی (AFN)</option>
+            <option value="USD">🇺🇸 دلار (USD)</option>
+            <option value="EUR">🇪🇺 یورو (EUR)</option>
+            <option value="IRR">🇮🇷 ریال ایران (IRR)</option>
+            <option value="TOMAN">🇮🇷 تومان (Toman)</option>
+            <option value="JPY">🇯🇵 ین (JPY)</option>
+            <option value="TRY">🇹🇷 لیر ترکیه (TRY)</option>
+            <option value="SAR">🇸🇦 ریال سعودی (SAR)</option>
+            <option value="AED">🇦🇪 درهم (AED)</option>
+            <option value="GBP">🇬🇧 پوند (GBP)</option>
+            <option value="CAD">🇨🇦 دلار کانادا (CAD)</option>
+            <option value="AUD">🇦🇺 دلار استرالیا (AUD)</option>
+            <option value="CHF">🇨🇭 فرانک سوئیس (CHF)</option>
+            <option value="INR">🇮🇳 روپیه هند (INR)</option>
+            <option value="PKR">🇵🇰 روپیه پاکستان (PKR)</option>
+            <option value="CNY">🇨🇳 یوان چین (CNY)</option>
+            <option value="RUB">🇷🇺 روبل روسیه (RUB)</option>
           </select>
         </div>
 
         <div class="form-group">
-          <label>Amount</label>
+          <label data-i18n="amount">مقدار</label>
           <input id="transactionAmount" class="input" type="number" inputmode="decimal" step="any" min="0" placeholder="0.00" oninput="calculateTransaction()" />
         </div>
       </div>
 
       <div class="form-group">
-        <label>Transaction Date</label>
+        <label data-i18n="transactionDate">تاریخ معامله</label>
         <input id="transactionDate" class="input" type="date" />
       </div>
 
       <div class="form-group">
-        <label>Note</label>
-        <textarea id="transactionNote" class="textarea" placeholder="Optional notes..."></textarea>
+        <label data-i18n="note">یادداشت</label>
+        <textarea id="transactionNote" class="textarea" placeholder="توضیحات اختیاری..." data-i18n-placeholder="optionalDescription"></textarea>
       </div>
 
       <div class="rate-result">
         <div class="rate-result-top">
-          <span class="rate-label" id="rateLabel">Today's rate</span>
+          <span class="rate-label" id="rateLabel">نرخ امروز</span>
           <strong class="rate-number" id="rateDisplay">—</strong>
         </div>
 
         <div class="base-equivalent">
-          <span id="baseEquivalentLabel">Equivalent in base currency</span>
+          <span id="baseEquivalentLabel">معادل ارز کشور</span>
           <strong id="baseTotal">—</strong>
         </div>
 
         <div class="afn-total">
-          <span id="afnTotalLabel">Value in AFN</span>
+          <span id="afnTotalLabel">ارزش ثبت‌شده به افغانی</span>
           <strong id="afnTotal">0 AFN</strong>
         </div>
       </div>
 
       <div class="modal-actions">
-        <button class="secondary-btn" type="button" onclick="closeModal('transactionModal')">Cancel</button>
-        <button class="primary-btn" type="button" id="saveTransactionBtn" onclick="saveTransaction()">Save Transaction</button>
+        <button class="secondary-btn" onclick="closeModal('transactionModal')" data-i18n="cancel">لغو</button>
+        <button class="primary-btn" id="saveTransactionBtn" onclick="saveTransaction()" data-i18n="saveTransaction">ذخیره معامله</button>
       </div>
     </div>
   </div>
@@ -1069,18 +1066,31 @@
   <div class="modal-overlay" id="confirmModal">
     <div class="modal">
       <div class="modal-header">
-        <h3 id="confirmTitle">Confirm</h3>
-        <button class="close-btn" type="button" onclick="closeModal('confirmModal')">×</button>
+        <h3 id="confirmTitle" data-i18n="confirmation">تأیید</h3>
+        <button class="close-btn" onclick="closeModal('confirmModal')">×</button>
       </div>
 
       <p id="confirmMessage" style="font-size:10px; line-height:2; color:#6b7280; margin:0;"></p>
 
       <div class="modal-actions">
-        <button class="secondary-btn" type="button" onclick="closeModal('confirmModal')">Cancel</button>
-        <button class="danger-btn" type="button" id="confirmButton">Delete</button>
+        <button class="secondary-btn" onclick="closeModal('confirmModal')" data-i18n="cancel">لغو</button>
+        <button class="danger-btn" id="confirmButton" data-i18n="delete">حذف</button>
       </div>
     </div>
   </div>
+
+  <nav class="bottom-nav">
+    <div class="nav-inner">
+      <a class="nav-item" href="index.html">
+        <span class="nav-icon">⌂</span>
+        <span data-i18n="home">خانه</span>
+      </a>
+      <a class="nav-item active" href="transactions.html">
+        <span class="nav-icon">⇄</span>
+        <span data-i18n="transactions">معاملات</span>
+      </a>
+    </div>
+  </nav>
 
   <div class="toast-container" id="toastContainer"></div>
 
@@ -1088,7 +1098,7 @@
     const SUPABASE_URL = "https://hvsymjkbmpmvjycwenbd.supabase.co";
     const SUPABASE_KEY = "sb_publishable_9pkhkb88LNXJw457Sx8dpA_0E231JwH";
 
-    const supabaseClient = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+    const supabaseClient = window.supabase ? window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY) : null;
 
     let currentUser = null;
     let appData = { clients: [] };
@@ -1097,99 +1107,25 @@
     let selectedDirection = "in";
     let confirmCallback = null;
 
-    function withTimeout(promise, ms = 10000) {
-      return Promise.race([
-        promise,
-        new Promise((_, reject) => setTimeout(() => reject(new Error("Request timeout")), ms))
-      ]);
-    }
-
-    function showToast(message, type = "") {
-      const container = document.getElementById("toastContainer");
-      const toast = document.createElement("div");
-      toast.className = "toast " + type;
-      toast.textContent = message;
-      container.appendChild(toast);
-
-      setTimeout(() => {
-        toast.style.opacity = "0";
-        toast.style.transform = "translateY(-8px)";
-        setTimeout(() => toast.remove(), 200);
-      }, 2800);
-    }
-
-    function escapeHtml(value) {
-      return String(value ?? "").replace(/[&<>"']/g, function (m) {
-        return {
-          '&': '&amp;',
-          '<': '&lt;',
-          '>': '&gt;',
-          '"': '&quot;',
-          "'": '&#039;'
-        }[m];
-      });
-    }
-
-    function createId() {
-      return (Date.now().toString(36) + Math.random().toString(36).substring(2, 10));
-    }
-
-    function formatNumber(number) {
-      if (number === null || number === undefined || !Number.isFinite(Number(number))) {
-        return "0";
-      }
-      return Number(number).toLocaleString("en-US", { maximumFractionDigits: 8 });
-    }
-
-    function setToday() {
-      const input = document.getElementById("transactionDate");
-      if (!input) return;
-      if (!input.value) {
-        const now = new Date();
-        const year = now.getFullYear();
-        const month = String(now.getMonth() + 1).padStart(2, "0");
-        const day = String(now.getDate()).padStart(2, "0");
-        input.value = `${year}-${month}-${day}`;
-      }
-    }
-
-    function openModal(id) {
-      const modal = document.getElementById(id);
-      if (!modal) return;
-      modal.classList.add("show");
-      document.body.style.overflow = "hidden";
-    }
-
-    function closeModal(id) {
-      const modal = document.getElementById(id);
-      if (!modal) return;
-      modal.classList.remove("show");
-      if (!document.querySelector(".modal-overlay.show")) {
-        document.body.style.overflow = "";
-      }
-    }
-
-    document.querySelectorAll(".modal-overlay").forEach((overlay) => {
-      overlay.addEventListener("click", (event) => {
-        if (event.target === overlay) closeModal(overlay.id);
-      });
-    });
-
-    function openConfirm(title, message, callback) {
-      document.getElementById("confirmTitle").textContent = title;
-      document.getElementById("confirmMessage").innerHTML = message;
-      confirmCallback = callback;
-
-      document.getElementById("confirmButton").onclick = async () => {
-        closeModal("confirmModal");
-        if (confirmCallback) {
-          const cb = confirmCallback;
-          confirmCallback = null;
-          await cb();
+    function pageT(key, fallback) {
+      try {
+        if (window.DailyTranslator && typeof window.DailyTranslator.t === "function") {
+          const value = window.DailyTranslator.t(key);
+          if (value && value !== key) return value;
         }
-      };
+      } catch (e) {}
+      return fallback || key;
+    }
 
-      openModal("confirmModal");
+    function applyPageLanguage() {
+      try {
+        if (window.DailyTranslator && typeof window.DailyTranslator.applyGlobalSettings === "function") {
+          window.DailyTranslator.applyGlobalSettings();
+        }
+        if (window.DailyTranslator && typeof window.DailyTranslator.translatePage === "function") {
+          window.DailyTranslator.translatePage();
+        }
+      } catch (e) {}
     }
 
     function getSelectedBaseCurrency() {
@@ -1203,39 +1139,56 @@
           }
         }
       } catch (e) {}
-
       try {
         if (window.DailyTranslator && typeof window.DailyTranslator.getCurrencyCode === "function") {
           const code = window.DailyTranslator.getCurrencyCode();
           if (code) return String(code).trim().toUpperCase();
         }
       } catch (e) {}
-
       return "AFN";
     }
 
     function getSelectedBaseCurrencyName() {
       const code = getSelectedBaseCurrency();
       const names = {
-        AFN: "Afghani",
-        USD: "Dollar",
-        EUR: "Euro",
-        IRR: "Iranian Rial",
-        TRY: "Turkish Lira",
-        SAR: "Saudi Riyal",
-        AED: "UAE Dirham",
-        GBP: "Pound",
-        CAD: "Canadian Dollar",
-        AUD: "Australian Dollar",
-        CHF: "Swiss Franc",
-        INR: "Indian Rupee",
-        PKR: "Pakistani Rupee",
-        CNY: "Chinese Yuan",
-        RUB: "Russian Ruble",
-        JPY: "Japanese Yen",
-        TOMAN: "Toman"
+        AFN: "افغانی",
+        USD: "دلار",
+        EUR: "یورو",
+        IRR: "ریال ایران",
+        TRY: "لیر ترکیه",
+        SAR: "ریال سعودی",
+        AED: "درهم امارات",
+        GBP: "پوند",
+        CAD: "دلار کانادا",
+        AUD: "دلار استرالیا",
+        CHF: "فرانک سوئیس",
+        INR: "روپیه هند",
+        PKR: "روپیه پاکستان",
+        CNY: "یوان چین",
+        RUB: "روبل روسیه",
+        JPY: "ین ژاپن",
+        TOMAN: "تومان"
       };
       return names[code] || code;
+    }
+
+    function updateCurrencyInterface() {
+      const base = getSelectedBaseCurrency();
+      const baseName = getSelectedBaseCurrencyName();
+
+      const rateLabel = document.getElementById("rateLabel");
+      if (rateLabel) rateLabel.textContent = `${pageT("todayRate","نرخ امروز")} به ${base}`;
+
+      const equivalentLabel = document.getElementById("baseEquivalentLabel");
+      if (equivalentLabel) equivalentLabel.textContent = `${pageT("equivalent","معادل")} ${baseName} (${base})`;
+
+      const afnLabel = document.getElementById("afnTotalLabel");
+      if (afnLabel) afnLabel.textContent = pageT("transactionValueAFN","ارزش ثبت‌شده به افغانی");
+
+      const rateStatus = document.getElementById("rateStatus");
+      if (rateStatus && liveRates) {
+        rateStatus.textContent = `${pageT("ratesOnline","نرخ اسعار آنلاین است")} • ${base}`;
+      }
     }
 
     function normalizeKey(key) {
@@ -1251,8 +1204,8 @@
         return Number.isFinite(n) ? n : null;
       }
       if (value && typeof value === "object") {
-        const possibleKeys = ["rate", "value", "price", "sell", "buy", "afn", "AFN", "rateAfn", "afnRate"];
-        for (const key of possibleKeys) {
+        const keys = ["rate", "value", "price", "sell", "buy", "afn", "AFN", "rateAfn", "afnRate"];
+        for (const key of keys) {
           if (value[key] !== undefined) {
             const n = extractNumber(value[key]);
             if (n !== null) return n;
@@ -1262,25 +1215,25 @@
       return null;
     }
 
-    function findCurrencyValue(object, aliases) {
-      if (object === null || object === undefined) return null;
-      if (typeof object !== "object") return null;
+    function findCurrencyValue(obj, aliases) {
+      if (obj === null || obj === undefined) return null;
+      if (typeof obj !== "object") return null;
 
-      for (const key of Object.keys(object)) {
-        const value = object[key];
+      for (const key of Object.keys(obj)) {
+        const value = obj[key];
         const normalizedKey = normalizeKey(key);
 
         for (const alias of aliases) {
           const normalizedAlias = normalizeKey(alias);
           if (normalizedKey === normalizedAlias) {
-            const num = extractNumber(value);
-            if (num !== null) return num;
+            const n = extractNumber(value);
+            if (n !== null) return n;
           }
         }
       }
 
-      for (const key of Object.keys(object)) {
-        const value = object[key];
+      for (const key of Object.keys(obj)) {
+        const value = obj[key];
         if (value && typeof value === "object") {
           const result = findCurrencyValue(value, aliases);
           if (result !== null) return result;
@@ -1296,12 +1249,12 @@
       if (!liveRates) return null;
 
       const aliases = {
-        USD: ["USD", "usd", "dollar", "dollars", "دلار"],
-        EUR: ["EUR", "eur", "euro", "euros", "یورو"],
-        IRR: ["IRR", "irr", "rial", "iranRial", "ریال"],
+        USD: ["USD", "usd", "dollar", "دلار"],
+        EUR: ["EUR", "eur", "euro", "یورو"],
+        IRR: ["IRR", "irr", "rial", "ریال"],
         TOMAN: ["TOMAN", "toman", "IRAN_TOMAN", "تومان"],
         JPY: ["JPY", "jpy", "yen", "ین"],
-        TRY: ["TRY", "try", "lira", "turkishLira", "لیر"],
+        TRY: ["TRY", "try", "lira", "لیر"],
         SAR: ["SAR", "sar", "saudiRiyal", "ریال سعودی"],
         AED: ["AED", "aed", "dirham", "درهم"],
         GBP: ["GBP", "gbp", "pound", "پوند"],
@@ -1316,8 +1269,8 @@
 
       const found = findCurrencyValue(liveRates, aliases[currency] || [currency]);
       if (found === null) return null;
-      const n = Number(found);
-      return Number.isFinite(n) && n > 0 ? n : null;
+      const number = Number(found);
+      return Number.isFinite(number) && number > 0 ? number : null;
     }
 
     function getLiveRate(fromCurrency, toCurrency) {
@@ -1329,7 +1282,9 @@
       if (window.CinaSarafi && typeof window.CinaSarafi.getSarafiRate === "function") {
         try {
           const rate = window.CinaSarafi.getSarafiRate(from, to);
-          if (rate !== null && Number.isFinite(Number(rate)) && Number(rate) > 0) return Number(rate);
+          if (rate !== null && Number.isFinite(Number(rate)) && Number(rate) > 0) {
+            return Number(rate);
+          }
         } catch (e) {}
       }
 
@@ -1360,118 +1315,110 @@
       return number * rate;
     }
 
-    function calculateAFN(amount, rate, currency) {
-      if (currency === "AFN") return amount;
-      return amount * rate;
+    function escapeHtml(value) {
+      return String(value ?? "").replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/"/g, "&quot;").replace(/'/g, "&#039;");
     }
 
-    function updateCurrencyInterface() {
-      const base = getSelectedBaseCurrency();
-      const baseName = getSelectedBaseCurrencyName();
-
-      const rateLabel = document.getElementById("rateLabel");
-      if (rateLabel) rateLabel.textContent = "Today's rate to " + base;
-
-      const equivalentLabel = document.getElementById("baseEquivalentLabel");
-      if (equivalentLabel) equivalentLabel.textContent = "Equivalent " + baseName + " (" + base + ")";
-
-      const afnLabel = document.getElementById("afnTotalLabel");
-      if (afnLabel) afnLabel.textContent = "Value in AFN";
-
-      const status = document.getElementById("statusText");
-      if (status && liveRates) status.textContent = "Rates are online • " + base;
-
-      const rateStatus = document.getElementById("rateStatus");
-      if (rateStatus && liveRates) rateStatus.textContent = "Rates are online • " + base;
+    function escapeAttribute(value) {
+      return escapeHtml(value);
     }
 
-    async function refreshRates() {
-      const dot = document.getElementById("rateDotMain") || document.getElementById("rateDot");
-      const status = document.getElementById("statusText") || document.getElementById("rateStatus");
-      if (!dot || !status) return null;
+    function formatNumber(number) {
+      if (number === null || number === undefined || !Number.isFinite(Number(number))) return "0";
+      return Number(number).toLocaleString("en-US", { maximumFractionDigits: 8 });
+    }
 
-      dot.classList.remove("online", "error");
-      status.textContent = "Loading rates...";
-
+    function formatDate(dateString) {
+      if (!dateString) return pageT("noDate","بدون تاریخ");
       try {
-        let rates = null;
-
-        if (window.CinaSarafi && typeof window.CinaSarafi.refreshSarafiRates === "function") {
-          rates = await window.CinaSarafi.refreshSarafiRates();
-        } else if (typeof getSarafiRates === "function") {
-          rates = await getSarafiRates();
-        } else {
-          throw new Error("Sarafi API function not found");
-        }
-
-        if (!rates) throw new Error("API returned empty data");
-
-        liveRates = rates;
-        dot.classList.add("online");
-
-        const base = getSelectedBaseCurrency();
-        status.textContent = "Rates are online • " + base;
-        updateCurrencyInterface();
-
-        if (document.getElementById("transactionModal") && document.getElementById("transactionModal").classList.contains("show")) {
-          calculateTransaction();
-        }
-
-        renderClients();
-        return rates;
-      } catch (error) {
-        console.error("Rate loading error:", error);
-        dot.classList.add("error");
-        status.textContent = "Rate fetch failed";
-        liveRates = null;
-        renderClients();
-        return null;
+        const date = new Date(dateString + "T00:00:00");
+        const settings = window.DailyTranslator && typeof window.DailyTranslator.getSettings === "function" ? window.DailyTranslator.getSettings() : null;
+        const language = settings?.language || "fa";
+        const localeMap = { en: "en-US", fa: "fa-AF", ar: "ar", ps: "ps-AF", tr: "tr-TR" };
+        return new Intl.DateTimeFormat(localeMap[language] || "fa-AF", { year: "numeric", month: "2-digit", day: "2-digit" }).format(date);
+      } catch (e) {
+        return dateString;
       }
     }
 
-    function calculateTransaction() {
-      const currencyElement = document.getElementById("transactionCurrency");
-      const amountElement = document.getElementById("transactionAmount");
-      const rateDisplay = document.getElementById("rateDisplay");
-      const baseTotal = document.getElementById("baseTotal");
-      const totalDisplay = document.getElementById("afnTotal");
-      const saveButton = document.getElementById("saveTransactionBtn");
+    function showToast(message, type = "") {
+      const container = document.getElementById("toastContainer");
+      if (!container) return;
+      const toast = document.createElement("div");
+      toast.className = `toast ${type}`;
+      toast.textContent = message;
+      container.appendChild(toast);
 
-      if (!currencyElement || !amountElement) return;
+      setTimeout(() => {
+        toast.style.opacity = "0";
+        toast.style.transform = "translateY(-8px)";
+        setTimeout(() => toast.remove(), 200);
+      }, 2800);
+    }
 
-      const currency = currencyElement.value.trim().toUpperCase();
-      const amount = Number(amountElement.value) || 0;
-      const baseCurrency = getSelectedBaseCurrency();
+    function createId() {
+      return (Date.now().toString(36) + Math.random().toString(36).substring(2, 10));
+    }
 
-      const afnRate = getRateForCurrency(currency);
-      const baseRate = getLiveRate(currency, baseCurrency);
+    function openModal(id) {
+      const modal = document.getElementById(id);
+      if (!modal) return;
+      modal.classList.add("show");
+      document.body.style.overflow = "hidden";
+    }
 
-      if (baseRate === null) {
-        rateDisplay.textContent = "Not received";
-        baseTotal.textContent = "— " + baseCurrency;
-      } else {
-        rateDisplay.textContent = "1 " + currency + " = " + formatNumber(baseRate) + " " + baseCurrency;
-        const equivalent = amount * baseRate;
-        baseTotal.textContent = formatNumber(equivalent) + " " + baseCurrency;
-      }
+    function closeModal(id) {
+      const modal = document.getElementById(id);
+      if (!modal) return;
+      modal.classList.remove("show");
+      if (!document.querySelector(".modal-overlay.show")) document.body.style.overflow = "";
+    }
 
-      if (afnRate === null) {
-        totalDisplay.textContent = "— AFN";
-        saveButton.disabled = true;
-        return;
-      }
+    function openConfirm(title, message, callback) {
+      const confirmTitle = document.getElementById("confirmTitle");
+      const confirmMessage = document.getElementById("confirmMessage");
+      const confirmButton = document.getElementById("confirmButton");
 
-      const total = calculateAFN(amount, afnRate, currency);
-      totalDisplay.textContent = formatNumber(total) + " AFN";
-      saveButton.disabled = false;
+      if (confirmTitle) confirmTitle.textContent = title;
+      if (confirmMessage) confirmMessage.innerHTML = message;
+
+      confirmCallback = callback;
+
+      confirmButton.onclick = async () => {
+        closeModal("confirmModal");
+        if (confirmCallback) {
+          const cb = confirmCallback;
+          confirmCallback = null;
+          await cb();
+        }
+      };
+
+      openModal("confirmModal");
+    }
+
+    document.querySelectorAll(".modal-overlay").forEach(overlay => {
+      overlay.addEventListener("click", function (event) {
+        if (event.target === overlay) closeModal(overlay.id);
+      });
+    });
+
+    function setToday() {
+      const input = document.getElementById("transactionDate");
+      if (!input || input.value) return;
+
+      const now = new Date();
+      const year = now.getFullYear();
+      const month = String(now.getMonth() + 1).padStart(2, "0");
+      const day = String(now.getDate()).padStart(2, "0");
+      input.value = `${year}-${month}-${day}`;
     }
 
     function normalizeExistingData() {
-      appData.clients.forEach((client) => {
+      appData.clients.forEach(client => {
         if (!client.id) client.id = createId();
         if (!Array.isArray(client.transactions)) client.transactions = [];
 
-        client.transactions.forEach((tx) => {
+        client.transactions.forEach(tx => {
           if (!tx.id) tx.id = createId();
           if (!tx.currency) tx.currency = "AFN";
           if (!tx.type) tx.type = tx.direction || "in";
@@ -1486,25 +1433,22 @@
     }
 
     async function saveData() {
-      const { error } = await supabaseClient
-        .from("exchange_users")
-        .upsert(
-          {
-            user_id: currentUser.id,
-            email: currentUser.email,
-            content: appData
-          },
-          { onConflict: "user_id" }
-        );
+      if (!supabaseClient || !currentUser) return;
+      const { error } = await supabaseClient.from("exchange_users").upsert({
+        user_id: currentUser.id,
+        email: currentUser.email,
+        content: appData
+      }, { onConflict: "user_id" });
 
       if (error) throw error;
     }
 
     async function checkAuth() {
+      if (!supabaseClient) return;
       const { data, error } = await supabaseClient.auth.getSession();
       if (error) {
         console.error(error);
-        showToast("Auth check error", "error");
+        showToast(pageT("authCheckError","خطا در بررسی حساب"), "error");
         return;
       }
 
@@ -1518,6 +1462,8 @@
     }
 
     async function loadData() {
+      if (!supabaseClient || !currentUser) return;
+
       try {
         const { data, error } = await supabaseClient
           .from("exchange_users")
@@ -1528,15 +1474,7 @@
         if (error) throw error;
 
         if (data && data.content) {
-          if (typeof data.content === "string") {
-            try {
-              appData = JSON.parse(data.content);
-            } catch (e) {
-              appData = { clients: [] };
-            }
-          } else {
-            appData = data.content;
-          }
+          appData = typeof data.content === "string" ? JSON.parse(data.content) : data.content;
         }
 
         if (!appData || typeof appData !== "object") appData = {};
@@ -1546,37 +1484,36 @@
         renderClients();
       } catch (error) {
         console.error(error);
-        showToast("Data load failed", "error");
+        showToast(pageT("loadDataError","خطا در بارگذاری اطلاعات"), "error");
       }
     }
 
     function renderClients() {
       const container = document.getElementById("accounts-list");
       const count = document.getElementById("clientCount");
-
       if (!container || !count) return;
 
-      count.textContent = `${appData.clients.length} customers`;
+      count.textContent = `${appData.clients.length} ${pageT("clients","مشتری")}`;
 
       if (!appData.clients.length) {
         container.innerHTML = `
           <div class="empty-state">
             <div class="empty-icon">👥</div>
-            <h3 class="empty-title">No clients yet</h3>
-            <p class="empty-text">Use the + button to add a client and begin recording transactions.</p>
+            <h3>${pageT("noClients","هنوز مشتری ندارید")}</h3>
+            <p>${pageT("addClientHint","از دکمه + برای اضافه کردن مشتری استفاده کنید.")}</p>
           </div>
         `;
         return;
       }
 
-      container.innerHTML = appData.clients.map((client) => renderClient(client)).join("");
+      container.innerHTML = appData.clients.map(client => renderClient(client)).join("");
     }
 
     function renderClient(client) {
       const transactions = Array.isArray(client.transactions) ? client.transactions : [];
-
       let balanceAFN = 0;
-      transactions.forEach((tx) => {
+
+      transactions.forEach(tx => {
         const value = Number(tx.totalAFN) || 0;
         if (tx.type === "in" || tx.direction === "in") {
           balanceAFN += value;
@@ -1589,42 +1526,39 @@
       const balanceBase = convertLiveCurrency(balanceAFN, "AFN", baseCurrency);
 
       let balanceClass = "zero";
-      let balanceText = "Settled";
+      let balanceText = pageT("settled","تسویه شده");
 
       if (balanceAFN > 0.000001) {
         balanceClass = "positive";
-        balanceText = "Client owes me";
+        balanceText = pageT("clientOwesMe","مشتری به شما باقی دارد");
       } else if (balanceAFN < -0.000001) {
         balanceClass = "negative";
-        balanceText = "I owe client";
+        balanceText = pageT("iOweClient","شما به مشتری باقی دارید");
       }
 
       const avatar = escapeHtml(String(client.name || "?").trim().charAt(0));
-      const balanceDisplay =
-        balanceBase === null
-          ? `— ${escapeHtml(baseCurrency)}`
-          : `${formatNumber(Math.abs(balanceBase))} ${escapeHtml(baseCurrency)}`;
+      const balanceDisplay = balanceBase === null ? `— ${escapeHtml(baseCurrency)}` : `${formatNumber(Math.abs(balanceBase))} ${escapeHtml(baseCurrency)}`;
 
       const transactionsHTML = transactions
         .slice()
         .sort((a, b) => String(b.rawDate || "").localeCompare(String(a.rawDate || "")))
-        .map((tx) => renderTransaction(client, tx))
+        .map(tx => renderTransaction(client, tx))
         .join("");
 
       return `
         <section class="client-card">
-          <div class="client-head">
+          <div class="client-top">
             <div class="client-info">
               <div class="client-avatar">${avatar}</div>
-              <div>
+              <div style="min-width:0">
                 <div class="client-name">${escapeHtml(client.name)}</div>
-                <div class="transaction-count">${transactions.length} transactions</div>
+                <div class="client-summary">${transactions.length} ${pageT("transactionsCountWord","معامله")}</div>
               </div>
             </div>
 
-            <div class="card-actions">
-              <button class="icon-action" type="button" title="New transaction" onclick="openTransactionModal('${escapeHtml(client.id)}')">＋</button>
-              <button class="icon-action delete" type="button" title="Delete client" onclick="askDeleteClient('${escapeHtml(client.id)}')">🗑</button>
+            <div class="client-actions">
+              <button class="small-btn" onclick="openTransactionModal('${escapeAttribute(client.id)}')" title="${pageT("newTransaction","معامله جدید")}">＋</button>
+              <button class="small-btn delete" onclick="askDeleteClient('${escapeAttribute(client.id)}')" title="${pageT("deleteClient","حذف مشتری")}">🗑</button>
             </div>
           </div>
 
@@ -1633,22 +1567,8 @@
             <span class="balance-value">${balanceDisplay}</span>
           </div>
 
-          <div class="transactions">
-            ${
-              transactionsHTML || `
-                <div class="tx-row">
-                  <div class="tx-main">
-                    <div class="tx-direction">
-                      <div class="tx-icon credit">✓</div>
-                      <div>
-                        <div class="tx-type">No transactions yet</div>
-                        <div class="tx-date">Add a new transaction</div>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-              `
-            }
+          <div class="transactions-list">
+            ${transactionsHTML || `<div class="empty-transactions">${pageT("noTransactions","هنوز معامله‌ای ثبت نشده است.")}</div>`}
           </div>
         </section>
       `;
@@ -1661,67 +1581,126 @@
       const currency = String(tx.currency || "AFN").toUpperCase();
       const amount = Number(tx.rawAmount ?? tx.amount ?? 0);
       const date = tx.rawDate || tx.date || "";
+      const afnRate = Number(tx.rateAtTransaction) || 0;
       const baseCurrency = getSelectedBaseCurrency();
       const equivalent = convertLiveCurrency(amount, currency, baseCurrency);
       const note = tx.note ? escapeHtml(tx.note) : "";
-      const afnRate = Number(tx.rateAtTransaction) || 0;
 
-      let equivalentText = "";
-      if (equivalent === null) {
-        equivalentText = `Equivalent: — ${escapeHtml(baseCurrency)}`;
-      } else {
-        equivalentText = `Equivalent: ${formatNumber(equivalent)} ${escapeHtml(baseCurrency)}`;
-      }
+      let equivalentText = `${pageT("equivalent","معادل")}: — ${escapeHtml(baseCurrency)}`;
+      if (equivalent !== null) equivalentText = `${pageT("equivalent","معادل")}: ${formatNumber(equivalent)} ${escapeHtml(baseCurrency)}`;
 
       return `
-        <div class="tx-row">
-          <div class="tx-main">
-            <div class="tx-direction">
-              <div class="tx-icon ${isIn ? "credit" : "debit"}">${icon}</div>
+        <div class="transaction-row">
+          <div class="transaction-main">
+            <div class="transaction-left">
+              <div class="transaction-icon ${isIn ? "in" : "out"}">${icon}</div>
               <div>
-                <div class="tx-type">${isIn ? "Client paid me" : "I paid client"}</div>
-                <div class="tx-date">${formatDate(date)}</div>
+                <div class="transaction-name">${isIn ? pageT("clientGaveMe","مشتری به من داد") : pageT("iGaveClient","من به مشتری دادم")}</div>
+                <div class="transaction-date">${formatDate(date)}</div>
               </div>
             </div>
 
-            <div class="tx-amount ${isIn ? "credit" : "debit"}">
+            <div class="transaction-amount ${isIn ? "in" : "out"}">
               ${sign}${formatNumber(amount)} ${escapeHtml(currency)}
             </div>
           </div>
 
-          <div class="tx-bottom">
-            <div class="tx-meta">
+          <div class="transaction-bottom">
+            <div class="transaction-meta">
               <strong>${equivalentText}</strong>
-              ${afnRate ? ` • Rate ${formatNumber(afnRate)} AFN` : ""}
+              ${afnRate ? ` • ${pageT("rate","نرخ")} ${formatNumber(afnRate)} AFN` : ""}
               ${note ? ` • ${note}` : ""}
             </div>
 
-            <div class="tx-actions">
-              <button class="tx-action" type="button" title="Edit" onclick="editTransaction('${escapeHtml(client.id)}','${escapeHtml(tx.id)}')">✎</button>
-              <button class="tx-action delete" type="button" title="Delete" onclick="askDeleteTransaction('${escapeHtml(client.id)}','${escapeHtml(tx.id)}')">×</button>
+            <div class="transaction-buttons">
+              <button class="transaction-mini-btn" onclick="editTransaction('${escapeAttribute(client.id)}','${escapeAttribute(tx.id)}')" title="${pageT("edit","ویرایش")}">✎</button>
+              <button class="transaction-mini-btn delete" onclick="askDeleteTransaction('${escapeAttribute(client.id)}','${escapeAttribute(tx.id)}')" title="${pageT("delete","حذف")}">×</button>
             </div>
           </div>
         </div>
       `;
     }
 
-    function formatDate(dateString) {
-      if (!dateString) return "No date";
-      try {
-        const date = new Date(dateString + "T00:00:00");
-        const settings = window.DailyTranslator && typeof window.DailyTranslator.getSettings === "function" ? window.DailyTranslator.getSettings() : null;
-        const language = settings?.language || "fa";
-        const localeMap = { en: "en-US", fa: "fa-AF", ar: "ar", ps: "ps-AF", tr: "tr-TR" };
-        return new Intl.DateTimeFormat(localeMap[language] || "fa-AF", { year: "numeric", month: "2-digit", day: "2-digit" }).format(date);
-      } catch (e) {
-        return dateString;
+    function openAddClientModal() {
+      const input = document.getElementById("clientNameInput");
+      if (input) input.value = "";
+      openModal("clientModal");
+      setTimeout(() => {
+        const el = document.getElementById("clientNameInput");
+        if (el) el.focus();
+      }, 100);
+    }
+
+    async function saveClient() {
+      const input = document.getElementById("clientNameInput");
+      const name = input.value.trim();
+
+      if (!name) {
+        showToast(pageT("enterClientName","نام مشتری را وارد کنید"), "error");
+        input.focus();
+        return;
       }
+
+      appData.clients.push({ id: createId(), name, transactions: [] });
+
+      try {
+        await saveData();
+        closeModal("clientModal");
+        renderClients();
+        showToast(pageT("clientAdded","مشتری با موفقیت اضافه شد"), "success");
+      } catch (error) {
+        console.error(error);
+        appData.clients.pop();
+        showToast(pageT("clientSaveFailed","ذخیره مشتری انجام نشد"), "error");
+      }
+    }
+
+    function askDeleteClient(clientId) {
+      const client = appData.clients.find(c => c.id === clientId);
+      if (!client) return;
+
+      openConfirm(
+        pageT("deleteClient","حذف مشتری"),
+        `${pageT("deleteClientQuestion","آیا مطمئن هستید که")} «${escapeHtml(client.name)}» ${pageT("deleteClientQuestionEnd","و تمام معاملات او حذف شود؟")}`,
+        async () => {
+          const old = appData.clients;
+          appData.clients = old.filter(c => c.id !== clientId);
+
+          try {
+            await saveData();
+            renderClients();
+            showToast(pageT("clientDeleted","مشتری حذف شد"), "success");
+          } catch (error) {
+            console.error(error);
+            appData.clients = old;
+            renderClients();
+            showToast(pageT("deleteFailed","حذف انجام نشد"), "error");
+          }
+        }
+      );
+    }
+
+    async function openTransactionModal(clientId) {
+      editingTransaction = null;
+      document.getElementById("transactionModalTitle").textContent = pageT("newTransaction","معامله جدید");
+      fillClientSelect(clientId);
+      document.getElementById("transactionAmount").value = "";
+      document.getElementById("transactionCurrency").value = "AFN";
+      document.getElementById("transactionNote").value = "";
+      setToday();
+      setDirection("in");
+      updateCurrencyInterface();
+      openModal("transactionModal");
+      await refreshRates();
+      calculateTransaction();
     }
 
     function fillClientSelect(selectedId) {
       const select = document.getElementById("transactionClient");
-      select.innerHTML = appData.clients.map((client) => `
-        <option value="${escapeHtml(client.id)}" ${client.id === selectedId ? "selected" : ""}>${escapeHtml(client.name)}</option>
+      select.innerHTML = appData.clients.map(client => `
+        <option value="${escapeAttribute(client.id)}" ${client.id === selectedId ? "selected" : ""}>
+          ${escapeHtml(client.name)}
+        </option>
       `).join("");
     }
 
@@ -1738,98 +1717,25 @@
       if (input) input.checked = true;
     }
 
-    function openAddClientModal() {
-      document.getElementById("clientNameInput").value = "";
-      openModal("clientModal");
-      setTimeout(() => document.getElementById("clientNameInput").focus(), 100);
-    }
-
-    async function saveClient() {
-      const input = document.getElementById("clientNameInput");
-      const name = input.value.trim();
-
-      if (!name) {
-        showToast("Please enter client name", "error");
-        input.focus();
-        return;
-      }
-
-      appData.clients.push({
-        id: createId(),
-        name,
-        transactions: []
-      });
-
-      try {
-        await saveData();
-        closeModal("clientModal");
-        renderClients();
-        showToast("Client added successfully", "success");
-      } catch (error) {
-        console.error(error);
-        appData.clients.pop();
-        showToast("Client save failed", "error");
-      }
-    }
-
-    function askDeleteClient(clientId) {
-      const client = appData.clients.find((c) => c.id === clientId);
-      if (!client) return;
-
-      openConfirm(
-        "Delete Client",
-        `Are you sure you want to delete <strong>${escapeHtml(client.name)}</strong> and all of their transactions?`,
-        async () => {
-          const old = appData.clients;
-          appData.clients = old.filter((c) => c.id !== clientId);
-
-          try {
-            await saveData();
-            renderClients();
-            showToast("Client deleted", "success");
-          } catch (error) {
-            console.error(error);
-            appData.clients = old;
-            renderClients();
-            showToast("Delete failed", "error");
-          }
-        }
-      );
-    }
-
-    async function openTransactionModal(clientId) {
-      editingTransaction = null;
-
-      document.getElementById("transactionModalTitle").textContent = "New Transaction";
-      fillClientSelect(clientId);
-
-      document.getElementById("transactionAmount").value = "";
-      document.getElementById("transactionCurrency").value = "AFN";
-      document.getElementById("transactionNote").value = "";
-      setToday();
-      setDirection("in");
-
-      openModal("transactionModal");
-      await refreshRates();
-      calculateTransaction();
-    }
-
     async function editTransaction(clientId, transactionId) {
-      const client = appData.clients.find((c) => c.id === clientId);
+      const client = appData.clients.find(c => c.id === clientId);
       if (!client) return;
 
-      const tx = client.transactions.find((t) => t.id === transactionId);
+      const tx = client.transactions.find(t => t.id === transactionId);
       if (!tx) return;
 
       editingTransaction = { clientId, transactionId };
 
-      document.getElementById("transactionModalTitle").textContent = "Edit Transaction";
+      document.getElementById("transactionModalTitle").textContent = pageT("editTransaction","ویرایش معامله");
       fillClientSelect(clientId);
+
       document.getElementById("transactionCurrency").value = tx.currency || "AFN";
       document.getElementById("transactionAmount").value = tx.rawAmount ?? tx.amount ?? "";
       document.getElementById("transactionDate").value = tx.rawDate || tx.date || "";
       document.getElementById("transactionNote").value = tx.note || "";
+
       setDirection(tx.type || tx.direction || "in");
+      updateCurrencyInterface();
 
       openModal("transactionModal");
       await refreshRates();
@@ -1844,27 +1750,29 @@
       const note = document.getElementById("transactionNote").value.trim();
 
       if (!clientId) {
-        showToast("Please select a client", "error");
+        showToast(pageT("selectClient","مشتری را انتخاب کنید"), "error");
         return;
       }
+
       if (!amount || amount <= 0) {
-        showToast("Please enter amount", "error");
+        showToast(pageT("enterAmount","مقدار معامله را وارد کنید"), "error");
         return;
       }
+
       if (!date) {
-        showToast("Please choose transaction date", "error");
+        showToast(pageT("enterTransactionDate","تاریخ معامله را وارد کنید"), "error");
         return;
       }
 
       const rate = getRateForCurrency(currency);
       if (rate === null) {
-        showToast("Currency rate was not received", "error");
+        showToast(pageT("rateNotAvailable","نرخ این ارز از API دریافت نشد"), "error");
         return;
       }
 
       const totalAFN = calculateAFN(amount, rate, currency);
       if (!Number.isFinite(totalAFN)) {
-        showToast("Rate calculation failed", "error");
+        showToast(pageT("rateCalculationFailed","محاسبه نرخ انجام نشد"), "error");
         return;
       }
 
@@ -1896,15 +1804,15 @@
 
       try {
         if (wasEditing) {
-          const client = appData.clients.find((c) => c.id === editingTransaction.clientId);
+          const client = appData.clients.find(c => c.id === editingTransaction.clientId);
           if (!client) throw new Error("Client not found");
 
-          const index = client.transactions.findIndex((t) => t.id === editingTransaction.transactionId);
+          const index = client.transactions.findIndex(t => t.id === editingTransaction.transactionId);
           if (index === -1) throw new Error("Transaction not found");
 
           client.transactions[index] = tx;
         } else {
-          const client = appData.clients.find((c) => c.id === clientId);
+          const client = appData.clients.find(c => c.id === clientId);
           if (!client) throw new Error("Client not found");
           if (!Array.isArray(client.transactions)) client.transactions = [];
           client.transactions.push(tx);
@@ -1914,43 +1822,134 @@
         editingTransaction = null;
         closeModal("transactionModal");
         renderClients();
-        showToast(wasEditing ? "Transaction updated" : "Transaction saved successfully", "success");
+        showToast(
+          wasEditing ? pageT("transactionEdited","معامله ویرایش شد") : pageT("transactionSaved","معامله با موفقیت ثبت شد"),
+          "success"
+        );
       } catch (error) {
         console.error(error);
-        showToast("Save failed", "error");
+        showToast(pageT("transactionSaveFailed","ذخیره معامله انجام نشد"), "error");
       }
     }
 
     function askDeleteTransaction(clientId, transactionId) {
       openConfirm(
-        "Delete Transaction",
-        "Are you sure you want to delete this transaction?",
+        pageT("deleteTransaction","حذف معامله"),
+        pageT("deleteTransactionQuestion","آیا مطمئن هستید که این معامله حذف شود؟"),
         async () => {
-          const client = appData.clients.find((c) => c.id === clientId);
+          const client = appData.clients.find(c => c.id === clientId);
           if (!client) return;
 
           const old = [...client.transactions];
-          client.transactions = client.transactions.filter((tx) => tx.id !== transactionId);
+          client.transactions = client.transactions.filter(tx => tx.id !== transactionId);
 
           try {
             await saveData();
             renderClients();
-            showToast("Transaction deleted", "success");
+            showToast(pageT("transactionDeleted","معامله حذف شد"), "success");
           } catch (error) {
             console.error(error);
             client.transactions = old;
             renderClients();
-            showToast("Delete failed", "error");
+            showToast(pageT("transactionDeleteFailed","حذف معامله انجام نشد"), "error");
           }
         }
       );
     }
 
+    function calculateAFN(amount, rate, currency) {
+      if (currency === "AFN") return amount;
+      return amount * rate;
+    }
+
+    function calculateTransaction() {
+      const currencyElement = document.getElementById("transactionCurrency");
+      const amountElement = document.getElementById("transactionAmount");
+      if (!currencyElement || !amountElement) return;
+
+      const currency = currencyElement.value.trim().toUpperCase();
+      const amount = Number(amountElement.value) || 0;
+
+      const baseCurrency = getSelectedBaseCurrency();
+      const afnRate = getRateForCurrency(currency);
+      const baseRate = getLiveRate(currency, baseCurrency);
+
+      const rateDisplay = document.getElementById("rateDisplay");
+      const baseTotal = document.getElementById("baseTotal");
+      const totalDisplay = document.getElementById("afnTotal");
+      const saveButton = document.getElementById("saveTransactionBtn");
+
+      if (baseRate === null) {
+        rateDisplay.textContent = pageT("notReceived","دریافت نشد");
+        baseTotal.textContent = `— ${baseCurrency}`;
+      } else {
+        rateDisplay.textContent = `1 ${currency} = ${formatNumber(baseRate)} ${baseCurrency}`;
+        const equivalent = amount * baseRate;
+        baseTotal.textContent = `${formatNumber(equivalent)} ${baseCurrency}`;
+      }
+
+      if (afnRate === null) {
+        totalDisplay.textContent = "— AFN";
+        saveButton.disabled = true;
+        return;
+      }
+
+      const total = calculateAFN(amount, afnRate, currency);
+      totalDisplay.textContent = `${formatNumber(total)} AFN`;
+      saveButton.disabled = false;
+    }
+
+    async function refreshRates() {
+      const dot = document.getElementById("rateDot");
+      const status = document.getElementById("rateStatus");
+      if (!dot || !status) return null;
+
+      dot.classList.remove("online", "error");
+      status.textContent = pageT("loadingRates","در حال دریافت نرخ اسعار...");
+
+      try {
+        let rates = null;
+
+        if (window.CinaSarafi && typeof window.CinaSarafi.refreshSarafiRates === "function") {
+          rates = await window.CinaSarafi.refreshSarafiRates();
+        } else if (typeof getSarafiRates === "function") {
+          rates = await getSarafiRates();
+        } else {
+          throw new Error("Sarafi API function not found");
+        }
+
+        if (!rates) throw new Error("API returned empty data");
+
+        liveRates = rates;
+        dot.classList.add("online");
+
+        const base = getSelectedBaseCurrency();
+        status.textContent = `${pageT("ratesOnline","نرخ اسعار آنلاین است")} • ${base}`;
+        updateCurrencyInterface();
+
+        const transactionModal = document.getElementById("transactionModal");
+        if (transactionModal && transactionModal.classList.contains("show")) calculateTransaction();
+
+        renderClients();
+        return rates;
+      } catch (error) {
+        console.error("Rate loading error:", error);
+        dot.classList.add("error");
+        status.textContent = pageT("ratesFailed","دریافت نرخ اسعار ناموفق بود");
+        liveRates = null;
+        renderClients();
+        return null;
+      }
+    }
+
     document.addEventListener("DOMContentLoaded", async () => {
+      applyPageLanguage();
       updateCurrencyInterface();
       setToday();
+
       await checkAuth();
       await refreshRates();
+      updateCurrencyInterface();
       renderClients();
     });
 
@@ -1958,13 +1957,14 @@
       await refreshRates();
     }, 60000);
 
-    document.addEventListener("keydown", (event) => {
+    document.addEventListener("keydown", function (event) {
       if (event.key === "Escape") {
-        document.querySelectorAll(".modal-overlay.show").forEach((modal) => closeModal(modal.id));
+        document.querySelectorAll(".modal-overlay.show").forEach(modal => closeModal(modal.id));
       }
     });
 
     setTimeout(() => {
+      applyPageLanguage();
       updateCurrencyInterface();
       renderClients();
     }, 100);
